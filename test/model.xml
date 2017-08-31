@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="test"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:t="test:ns"
+        module-prefix="t">
+  <description>
+    <text>Test model</text>
+  </description>
+  <container name="test"/>
+</module>
