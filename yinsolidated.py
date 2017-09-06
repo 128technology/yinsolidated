@@ -10,6 +10,7 @@ accessing the details of the consolidated model without parsing XML
 
 import re
 
+import xpathparser
 from lxml import etree
 
 
@@ -535,11 +536,7 @@ class WhenElement(YinElement):
 
 
 def _ensure_xpath_names_prefixed(expression, prefix):
-    # Import here because pyang.xpath performs an expensive operation (.6s)
-    # on import
-    import pyang.xpath
-
-    tokens = pyang.xpath.tokens(expression)
+    tokens = xpathparser.tokens(expression)
     new_tokens = []
 
     for token_type, token in tokens:

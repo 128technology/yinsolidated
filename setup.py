@@ -7,12 +7,12 @@ from setuptools import setup
 
 setup(
     name='yinsolidated',
-    version='1.0.0',
+    version='1.0.1',
     description='Parses the consolidated YIN model format',
     py_modules=['yinsolidated'],
     install_requires=[
         'lxml >= 3.7.3',
-        'pyang >= 1.6'
+        'xpathparser >= 1.0.0'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
