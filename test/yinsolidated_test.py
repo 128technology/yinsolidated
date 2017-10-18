@@ -38,6 +38,70 @@ class TestYinElement(object):
 
         assert module_elem.keyword == 'module'
 
+    def test_namespace_from_module(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+                    xmlns:test="test:ns"
+                    module-prefix="test">
+                <choice/>
+            </module>
+            """)
+        choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
+
+        assert choice_elem.namespace == 'test:ns'
+
+    def test_namespace_from_augmenting_node(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+                    xmlns:out="outer:ns"
+                    module-prefix="out">
+                <container name="test-container"
+                           xmlns:in="inner:ns"
+                           module-prefix="in">
+                    <choice/>
+                </container>
+            </module>
+            """)
+        choice_elem = module_elem.find('.//yin:choice', namespaces=_NSMAP)
+
+        assert choice_elem.namespace == 'inner:ns'
+
+    def test_prefix_from_module(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+                    module-prefix="test">
+                <choice/>
+            </module>
+            """)
+        choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
+
+        assert choice_elem.prefix == 'test'
+
+    def test_prefix_from_augmenting_node(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+                    module-prefix="outer">
+                <container name="test-container"
+                           module-prefix="inner">
+                    <choice/>
+                </container>
+            </module>
+            """)
+        choice_elem = module_elem.find('.//yin:choice', namespaces=_NSMAP)
+
+        assert choice_elem.prefix == 'inner'
+
+    def test_missing_prefix(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+                <choice/>
+            </module>
+            """)
+        choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
+
+        with pytest.raises(yinsolidated.MissingPrefixError):
+            choice_elem.prefix
+
     def test_namespace_map(self):
         module_elem = yinsolidated.fromstring("""
             <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
@@ -235,9 +299,8 @@ class TestGetAncestorOrSelfDataNodes(object):
 
 class TestModuleElement(object):
 
-    @pytest.fixture
-    def module_elem(self):
-        return yinsolidated.fromstring("""
+    def test_name(self):
+        module_elem = yinsolidated.fromstring("""
             <module name="test"
                     xmlns="urn:ietf:params:xml:ns:yang:yin:1"
                     xmlns:t="test:ns"
@@ -245,14 +308,7 @@ class TestModuleElement(object):
             </module>
             """)
 
-    def test_name(self, module_elem):
         assert module_elem.name == 'test'
-
-    def test_namespace(self, module_elem):
-        assert module_elem.namespace == 'test:ns'
-
-    def test_prefix(self, module_elem):
-        assert module_elem.prefix == 't'
 
 
 class TestDefinitionElement(object):
@@ -264,70 +320,6 @@ class TestDefinitionElement(object):
             """)
 
         assert choice_elem.name == 'system'
-
-    def test_namespace_from_module(self):
-        module_elem = yinsolidated.fromstring("""
-            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-                    xmlns:test="test:ns"
-                    module-prefix="test">
-                <choice/>
-            </module>
-            """)
-        choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
-
-        assert choice_elem.namespace == 'test:ns'
-
-    def test_namespace_from_augmenting_node(self):
-        module_elem = yinsolidated.fromstring("""
-            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-                    xmlns:out="outer:ns"
-                    module-prefix="out">
-                <container name="test-container"
-                           xmlns:in="inner:ns"
-                           module-prefix="in">
-                    <choice/>
-                </container>
-            </module>
-            """)
-        choice_elem = module_elem.find('.//yin:choice', namespaces=_NSMAP)
-
-        assert choice_elem.namespace == 'inner:ns'
-
-    def test_prefix_from_module(self):
-        module_elem = yinsolidated.fromstring("""
-            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-                    module-prefix="test">
-                <choice/>
-            </module>
-            """)
-        choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
-
-        assert choice_elem.prefix == 'test'
-
-    def test_prefix_from_augmenting_node(self):
-        module_elem = yinsolidated.fromstring("""
-            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-                    module-prefix="outer">
-                <container name="test-container"
-                           module-prefix="inner">
-                    <choice/>
-                </container>
-            </module>
-            """)
-        choice_elem = module_elem.find('.//yin:choice', namespaces=_NSMAP)
-
-        assert choice_elem.prefix == 'inner'
-
-    def test_missing_prefix(self):
-        module_elem = yinsolidated.fromstring("""
-            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1">
-                <choice/>
-            </module>
-            """)
-        choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
-
-        with pytest.raises(yinsolidated.MissingPrefixError):
-            choice_elem.prefix
 
     def test_status(self):
         choice_elem = yinsolidated.fromstring("""
@@ -719,19 +711,35 @@ class TestAnyxmlElement(object):
         assert not anyxml_elem.is_mandatory
 
 
-class TestTypeElement(object):
-
-    def test_name(self):
-        type_elem = yinsolidated.fromstring("""
-            <type xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-                  name="counter">
+@pytest.fixture
+def type_elem_with_unprefixed_name():
+    return yinsolidated.fromstring("""
+        <leaf xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+              xmlns:a="a:ns"
+              module-prefix="a"
+              name="test-leaf">
+            <type name="counter">
                 <typedef name="counter">
                     <type name="uint32"/>
                 </typedef>
             </type>
-            """)
+        </leaf>
+        """).find('yin:type', _NSMAP)
 
-        assert type_elem.name == 'counter'
+
+class TestTypeElement(object):
+
+    def test_name(self, type_elem_with_unprefixed_name):
+        assert type_elem_with_unprefixed_name.name == 'counter'
+
+    def test_unprefixed_name(self, type_elem_with_unprefixed_name):
+        assert type_elem_with_unprefixed_name.unprefixed_name == 'counter'
+
+    def test_prefix(self, type_elem_with_unprefixed_name):
+        assert type_elem_with_unprefixed_name.prefix == 'a'
+
+    def test_namespace(self, type_elem_with_unprefixed_name):
+        assert type_elem_with_unprefixed_name.namespace == 'a:ns'
 
     def test_base(self):
         type_elem = yinsolidated.fromstring("""
@@ -1290,6 +1298,38 @@ class TestTypeElement(object):
 
         subtype_names = [elem.base_type.name for elem in type_elem.subtypes]
         assert subtype_names == ['uint8', 'string']
+
+
+@pytest.fixture
+def type_elem_with_prefixed_name():
+    return yinsolidated.fromstring("""
+        <leaf xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+              xmlns:a="a:ns"
+              xmlns:b="b:ns"
+              module-prefix="a"
+              name="test-leaf">
+            <type name="b:counter">
+                <typedef name="counter">
+                    <type name="uint32"/>
+                </typedef>
+            </type>
+        </leaf>
+        """).find('yin:type', _NSMAP)
+
+
+class TestTypeElementWithPrefixedName(object):
+
+    def test_name(self, type_elem_with_prefixed_name):
+        assert type_elem_with_prefixed_name.name == 'b:counter'
+
+    def test_unprefixed_name(self, type_elem_with_prefixed_name):
+        assert type_elem_with_prefixed_name.unprefixed_name == 'counter'
+
+    def test_prefix(self, type_elem_with_prefixed_name):
+        assert type_elem_with_prefixed_name.prefix == 'b'
+
+    def test_namespace(self, type_elem_with_prefixed_name):
+        assert type_elem_with_prefixed_name.namespace == 'b:ns'
 
 
 class TestTypedefElement(object):

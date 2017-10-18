@@ -27,6 +27,11 @@ _DATA_NODE_PREDICATE = ' or '.join(
 )
 
 
+class Error(Exception):
+
+    """Base exception"""
+
+
 class _ConsolidatedModelLookup(etree.CustomElementClassLookup):
 
     def lookup(self, _node_type, _document, namespace, name):
@@ -86,6 +91,21 @@ class YinElement(etree.ElementBase):
         return etree.QName(self.tag).localname
 
     @property
+    def namespace(self):
+        return self.nsmap[self.prefix]
+
+    @property
+    def prefix(self):
+        ancestor_prefixes = self.xpath(
+            'ancestor-or-self::yin:*[@module-prefix]/@module-prefix',
+            namespaces=_NSMAP
+        )
+        try:
+            return ancestor_prefixes[-1]
+        except IndexError:
+            raise MissingPrefixError(self)
+
+    @property
     def namespace_map(self):
         return {
             prefix: namespace
@@ -130,19 +150,23 @@ def _change_all_whitespace_to_spaces(string):
     return re.sub(r'\s+', ' ', string).strip()
 
 
+class MissingPrefixError(Error):
+
+    """Could not find a prefix attribute"""
+
+    def __init__(self, data_def_element):
+        message = "No prefix attribute found for ancestors of {} '{}'".format(
+            data_def_element.keyword,
+            data_def_element.name
+        )
+        super(MissingPrefixError, self).__init__(message)
+
+
 class ModuleElement(YinElement):
 
     @property
     def name(self):
         return self.get('name')
-
-    @property
-    def namespace(self):
-        return self.nsmap[self.prefix]
-
-    @property
-    def prefix(self):
-        return self.get('module-prefix')
 
 
 class DefinitionElement(YinElement):
@@ -150,20 +174,6 @@ class DefinitionElement(YinElement):
     @property
     def name(self):
         return self.get('name')
-
-    @property
-    def namespace(self):
-        return self.nsmap[self.prefix]
-
-    @property
-    def prefix(self):
-        ancestor_prefixes = self.xpath(
-            'ancestor-or-self::yin:*[@module-prefix]/@module-prefix',
-            namespaces=_NSMAP)
-        try:
-            return ancestor_prefixes[-1]
-        except IndexError:
-            raise MissingPrefixError(self)
 
     @property
     def status(self):
@@ -192,17 +202,6 @@ class DataDefinitionElement(DefinitionElement):
     @property
     def when_elements(self):
         return self.findall('yin:when', namespaces=_NSMAP)
-
-
-class MissingPrefixError(Exception):
-
-    """Could not find a prefix attribute"""
-
-    def __init__(self, data_def_element):
-        message = (
-            "No prefix attribute found for ancestors of {} '{}'".format(
-                data_def_element.keyword, data_def_element.name))
-        super(MissingPrefixError, self).__init__(message)
 
 
 class ContainerElement(DataDefinitionElement):
@@ -360,6 +359,17 @@ class TypeElement(YinElement):
         return self.get('name')
 
     @property
+    def unprefixed_name(self):
+        return self.name.split(':')[-1]
+
+    @property
+    def prefix(self):
+        if ':' in self.name:
+            return self.name.split(':')[0]
+
+        return super(TypeElement, self).prefix
+
+    @property
     def base_type(self):
         typedef_elem = self.typedef
         return self if typedef_elem is None else typedef_elem.type.base_type
@@ -467,7 +477,7 @@ def _parse_identifier(identifier, nsmap, default_namespace):
     return name, namespace
 
 
-class MissingIdentityError(Exception):
+class MissingIdentityError(Error):
 
     def __init__(self, name, namespace):
         super(MissingIdentityError, self).__init__(
@@ -564,14 +574,6 @@ class IdentityElement(YinElement):
     @property
     def name(self):
         return self.get('name')
-
-    @property
-    def namespace(self):
-        return self.nsmap[self.prefix]
-
-    @property
-    def prefix(self):
-        return self.get('module-prefix')
 
     @property
     def base(self):
