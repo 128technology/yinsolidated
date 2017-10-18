@@ -29,7 +29,7 @@ def test_parse_file():
     assert container_element.name == 'test'
 
 
-class TestYinElement:
+class TestYinElement(object):
 
     def test_keyword(self):
         module_elem = yinsolidated.fromstring("""
@@ -88,8 +88,116 @@ class TestYinElement:
 
         assert len(list(module_elem.iterate_data_definitions())) == 7
 
+    def test_rpc_definitions(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+                <namespace uri="test:ns"/>
+                <prefix value="t"/>
+                <rpc name="do-something">
+                    <input/>
+                    <output/>
+                </rpc>
+                <rpc name="do-something-else">
+                    <input/>
+                    <output/>
+                </rpc>
+            </module>
+            """)
 
-class TestDefinitionElement:
+        assert len(list(module_elem.iterate_rpcs())) == 2
+
+
+class TestGetAncestorDataNodes(object):
+
+    @pytest.fixture
+    def model(self):
+        return yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+                <namespace uri="test:ns"/>
+                <prefix value="t"/>
+                <container name="test-container">
+                    <list name="test-list">
+                        <choice name="test-choice">
+                            <case name="case-0">
+                                <leaf name="test-leaf">
+                                    <type name="uint8"/>
+                                </leaf>
+                            </case>
+                            <case name="case-1">
+                                <leaf-list name="test-leaf-list">
+                                    <type name="string"/>
+                                </leaf-list>
+                            </case>
+                        </choice>
+                    </list>
+                </container>
+            </module>
+            """)
+
+    def test_from_leaf_type(self, model):
+        leaf_type_elem = model.find(
+            './/yin:leaf/yin:type',
+            namespaces=_NSMAP
+        )
+
+        data_node_ancestors = leaf_type_elem.get_ancestor_data_nodes()
+        assert len(data_node_ancestors) == 3
+        assert data_node_ancestors[0].keyword == 'container'
+        assert data_node_ancestors[1].keyword == 'list'
+        assert data_node_ancestors[2].keyword == 'leaf'
+
+    def test_from_leaf(self, model):
+        leaf_elem = model.find('.//yin:leaf', namespaces=_NSMAP)
+
+        data_node_ancestors = leaf_elem.get_ancestor_data_nodes()
+        assert len(data_node_ancestors) == 2
+        assert data_node_ancestors[0].keyword == 'container'
+        assert data_node_ancestors[1].keyword == 'list'
+
+    def test_from_leaf_list_type(self, model):
+        leaf_list_type_elem = model.find(
+            './/yin:leaf-list/yin:type',
+            namespaces=_NSMAP
+        )
+
+        data_node_ancestors = leaf_list_type_elem.get_ancestor_data_nodes()
+        assert len(data_node_ancestors) == 3
+        assert data_node_ancestors[0].keyword == 'container'
+        assert data_node_ancestors[1].keyword == 'list'
+        assert data_node_ancestors[2].keyword == 'leaf-list'
+
+    def test_from_leaf_list(self, model):
+        leaf_list_elem = model.find('.//yin:leaf-list', namespaces=_NSMAP)
+
+        data_node_ancestors = leaf_list_elem.get_ancestor_data_nodes()
+        assert len(data_node_ancestors) == 2
+        assert data_node_ancestors[0].keyword == 'container'
+        assert data_node_ancestors[1].keyword == 'list'
+
+
+class TestModuleElement(object):
+
+    @pytest.fixture
+    def module_elem(self):
+        return yinsolidated.fromstring("""
+            <module name="test"
+                    xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+                    xmlns:t="test:ns"
+                    module-prefix="t">
+            </module>
+            """)
+
+    def test_name(self, module_elem):
+        assert module_elem.name == 'test'
+
+    def test_namespace(self, module_elem):
+        assert module_elem.namespace == 'test:ns'
+
+    def test_prefix(self, module_elem):
+        assert module_elem.prefix == 't'
+
+
+class TestDefinitionElement(object):
 
     def test_name(self):
         choice_elem = yinsolidated.fromstring("""
@@ -180,7 +288,7 @@ class TestDefinitionElement:
         assert choice_elem.status == 'current'
 
 
-class TestRpcElement:
+class TestRpcElement(object):
 
     def test_input(self):
         rpc_elem = yinsolidated.fromstring("""
@@ -201,7 +309,7 @@ class TestRpcElement:
         assert rpc_elem.output is not None
 
 
-class TestDataDefinitionElement:
+class TestDataDefinitionElement(object):
 
     def test_is_config_false(self):
         choice_elem = yinsolidated.fromstring("""
@@ -241,7 +349,7 @@ class TestDataDefinitionElement:
         assert len(container_elem.when_elements) == 2
 
 
-class TestContainerElement:
+class TestContainerElement(object):
 
     def test_presence(self):
         container_elem = yinsolidated.fromstring("""
@@ -260,7 +368,7 @@ class TestContainerElement:
         assert container_elem.presence is None
 
 
-class TestLeafElement:
+class TestLeafElement(object):
 
     def test_type(self):
         leaf_elem = yinsolidated.fromstring("""
@@ -362,7 +470,7 @@ class TestLeafElement:
         assert not leaf_elem.is_list_key
 
 
-class TestLeafListElement:
+class TestLeafListElement(object):
 
     def test_type(self):
         leaf_list_elem = yinsolidated.fromstring("""
@@ -438,7 +546,7 @@ class TestLeafListElement:
         assert leaf_list_elem.ordered_by == 'system'
 
 
-class TestListElement:
+class TestListElement(object):
 
     def test_keys(self):
         module_elem = yinsolidated.fromstring("""
@@ -525,7 +633,7 @@ class TestListElement:
         assert list_elem.ordered_by == 'system'
 
 
-class TestAnyxmlElement:
+class TestAnyxmlElement(object):
 
     def test_is_mandatory(self):
         anyxml_elem = yinsolidated.fromstring("""
@@ -553,7 +661,7 @@ class TestAnyxmlElement:
         assert not anyxml_elem.is_mandatory
 
 
-class TestTypeElement:
+class TestTypeElement(object):
 
     def test_name(self):
         type_elem = yinsolidated.fromstring("""
@@ -759,6 +867,11 @@ class TestTypeElement:
                           name="derived-identity">
                     <base name="base-identity"/>
                 </identity>
+                <identity xmlns:t="test:ns"
+                          module-prefix="t"
+                          name="nested-derived-identity">
+                    <base name="derived-identity"/>
+                </identity>
                 <identity xmlns:o="other:ns"
                           module-prefix="o"
                           name="another-base-identity"/>
@@ -779,8 +892,9 @@ class TestTypeElement:
 
         identities = type_elem.get_identities()
 
-        assert len(identities) == 1
+        assert len(identities) == 2
         assert identities[0].name == 'derived-identity'
+        assert identities[1].name == 'nested-derived-identity'
 
     def test_identities_base_in_different_namespace(self):
         module_elem = yinsolidated.fromstring("""
@@ -1120,7 +1234,7 @@ class TestTypeElement:
         assert subtype_names == ['uint8', 'string']
 
 
-class TestTypedefElement:
+class TestTypedefElement(object):
 
     def test_name(self):
         typedef_elem = yinsolidated.fromstring("""
@@ -1178,7 +1292,7 @@ class TestTypedefElement:
         assert typedef_elem.units is None
 
 
-class TestBitElement:
+class TestBitElement(object):
 
     def test_name(self):
         bit_elem = yinsolidated.fromstring("""
@@ -1205,7 +1319,7 @@ class TestBitElement:
         assert bit_elem.position is None
 
 
-class TestEnumElement:
+class TestEnumElement(object):
 
     def test_name(self):
         enum_elem = yinsolidated.fromstring("""
@@ -1232,7 +1346,7 @@ class TestEnumElement:
         assert enum_elem.value is None
 
 
-class TestWhenElement:
+class TestWhenElement(object):
 
     def test_no_prefix_added(self):
         container_elem = yinsolidated.fromstring("""
@@ -1284,7 +1398,7 @@ class TestWhenElement:
         assert when_element.context_node_is_parent
 
 
-class TestIdentityElement:
+class TestIdentityElement(object):
 
     def test_name(self):
         identity_elem = yinsolidated.fromstring("""
