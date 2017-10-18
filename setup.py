@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name='yinsolidated',
-    version='1.0.1',
+    version='1.0.2',
     description='Parses the consolidated YIN model format',
     py_modules=['yinsolidated'],
     install_requires=[

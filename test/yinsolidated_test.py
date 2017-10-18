@@ -107,72 +107,130 @@ class TestYinElement(object):
         assert len(list(module_elem.iterate_rpcs())) == 2
 
 
+@pytest.fixture
+def ancestor_data_node_model():
+    return yinsolidated.fromstring("""
+        <module xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+            <namespace uri="test:ns"/>
+            <prefix value="t"/>
+            <container name="test-container">
+                <list name="test-list">
+                    <choice name="test-choice">
+                        <case name="case-0">
+                            <leaf name="test-leaf">
+                                <type name="uint8"/>
+                            </leaf>
+                        </case>
+                        <case name="case-1">
+                            <leaf-list name="test-leaf-list">
+                                <type name="string"/>
+                            </leaf-list>
+                        </case>
+                    </choice>
+                </list>
+            </container>
+        </module>
+        """)
+
+
 class TestGetAncestorDataNodes(object):
 
-    @pytest.fixture
-    def model(self):
-        return yinsolidated.fromstring("""
-            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1">
-                <namespace uri="test:ns"/>
-                <prefix value="t"/>
-                <container name="test-container">
-                    <list name="test-list">
-                        <choice name="test-choice">
-                            <case name="case-0">
-                                <leaf name="test-leaf">
-                                    <type name="uint8"/>
-                                </leaf>
-                            </case>
-                            <case name="case-1">
-                                <leaf-list name="test-leaf-list">
-                                    <type name="string"/>
-                                </leaf-list>
-                            </case>
-                        </choice>
-                    </list>
-                </container>
-            </module>
-            """)
-
-    def test_from_leaf_type(self, model):
-        leaf_type_elem = model.find(
+    def test_from_leaf_type(self, ancestor_data_node_model):
+        type_elem = ancestor_data_node_model.find(
             './/yin:leaf/yin:type',
             namespaces=_NSMAP
         )
 
-        data_node_ancestors = leaf_type_elem.get_ancestor_data_nodes()
+        data_node_ancestors = type_elem.get_ancestor_data_nodes()
         assert len(data_node_ancestors) == 3
         assert data_node_ancestors[0].keyword == 'container'
         assert data_node_ancestors[1].keyword == 'list'
         assert data_node_ancestors[2].keyword == 'leaf'
 
-    def test_from_leaf(self, model):
-        leaf_elem = model.find('.//yin:leaf', namespaces=_NSMAP)
+    def test_from_leaf(self, ancestor_data_node_model):
+        leaf_elem = ancestor_data_node_model.find(
+            './/yin:leaf',
+            namespaces=_NSMAP
+        )
 
         data_node_ancestors = leaf_elem.get_ancestor_data_nodes()
         assert len(data_node_ancestors) == 2
         assert data_node_ancestors[0].keyword == 'container'
         assert data_node_ancestors[1].keyword == 'list'
 
-    def test_from_leaf_list_type(self, model):
-        leaf_list_type_elem = model.find(
+    def test_from_leaf_list_type(self, ancestor_data_node_model):
+        type_elem = ancestor_data_node_model.find(
             './/yin:leaf-list/yin:type',
             namespaces=_NSMAP
         )
 
-        data_node_ancestors = leaf_list_type_elem.get_ancestor_data_nodes()
+        data_node_ancestors = type_elem.get_ancestor_data_nodes()
         assert len(data_node_ancestors) == 3
         assert data_node_ancestors[0].keyword == 'container'
         assert data_node_ancestors[1].keyword == 'list'
         assert data_node_ancestors[2].keyword == 'leaf-list'
 
-    def test_from_leaf_list(self, model):
-        leaf_list_elem = model.find('.//yin:leaf-list', namespaces=_NSMAP)
+    def test_from_leaf_list(self, ancestor_data_node_model):
+        leaf_list_elem = ancestor_data_node_model.find(
+            './/yin:leaf-list',
+            namespaces=_NSMAP
+        )
 
         data_node_ancestors = leaf_list_elem.get_ancestor_data_nodes()
         assert len(data_node_ancestors) == 2
         assert data_node_ancestors[0].keyword == 'container'
         assert data_node_ancestors[1].keyword == 'list'
+
+
+class TestGetAncestorOrSelfDataNodes(object):
+
+    def test_from_leaf_type(self, ancestor_data_node_model):
+        type_elem = ancestor_data_node_model.find(
+            './/yin:leaf/yin:type',
+            namespaces=_NSMAP
+        )
+
+        data_node_ancestors = type_elem.get_ancestor_or_self_data_nodes()
+        assert len(data_node_ancestors) == 3
+        assert data_node_ancestors[0].keyword == 'container'
+        assert data_node_ancestors[1].keyword == 'list'
+        assert data_node_ancestors[2].keyword == 'leaf'
+
+    def test_from_leaf(self, ancestor_data_node_model):
+        leaf_elem = ancestor_data_node_model.find(
+            './/yin:leaf',
+            namespaces=_NSMAP
+        )
+
+        data_node_ancestors = leaf_elem.get_ancestor_or_self_data_nodes()
+        assert len(data_node_ancestors) == 3
+        assert data_node_ancestors[0].keyword == 'container'
+        assert data_node_ancestors[1].keyword == 'list'
+        assert data_node_ancestors[2].keyword == 'leaf'
+
+    def test_from_leaf_list_type(self, ancestor_data_node_model):
+        type_elem = ancestor_data_node_model.find(
+            './/yin:leaf-list/yin:type',
+            namespaces=_NSMAP
+        )
+
+        data_node_ancestors = type_elem.get_ancestor_or_self_data_nodes()
+        assert len(data_node_ancestors) == 3
+        assert data_node_ancestors[0].keyword == 'container'
+        assert data_node_ancestors[1].keyword == 'list'
+        assert data_node_ancestors[2].keyword == 'leaf-list'
+
+    def test_from_leaf_list(self, ancestor_data_node_model):
+        leaf_list_elem = ancestor_data_node_model.find(
+            './/yin:leaf-list',
+            namespaces=_NSMAP
+        )
+
+        data_node_ancestors = leaf_list_elem.get_ancestor_or_self_data_nodes()
+        assert len(data_node_ancestors) == 3
+        assert data_node_ancestors[0].keyword == 'container'
+        assert data_node_ancestors[1].keyword == 'list'
+        assert data_node_ancestors[2].keyword == 'leaf-list'
 
 
 class TestModuleElement(object):

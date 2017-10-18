@@ -21,6 +21,11 @@ _NSMAP = {'yin': _YIN_NS}
 _DATA_NODE_KEYWORDS = ['container', 'leaf', 'leaf-list', 'list', 'anyxml']
 _DATA_DEFINITION_KEYWORDS = (_DATA_NODE_KEYWORDS + ['choice', 'case'])
 
+_DATA_NODE_PREDICATE = ' or '.join(
+    'self::yin:{}'.format(keyword)
+    for keyword in _DATA_NODE_KEYWORDS
+)
+
 
 class _ConsolidatedModelLookup(etree.CustomElementClassLookup):
 
@@ -109,10 +114,16 @@ class YinElement(etree.ElementBase):
                 yield child
 
     def get_ancestor_data_nodes(self):
-        predicate = ' or '.join('self::yin:{}'.format(keyword)
-                                for keyword in _DATA_NODE_KEYWORDS)
-        return self.xpath('ancestor::*[{}]'.format(predicate),
-                          namespaces=_NSMAP)
+        return self.xpath(
+            'ancestor::*[{}]'.format(_DATA_NODE_PREDICATE),
+            namespaces=_NSMAP
+        )
+
+    def get_ancestor_or_self_data_nodes(self):
+        return self.xpath(
+            'ancestor-or-self::*[{}]'.format(_DATA_NODE_PREDICATE),
+            namespaces=_NSMAP
+        )
 
 
 def _change_all_whitespace_to_spaces(string):
