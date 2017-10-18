@@ -6,33 +6,37 @@
 """Unit tests for the yinsolidated module"""
 
 import os
-import unittest
+
+import pytest
 
 import yinsolidated
 
 
 _NSMAP = {'yin': 'urn:ietf:params:xml:ns:yang:yin:1'}
-_TEST_CONSOLIDATED_MODEL = os.path.join(os.path.dirname(__file__), 'model.xml')
+
+_TEST_CONSOLIDATED_MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    'model.xml'
+)
 
 
-class ParseConsolidatedModelFileTestCase(unittest.TestCase):
+def test_parse_file():
+    model_tree = yinsolidated.parse(_TEST_CONSOLIDATED_MODEL_PATH)
+    module_element = model_tree.getroot()
+    container_element = module_element.find(
+        'yin:container[@name="test"]', namespaces=_NSMAP)
 
-    def test_parse(self):
-        model_tree = yinsolidated.parse(_TEST_CONSOLIDATED_MODEL)
-        module_element = model_tree.getroot()
-        container_element = module_element.find(
-            'yin:container[@name="test"]', namespaces=_NSMAP)
-        self.assertEqual('test', container_element.name)
+    assert container_element.name == 'test'
 
 
-class YinElementTestCase(unittest.TestCase):
+class TestYinElement:
 
     def test_keyword(self):
         module_elem = yinsolidated.fromstring("""
             <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertEqual('module', module_elem.keyword)
+        assert module_elem.keyword == 'module'
 
     def test_namespace_map(self):
         module_elem = yinsolidated.fromstring("""
@@ -41,8 +45,7 @@ class YinElementTestCase(unittest.TestCase):
                     xmlns:b="bravo"/>
             """)
 
-        self.assertEqual({'a': 'alpha', 'b': 'bravo'},
-                         module_elem.namespace_map)
+        assert module_elem.namespace_map == {'a': 'alpha', 'b': 'bravo'}
 
     def test_description(self):
         module_elem = yinsolidated.fromstring("""
@@ -56,15 +59,17 @@ class YinElementTestCase(unittest.TestCase):
             </module>
             """)
 
-        self.assertEqual('This is a long description of the data model that '
-                         'wraps onto the next line', module_elem.description)
+        assert module_elem.description == (
+            'This is a long description of the data model that wraps onto the '
+            'next line'
+        )
 
     def test_no_description(self):
         module_elem = yinsolidated.fromstring("""
             <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(module_elem.description)
+        assert module_elem.description is None
 
     def test_child_data_definitions(self):
         module_elem = yinsolidated.fromstring("""
@@ -81,10 +86,10 @@ class YinElementTestCase(unittest.TestCase):
             </module>
             """)
 
-        self.assertEqual(7, len(list(module_elem.iterate_data_definitions())))
+        assert len(list(module_elem.iterate_data_definitions())) == 7
 
 
-class DefinitionElementTestCase(unittest.TestCase):
+class TestDefinitionElement:
 
     def test_name(self):
         choice_elem = yinsolidated.fromstring("""
@@ -92,7 +97,7 @@ class DefinitionElementTestCase(unittest.TestCase):
                     xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertEqual('system', choice_elem.name)
+        assert choice_elem.name == 'system'
 
     def test_namespace_from_module(self):
         module_elem = yinsolidated.fromstring("""
@@ -104,7 +109,7 @@ class DefinitionElementTestCase(unittest.TestCase):
             """)
         choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
 
-        self.assertEqual('test:ns', choice_elem.namespace)
+        assert choice_elem.namespace == 'test:ns'
 
     def test_namespace_from_augmenting_node(self):
         module_elem = yinsolidated.fromstring("""
@@ -120,7 +125,7 @@ class DefinitionElementTestCase(unittest.TestCase):
             """)
         choice_elem = module_elem.find('.//yin:choice', namespaces=_NSMAP)
 
-        self.assertEqual('inner:ns', choice_elem.namespace)
+        assert choice_elem.namespace == 'inner:ns'
 
     def test_prefix_from_module(self):
         module_elem = yinsolidated.fromstring("""
@@ -131,7 +136,7 @@ class DefinitionElementTestCase(unittest.TestCase):
             """)
         choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
 
-        self.assertEqual('test', choice_elem.prefix)
+        assert choice_elem.prefix == 'test'
 
     def test_prefix_from_augmenting_node(self):
         module_elem = yinsolidated.fromstring("""
@@ -145,7 +150,7 @@ class DefinitionElementTestCase(unittest.TestCase):
             """)
         choice_elem = module_elem.find('.//yin:choice', namespaces=_NSMAP)
 
-        self.assertEqual('inner', choice_elem.prefix)
+        assert choice_elem.prefix == 'inner'
 
     def test_missing_prefix(self):
         module_elem = yinsolidated.fromstring("""
@@ -155,7 +160,7 @@ class DefinitionElementTestCase(unittest.TestCase):
             """)
         choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
 
-        with self.assertRaises(yinsolidated.MissingPrefixError):
+        with pytest.raises(yinsolidated.MissingPrefixError):
             choice_elem.prefix
 
     def test_status(self):
@@ -165,17 +170,17 @@ class DefinitionElementTestCase(unittest.TestCase):
             </choice>
             """)
 
-        self.assertEqual('obsolete', choice_elem.status)
+        assert choice_elem.status == 'obsolete'
 
     def test_default_status(self):
         choice_elem = yinsolidated.fromstring("""
             <choice name="system" xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertEqual('current', choice_elem.status)
+        assert choice_elem.status == 'current'
 
 
-class RpcElementTestCase(unittest.TestCase):
+class TestRpcElement:
 
     def test_input(self):
         rpc_elem = yinsolidated.fromstring("""
@@ -184,7 +189,7 @@ class RpcElementTestCase(unittest.TestCase):
             </rpc>
             """)
 
-        self.assertIsNotNone(rpc_elem.input)
+        assert rpc_elem.input is not None
 
     def test_output(self):
         rpc_elem = yinsolidated.fromstring("""
@@ -193,10 +198,10 @@ class RpcElementTestCase(unittest.TestCase):
             </rpc>
             """)
 
-        self.assertIsNotNone(rpc_elem.output)
+        assert rpc_elem.output is not None
 
 
-class DataDefinitionElementTestCase(unittest.TestCase):
+class TestDataDefinitionElement:
 
     def test_is_config_false(self):
         choice_elem = yinsolidated.fromstring("""
@@ -205,14 +210,14 @@ class DataDefinitionElementTestCase(unittest.TestCase):
             </choice>
             """)
 
-        self.assertFalse(choice_elem.is_config)
+        assert not choice_elem.is_config
 
     def test_is_config_no_parent(self):
         choice_elem = yinsolidated.fromstring("""
             <choice xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertTrue(choice_elem.is_config)
+        assert choice_elem.is_config
 
     def test_is_config_parent_false(self):
         choice_elem = yinsolidated.fromstring("""
@@ -223,7 +228,7 @@ class DataDefinitionElementTestCase(unittest.TestCase):
             """)
         leaf_elem = choice_elem[1]
 
-        self.assertFalse(leaf_elem.is_config)
+        assert not leaf_elem.is_config
 
     def test_when_elements(self):
         container_elem = yinsolidated.fromstring("""
@@ -233,10 +238,10 @@ class DataDefinitionElementTestCase(unittest.TestCase):
             </container>
             """)
 
-        self.assertEqual(2, len(container_elem.when_elements))
+        assert len(container_elem.when_elements) == 2
 
 
-class ContainerElementTestCase(unittest.TestCase):
+class TestContainerElement:
 
     def test_presence(self):
         container_elem = yinsolidated.fromstring("""
@@ -245,17 +250,17 @@ class ContainerElementTestCase(unittest.TestCase):
             </container>
             """)
 
-        self.assertEqual('My existence is meaningful', container_elem.presence)
+        assert container_elem.presence == 'My existence is meaningful'
 
     def test_no_presence(self):
         container_elem = yinsolidated.fromstring("""
             <container xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(container_elem.presence)
+        assert container_elem.presence is None
 
 
-class LeafElementTestCase(unittest.TestCase):
+class TestLeafElement:
 
     def test_type(self):
         leaf_elem = yinsolidated.fromstring("""
@@ -264,7 +269,7 @@ class LeafElementTestCase(unittest.TestCase):
             </leaf>
             """)
 
-        self.assertEqual('uint8', leaf_elem.type.base_type.name)
+        assert leaf_elem.type.base_type.name == 'uint8'
 
     def test_default(self):
         leaf_elem = yinsolidated.fromstring("""
@@ -273,14 +278,14 @@ class LeafElementTestCase(unittest.TestCase):
             </leaf>
             """)
 
-        self.assertEqual('600', leaf_elem.default)
+        assert leaf_elem.default == '600'
 
     def test_no_default(self):
         leaf_elem = yinsolidated.fromstring("""
             <leaf xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(leaf_elem.default)
+        assert leaf_elem.default is None
 
     def test_units(self):
         leaf_elem = yinsolidated.fromstring("""
@@ -289,14 +294,14 @@ class LeafElementTestCase(unittest.TestCase):
             </leaf>
             """)
 
-        self.assertEqual('seconds', leaf_elem.units)
+        assert leaf_elem.units == 'seconds'
 
     def test_no_units(self):
         leaf_elem = yinsolidated.fromstring("""
             <leaf xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(leaf_elem.units)
+        assert leaf_elem.units is None
 
     def test_is_mandatory(self):
         leaf_elem = yinsolidated.fromstring("""
@@ -305,7 +310,7 @@ class LeafElementTestCase(unittest.TestCase):
             </leaf>
             """)
 
-        self.assertTrue(leaf_elem.is_mandatory)
+        assert leaf_elem.is_mandatory
 
     def test_not_mandatory(self):
         leaf_elem = yinsolidated.fromstring("""
@@ -314,14 +319,14 @@ class LeafElementTestCase(unittest.TestCase):
             </leaf>
             """)
 
-        self.assertFalse(leaf_elem.is_mandatory)
+        assert not leaf_elem.is_mandatory
 
     def test_not_mandatory_implicit(self):
         leaf_elem = yinsolidated.fromstring("""
             <leaf xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertFalse(leaf_elem.is_mandatory)
+        assert not leaf_elem.is_mandatory
 
     def test_is_list_key(self):
         list_elem = yinsolidated.fromstring("""
@@ -334,7 +339,7 @@ class LeafElementTestCase(unittest.TestCase):
             """)
         leaf_elem = list_elem.find('yin:leaf', namespaces=_NSMAP)
 
-        self.assertTrue(leaf_elem.is_list_key)
+        assert leaf_elem.is_list_key
 
     def test_list_child_not_key(self):
         list_elem = yinsolidated.fromstring("""
@@ -347,17 +352,17 @@ class LeafElementTestCase(unittest.TestCase):
             """)
         leaf_elem = list_elem.find('yin:leaf', namespaces=_NSMAP)
 
-        self.assertFalse(leaf_elem.is_list_key)
+        assert not leaf_elem.is_list_key
 
     def test_non_list_child_not_key(self):
         leaf_elem = yinsolidated.fromstring("""
             <leaf xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertFalse(leaf_elem.is_list_key)
+        assert not leaf_elem.is_list_key
 
 
-class LeafListElementTestCase(unittest.TestCase):
+class TestLeafListElement:
 
     def test_type(self):
         leaf_list_elem = yinsolidated.fromstring("""
@@ -366,7 +371,7 @@ class LeafListElementTestCase(unittest.TestCase):
             </leaf-list>
             """)
 
-        self.assertEqual('uint8', leaf_list_elem.type.base_type.name)
+        assert leaf_list_elem.type.base_type.name == 'uint8'
 
     def test_units(self):
         leaf_list_elem = yinsolidated.fromstring("""
@@ -375,14 +380,14 @@ class LeafListElementTestCase(unittest.TestCase):
             </leaf-list>
             """)
 
-        self.assertEqual('seconds', leaf_list_elem.units)
+        assert leaf_list_elem.units == 'seconds'
 
     def test_no_units(self):
         leaf_list_elem = yinsolidated.fromstring("""
             <leaf-list xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(leaf_list_elem.units)
+        assert leaf_list_elem.units is None
 
     def test_min_elements(self):
         leaf_list_elem = yinsolidated.fromstring("""
@@ -391,14 +396,14 @@ class LeafListElementTestCase(unittest.TestCase):
             </leaf-list>
             """)
 
-        self.assertEqual(10, leaf_list_elem.min_elements)
+        assert leaf_list_elem.min_elements == 10
 
     def test_no_min_elements(self):
         leaf_list_elem = yinsolidated.fromstring("""
             <leaf-list xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertEqual(0, leaf_list_elem.min_elements)
+        assert leaf_list_elem.min_elements == 0
 
     def test_max_elements(self):
         leaf_list_elem = yinsolidated.fromstring("""
@@ -407,14 +412,14 @@ class LeafListElementTestCase(unittest.TestCase):
             </leaf-list>
             """)
 
-        self.assertEqual(10, leaf_list_elem.max_elements)
+        assert leaf_list_elem.max_elements == 10
 
     def test_no_max_elements(self):
         leaf_list_elem = yinsolidated.fromstring("""
             <leaf-list xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(leaf_list_elem.max_elements)
+        assert leaf_list_elem.max_elements is None
 
     def test_ordered_by_user(self):
         leaf_list_elem = yinsolidated.fromstring("""
@@ -423,17 +428,17 @@ class LeafListElementTestCase(unittest.TestCase):
             </leaf-list>
             """)
 
-        self.assertEqual('user', leaf_list_elem.ordered_by)
+        assert leaf_list_elem.ordered_by == 'user'
 
     def test_no_ordered_by(self):
         leaf_list_elem = yinsolidated.fromstring("""
             <leaf-list xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertEqual('system', leaf_list_elem.ordered_by)
+        assert leaf_list_elem.ordered_by == 'system'
 
 
-class ListElementTestCase(unittest.TestCase):
+class TestListElement:
 
     def test_keys(self):
         module_elem = yinsolidated.fromstring("""
@@ -449,18 +454,18 @@ class ListElementTestCase(unittest.TestCase):
             """)
         list_elem = module_elem.find('yin:list', namespaces=_NSMAP)
 
-        self.assertEqual([
+        assert list_elem.key_ids == [
             ('alpha', 'alpha:ns'),
             ('bravo', 'bravo:ns'),
             ('charlie', 'charlie:ns')
-        ], list_elem.key_ids)
+        ]
 
     def test_no_keys(self):
         list_elem = yinsolidated.fromstring("""
             <list xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertEqual([], list_elem.key_ids)
+        assert list_elem.key_ids == []
 
     def test_unique(self):
         list_elem = yinsolidated.fromstring("""
@@ -469,7 +474,7 @@ class ListElementTestCase(unittest.TestCase):
             </list>
             """)
 
-        self.assertEqual(['alpha', 'bravo', 'charlie'], list_elem.unique)
+        assert list_elem.unique == ['alpha', 'bravo', 'charlie']
 
     def test_min_elements(self):
         list_elem = yinsolidated.fromstring("""
@@ -478,14 +483,14 @@ class ListElementTestCase(unittest.TestCase):
             </list>
             """)
 
-        self.assertEqual(10, list_elem.min_elements)
+        assert list_elem.min_elements == 10
 
     def test_no_min_elements(self):
         list_elem = yinsolidated.fromstring("""
             <list xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertEqual(0, list_elem.min_elements)
+        assert list_elem.min_elements == 0
 
     def test_max_elements(self):
         list_elem = yinsolidated.fromstring("""
@@ -494,14 +499,14 @@ class ListElementTestCase(unittest.TestCase):
             </list>
             """)
 
-        self.assertEqual(10, list_elem.max_elements)
+        assert list_elem.max_elements == 10
 
     def test_no_max_elements(self):
         list_elem = yinsolidated.fromstring("""
             <list xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(list_elem.max_elements)
+        assert list_elem.max_elements is None
 
     def test_ordered_by_user(self):
         list_elem = yinsolidated.fromstring("""
@@ -510,17 +515,17 @@ class ListElementTestCase(unittest.TestCase):
             </list>
             """)
 
-        self.assertEqual('user', list_elem.ordered_by)
+        assert list_elem.ordered_by == 'user'
 
     def test_no_ordered_by(self):
         list_elem = yinsolidated.fromstring("""
             <list xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertEqual('system', list_elem.ordered_by)
+        assert list_elem.ordered_by == 'system'
 
 
-class AnyxmlElementTestCase(unittest.TestCase):
+class TestAnyxmlElement:
 
     def test_is_mandatory(self):
         anyxml_elem = yinsolidated.fromstring("""
@@ -529,7 +534,7 @@ class AnyxmlElementTestCase(unittest.TestCase):
             </anyxml>
             """)
 
-        self.assertTrue(anyxml_elem.is_mandatory)
+        assert anyxml_elem.is_mandatory
 
     def test_not_mandatory(self):
         anyxml_elem = yinsolidated.fromstring("""
@@ -538,17 +543,17 @@ class AnyxmlElementTestCase(unittest.TestCase):
             </anyxml>
             """)
 
-        self.assertFalse(anyxml_elem.is_mandatory)
+        assert not anyxml_elem.is_mandatory
 
     def test_not_mandatory_implicit(self):
         anyxml_elem = yinsolidated.fromstring("""
             <anyxml xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertFalse(anyxml_elem.is_mandatory)
+        assert not anyxml_elem.is_mandatory
 
 
-class TypeElementTestCase(unittest.TestCase):
+class TestTypeElement:
 
     def test_name(self):
         type_elem = yinsolidated.fromstring("""
@@ -560,7 +565,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('counter', type_elem.name)
+        assert type_elem.name == 'counter'
 
     def test_base(self):
         type_elem = yinsolidated.fromstring("""
@@ -577,7 +582,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('uint8', type_elem.base_type.name)
+        assert type_elem.base_type.name == 'uint8'
 
     def test_base_for_leafref(self):
         type_elem = yinsolidated.fromstring("""
@@ -591,7 +596,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('leafref', type_elem.base_type.name)
+        assert type_elem.base_type.name == 'leafref'
 
     def test_base_for_union(self):
         type_elem = yinsolidated.fromstring("""
@@ -606,7 +611,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('union', type_elem.base_type.name)
+        assert type_elem.base_type.name == 'union'
 
     def test_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -618,7 +623,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertIsNotNone(type_elem.typedef)
+        assert type_elem.typedef is not None
 
     def test_no_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -626,7 +631,7 @@ class TypeElementTestCase(unittest.TestCase):
                   name="uint32"/>
             """)
 
-        self.assertIsNone(type_elem.typedef)
+        assert type_elem.typedef is None
 
     def test_bits(self):
         type_elem = yinsolidated.fromstring("""
@@ -638,7 +643,7 @@ class TypeElementTestCase(unittest.TestCase):
             """)
 
         bit_names = [bit.name for bit in type_elem.bits]
-        self.assertEqual(['alpha', 'bravo'], bit_names)
+        assert bit_names == ['alpha', 'bravo']
 
     def test_bits_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -654,7 +659,7 @@ class TypeElementTestCase(unittest.TestCase):
             """)
 
         bit_names = [bit.name for bit in type_elem.bits]
-        self.assertEqual(['alpha', 'bravo'], bit_names)
+        assert bit_names == ['alpha', 'bravo']
 
     def test_enums(self):
         type_elem = yinsolidated.fromstring("""
@@ -666,7 +671,7 @@ class TypeElementTestCase(unittest.TestCase):
             """)
 
         enum_names = [enum.name for enum in type_elem.enums]
-        self.assertEqual(['alpha', 'bravo'], enum_names)
+        assert enum_names == ['alpha', 'bravo']
 
     def test_enums_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -682,7 +687,7 @@ class TypeElementTestCase(unittest.TestCase):
             """)
 
         enum_names = [enum.name for enum in type_elem.enums]
-        self.assertEqual(['alpha', 'bravo'], enum_names)
+        assert enum_names == ['alpha', 'bravo']
 
     def test_fraction_digits(self):
         type_elem = yinsolidated.fromstring("""
@@ -692,7 +697,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('2', type_elem.fraction_digits)
+        assert type_elem.fraction_digits == '2'
 
     def test_fraction_digits_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -706,7 +711,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('2', type_elem.fraction_digits)
+        assert type_elem.fraction_digits == '2'
 
     def test_no_fraction_digits(self):
         type_elem = yinsolidated.fromstring("""
@@ -715,7 +720,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertIsNone(type_elem.fraction_digits)
+        assert type_elem.fraction_digits is None
 
     def test_base_identity(self):
         type_elem = yinsolidated.fromstring("""
@@ -725,7 +730,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('base-identity', type_elem.base_identity)
+        assert type_elem.base_identity == 'base-identity'
 
     def test_base_identity_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -739,7 +744,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('base-identity', type_elem.base_identity)
+        assert type_elem.base_identity == 'base-identity'
 
     def test_identities_base_in_same_namespace(self):
         module_elem = yinsolidated.fromstring("""
@@ -774,8 +779,8 @@ class TypeElementTestCase(unittest.TestCase):
 
         identities = type_elem.get_identities()
 
-        self.assertEqual(1, len(identities))
-        self.assertEqual('derived-identity', identities[0].name)
+        assert len(identities) == 1
+        assert identities[0].name == 'derived-identity'
 
     def test_identities_base_in_different_namespace(self):
         module_elem = yinsolidated.fromstring("""
@@ -811,8 +816,8 @@ class TypeElementTestCase(unittest.TestCase):
 
         identities = type_elem.get_identities()
 
-        self.assertEqual(1, len(identities))
-        self.assertEqual('another-derived-identity', identities[0].name)
+        assert len(identities) == 1
+        assert identities[0].name == 'another-derived-identity'
 
     def test_missing_identity(self):
         module_elem = yinsolidated.fromstring("""
@@ -829,7 +834,7 @@ class TypeElementTestCase(unittest.TestCase):
             """)
         type_elem = module_elem.find('yin:leaf/yin:type', namespaces=_NSMAP)
 
-        with self.assertRaises(yinsolidated.MissingIdentityError):
+        with pytest.raises(yinsolidated.MissingIdentityError):
             type_elem.get_identities()
 
     def test_no_identities(self):
@@ -839,7 +844,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual(0, len(type_elem.get_identities()))
+        assert len(type_elem.get_identities()) == 0
 
     def test_length(self):
         type_elem = yinsolidated.fromstring("""
@@ -849,7 +854,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('1..253', type_elem.length)
+        assert type_elem.length == '1..253'
 
     def test_length_typedefs(self):
         type_elem = yinsolidated.fromstring("""
@@ -863,7 +868,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('1..253', type_elem.length)
+        assert type_elem.length == '1..253'
 
         type_elem = yinsolidated.fromstring("""
             <type xmlns="urn:ietf:params:xml:ns:yang:yin:1"
@@ -879,7 +884,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('8..110', type_elem.length)
+        assert type_elem.length == '8..110'
 
         type_elem = yinsolidated.fromstring("""
             <type xmlns="urn:ietf:params:xml:ns:yang:yin:1"
@@ -893,14 +898,14 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('9..17', type_elem.length)
+        assert type_elem.length == '9..17'
 
     def test_no_length(self):
         type_elem = yinsolidated.fromstring("""
             <type xmlns="urn:ietf:params:xml:ns:yang:yin:1" name="string"/>
             """)
 
-        self.assertIsNone(type_elem.length)
+        assert type_elem.length is None
 
     def test_path(self):
         type_elem = yinsolidated.fromstring("""
@@ -910,7 +915,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('/a/fake/path', type_elem.path)
+        assert type_elem.path == '/a/fake/path'
 
     def test_path_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -924,14 +929,14 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('/a/fake/path', type_elem.path)
+        assert type_elem.path == '/a/fake/path'
 
     def test_no_path(self):
         type_elem = yinsolidated.fromstring("""
             <type xmlns="urn:ietf:params:xml:ns:yang:yin:1" name="string"/>
             """)
 
-        self.assertIsNone(type_elem.path)
+        assert type_elem.path is None
 
     def test_patterns(self):
         type_elem = yinsolidated.fromstring("""
@@ -946,14 +951,13 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual(2, len(type_elem.patterns))
+        assert len(type_elem.patterns) == 2
 
-        self.assertEqual(r'[a-zA-Z0-9_\-]*', type_elem.patterns[0].value)
-        self.assertEqual('Must be alphanumeric',
-                         type_elem.patterns[0].error_message)
+        assert type_elem.patterns[0].value == r'[a-zA-Z0-9_\-]*'
+        assert type_elem.patterns[0].error_message == 'Must be alphanumeric'
 
-        self.assertEqual('.*', type_elem.patterns[1].value)
-        self.assertIsNone(type_elem.patterns[1].error_message)
+        assert type_elem.patterns[1].value == '.*'
+        assert type_elem.patterns[1].error_message is None
 
     def test_patterns_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -972,14 +976,13 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual(2, len(type_elem.patterns))
+        assert len(type_elem.patterns) == 2
 
-        self.assertEqual(r'[a-zA-Z0-9_\-]*', type_elem.patterns[0].value)
-        self.assertEqual('Must be alphanumeric',
-                         type_elem.patterns[0].error_message)
+        assert type_elem.patterns[0].value == r'[a-zA-Z0-9_\-]*'
+        assert type_elem.patterns[0].error_message == 'Must be alphanumeric'
 
-        self.assertEqual('.*', type_elem.patterns[1].value)
-        self.assertIsNone(type_elem.patterns[1].error_message)
+        assert type_elem.patterns[1].value == '.*'
+        assert type_elem.patterns[1].error_message is None
 
     def test_range(self):
         type_elem = yinsolidated.fromstring("""
@@ -989,7 +992,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('1..253', type_elem.range)
+        assert type_elem.range == '1..253'
 
     def test_range_typedefs(self):
         type_elem = yinsolidated.fromstring("""
@@ -1003,7 +1006,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('1..253', type_elem.range)
+        assert type_elem.range == '1..253'
 
         type_elem = yinsolidated.fromstring("""
             <type xmlns="urn:ietf:params:xml:ns:yang:yin:1"
@@ -1019,7 +1022,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('7..9', type_elem.range)
+        assert type_elem.range == '7..9'
 
         type_elem = yinsolidated.fromstring("""
             <type xmlns="urn:ietf:params:xml:ns:yang:yin:1"
@@ -1033,7 +1036,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('4..128', type_elem.range)
+        assert type_elem.range == '4..128'
 
     def test_no_range(self):
         type_elem = yinsolidated.fromstring("""
@@ -1041,7 +1044,7 @@ class TypeElementTestCase(unittest.TestCase):
                   name="uint8"/>
             """)
 
-        self.assertIsNone(type_elem.range)
+        assert type_elem.range is None
 
     def test_referenced_type_for_leafref(self):
         type_elem = yinsolidated.fromstring("""
@@ -1051,7 +1054,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('string', type_elem.referenced_type.base_type.name)
+        assert type_elem.referenced_type.base_type.name == 'string'
 
     def test_referenced_type_for_union(self):
         type_elem = yinsolidated.fromstring("""
@@ -1062,7 +1065,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertIsNone(type_elem.referenced_type)
+        assert type_elem.referenced_type is None
 
     def test_referenced_type_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -1076,7 +1079,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual('string', type_elem.referenced_type.base_type.name)
+        assert type_elem.referenced_type.base_type.name == 'string'
 
     def test_subtypes_for_union(self):
         type_elem = yinsolidated.fromstring("""
@@ -1088,7 +1091,7 @@ class TypeElementTestCase(unittest.TestCase):
             """)
 
         subtype_names = [elem.base_type.name for elem in type_elem.subtypes]
-        self.assertEqual(['uint8', 'string'], subtype_names)
+        assert subtype_names == ['uint8', 'string']
 
     def test_subtypes_for_leafref(self):
         type_elem = yinsolidated.fromstring("""
@@ -1098,7 +1101,7 @@ class TypeElementTestCase(unittest.TestCase):
             </type>
             """)
 
-        self.assertEqual(0, len(type_elem.subtypes))
+        assert len(type_elem.subtypes) == 0
 
     def test_subtypes_typedef(self):
         type_elem = yinsolidated.fromstring("""
@@ -1114,10 +1117,10 @@ class TypeElementTestCase(unittest.TestCase):
             """)
 
         subtype_names = [elem.base_type.name for elem in type_elem.subtypes]
-        self.assertEqual(['uint8', 'string'], subtype_names)
+        assert subtype_names == ['uint8', 'string']
 
 
-class TypedefElementTestCase(unittest.TestCase):
+class TestTypedefElement:
 
     def test_name(self):
         typedef_elem = yinsolidated.fromstring("""
@@ -1126,7 +1129,7 @@ class TypedefElementTestCase(unittest.TestCase):
             </typedef>
             """)
 
-        self.assertEqual('counter', typedef_elem.name)
+        assert typedef_elem.name == 'counter'
 
     def test_type(self):
         typedef_elem = yinsolidated.fromstring("""
@@ -1136,7 +1139,7 @@ class TypedefElementTestCase(unittest.TestCase):
             </typedef>
             """)
 
-        self.assertEqual('uint32', typedef_elem.type.name)
+        assert typedef_elem.type.name == 'uint32'
 
     def test_default(self):
         typedef_elem = yinsolidated.fromstring("""
@@ -1146,7 +1149,7 @@ class TypedefElementTestCase(unittest.TestCase):
             </typedef>
             """)
 
-        self.assertEqual('600', typedef_elem.default)
+        assert typedef_elem.default == '600'
 
     def test_no_default(self):
         typedef_elem = yinsolidated.fromstring("""
@@ -1154,7 +1157,7 @@ class TypedefElementTestCase(unittest.TestCase):
                      name="counter"/>
             """)
 
-        self.assertIsNone(typedef_elem.default)
+        assert typedef_elem.default is None
 
     def test_units(self):
         typedef_elem = yinsolidated.fromstring("""
@@ -1164,7 +1167,7 @@ class TypedefElementTestCase(unittest.TestCase):
             </typedef>
             """)
 
-        self.assertEqual('seconds', typedef_elem.units)
+        assert typedef_elem.units == 'seconds'
 
     def test_no_units(self):
         typedef_elem = yinsolidated.fromstring("""
@@ -1172,10 +1175,10 @@ class TypedefElementTestCase(unittest.TestCase):
                      name="counter"/>
             """)
 
-        self.assertIsNone(typedef_elem.units)
+        assert typedef_elem.units is None
 
 
-class BitElementTestCase(unittest.TestCase):
+class TestBitElement:
 
     def test_name(self):
         bit_elem = yinsolidated.fromstring("""
@@ -1183,7 +1186,7 @@ class BitElementTestCase(unittest.TestCase):
                  name="alpha"/>
             """)
 
-        self.assertEqual('alpha', bit_elem.name)
+        assert bit_elem.name == 'alpha'
 
     def test_position(self):
         bit_elem = yinsolidated.fromstring("""
@@ -1192,17 +1195,17 @@ class BitElementTestCase(unittest.TestCase):
             </bit>
             """)
 
-        self.assertEqual(1, bit_elem.position)
+        assert bit_elem.position == 1
 
     def test_no_position(self):
         bit_elem = yinsolidated.fromstring("""
             <bit xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(bit_elem.position)
+        assert bit_elem.position is None
 
 
-class EnumElementTestCase(unittest.TestCase):
+class TestEnumElement:
 
     def test_name(self):
         enum_elem = yinsolidated.fromstring("""
@@ -1210,7 +1213,7 @@ class EnumElementTestCase(unittest.TestCase):
                   name="alpha"/>
             """)
 
-        self.assertEqual('alpha', enum_elem.name)
+        assert enum_elem.name == 'alpha'
 
     def test_value(self):
         enum_elem = yinsolidated.fromstring("""
@@ -1219,17 +1222,17 @@ class EnumElementTestCase(unittest.TestCase):
             </enum>
             """)
 
-        self.assertEqual(1, enum_elem.value)
+        assert enum_elem.value == 1
 
     def test_no_value(self):
         enum_elem = yinsolidated.fromstring("""
             <enum xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertIsNone(enum_elem.value)
+        assert enum_elem.value is None
 
 
-class WhenElementTestCase(unittest.TestCase):
+class TestWhenElement:
 
     def test_no_prefix_added(self):
         container_elem = yinsolidated.fromstring("""
@@ -1241,8 +1244,8 @@ class WhenElementTestCase(unittest.TestCase):
             """)
         when_element = container_elem.find('yin:when', namespaces=_NSMAP)
 
-        self.assertEqual("t:foo = 'bar'", when_element.condition)
-        self.assertEqual({'t': 'test:ns'}, when_element.namespace_map)
+        assert when_element.condition == "t:foo = 'bar'"
+        assert when_element.namespace_map == {'t': 'test:ns'}
 
     def test_prefix_added(self):
         container_elem = yinsolidated.fromstring("""
@@ -1256,17 +1259,21 @@ class WhenElementTestCase(unittest.TestCase):
 
         when_element = container_elem.find('yin:when', namespaces=_NSMAP)
 
-        self.assertEqual("../d:foo/d:bar = 'alpha' | /t:root/d:test = 'bravo'",
-                         when_element.condition)
-        self.assertEqual({'d': 'default:ns', 't': 'test:ns'},
-                         when_element.namespace_map)
+        assert when_element.condition == (
+            "../d:foo/d:bar = 'alpha' | /t:root/d:test = 'bravo'"
+        )
+
+        assert when_element.namespace_map == {
+            'd': 'default:ns',
+            't': 'test:ns'
+        }
 
     def test_self_context(self):
         when_element = yinsolidated.fromstring("""
             <when xmlns="urn:ietf:params:xml:ns:yang:yin:1"/>
             """)
 
-        self.assertFalse(when_element.context_node_is_parent)
+        assert not when_element.context_node_is_parent
 
     def test_parent_context(self):
         when_element = yinsolidated.fromstring("""
@@ -1274,10 +1281,10 @@ class WhenElementTestCase(unittest.TestCase):
                   context-node="parent"/>
             """)
 
-        self.assertTrue(when_element.context_node_is_parent)
+        assert when_element.context_node_is_parent
 
 
-class IdentityElementTestCase(unittest.TestCase):
+class TestIdentityElement:
 
     def test_name(self):
         identity_elem = yinsolidated.fromstring("""
@@ -1285,7 +1292,7 @@ class IdentityElementTestCase(unittest.TestCase):
                       name="test-identity"/>
             """)
 
-        self.assertEqual('test-identity', identity_elem.name)
+        assert identity_elem.name == 'test-identity'
 
     def test_namespace(self):
         identity_elem = yinsolidated.fromstring("""
@@ -1295,7 +1302,7 @@ class IdentityElementTestCase(unittest.TestCase):
                       name="test-identity"/>
             """)
 
-        self.assertEqual('test:ns', identity_elem.namespace)
+        assert identity_elem.namespace == 'test:ns'
 
     def test_prefix(self):
         identity_elem = yinsolidated.fromstring("""
@@ -1305,7 +1312,7 @@ class IdentityElementTestCase(unittest.TestCase):
                       name="test-identity"/>
             """)
 
-        self.assertEqual('t', identity_elem.prefix)
+        assert identity_elem.prefix == 't'
 
     def test_no_base(self):
         identity_elem = yinsolidated.fromstring("""
@@ -1313,7 +1320,7 @@ class IdentityElementTestCase(unittest.TestCase):
                       name="test-identity"/>
             """)
 
-        self.assertEqual((None, None), identity_elem.base)
+        assert identity_elem.base == (None, None)
 
     def test_base_in_same_namespace(self):
         identity_elem = yinsolidated.fromstring("""
@@ -1325,7 +1332,7 @@ class IdentityElementTestCase(unittest.TestCase):
             </identity>
             """)
 
-        self.assertEqual(('base-identity', 'test:ns'), identity_elem.base)
+        assert identity_elem.base == ('base-identity', 'test:ns')
 
     def test_base_in_different_namespace(self):
         identity_elem = yinsolidated.fromstring("""
@@ -1338,7 +1345,7 @@ class IdentityElementTestCase(unittest.TestCase):
             </identity>
             """)
 
-        self.assertEqual(('base-identity', 'other:ns'), identity_elem.base)
+        assert identity_elem.base == ('base-identity', 'other:ns')
 
     def test_iterate_derived_identities(self):
         module_element = yinsolidated.fromstring("""
@@ -1371,15 +1378,10 @@ class IdentityElementTestCase(unittest.TestCase):
             </module>
             """)
         base_identity = module_element.find('yin:identity', namespaces=_NSMAP)
-        self.assertEqual('base-identity', base_identity.name)
+        assert base_identity.name == 'base-identity'
 
         derived_identities = base_identity.get_derived_identities()
 
-        self.assertEqual(2, len(derived_identities))
-        self.assertEqual('derived-identity-1', derived_identities[0].name)
-        self.assertEqual('external-derived-identity',
-                         derived_identities[1].name)
-
-
-if __name__ == '__main__':
-    unittest.main()
+        assert len(derived_identities) == 2
+        assert derived_identities[0].name == 'derived-identity-1'
+        assert derived_identities[1].name == 'external-derived-identity'
