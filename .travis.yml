@@ -1,17 +1,18 @@
 language: python
 python:
-- '2.7'
-- '3.4'
-- '3.5'
-- '3.6'
+    - '2.7'
+    - '3.4'
+    - '3.5'
+    - '3.6'
 install:
-- pip install tox-travis
+    - pip install tox-travis
 script: tox
 deploy:
-  provider: pypi
-  user: 128technology
-  password:
-    secure: hyJxq1Y0zoVdwJJQdhw8LWmWt1l7xxgW1WyUlIo9dyYciewgskvZR6tE8L/F9iwMeZ3aISLr7KifAR6pQIC8mrcZ7YdVIArpwptfAJdJEvkf2+gVyu/6n/7epV8qRI0JoJD3D2+0ZRy+L2S19cHIrDayBaVaTCfOua8cy1Y4aFVxikzeFjs/WVL+cp0Mbup8rd8RXSoxrqW8oYAOH0clPPfVizbwDY7Whkhd+yAbtkdi7x8SAcClYzB7nHYecGQ3ifJTnGrqpKaxSniUa32CLhn91azws3Fglhn0RUqu6Oegr0Bz+ayV5fdWMo94d5xuuUmWcHWwMMmtTa5esOm6yEESSpjvNCUeu+T3gkqIhmfo63rmzkwwTwZRQMO77jgnat/RgWgs2EvlL/QG1yqMWHguvnHc/UajKPZbtgXdBgMjhfIGxs6G2gFLg+fPRNFWBKAdzyAN7CmG28dGkGDnyzoTsfs/lh6jdluCgE08TUajMxqUwJr3nx0Mwnc7oMLLOxk/5PSt34W1OeVsG2+Y8NF+qDEkUYqq6bSGIIWofRrYAYvo7RI5oVELeHca71ZB8YpeTYYD0fzEtSrWR//psdC+iPVttAkqltYTe0h7CUwjir/emDZiFav5zz4vqFWmg9lFWwJMJdr9BYexNglifuR1hdzNC2uOUeX2iaLHLns=
-  distributions: sdist bdist_wheel --universal
-  on:
-    tags: true
+    on:
+        python: '3.6'
+        tags: true
+    distributions: 'sdist bdist_wheel'
+    provider: pypi
+    user: 128technology
+    password:
+        secure: Z6VNi82YixJP5eIeDh1vaMtnBaSLptfNwsI8Thqxr5pqGEu++eiHV7pik5dC4DLwxZlPhwljPEP+AVpQ2W9SuXN3m4lrinbIgB+u3ZxM5I0zmHu2dFLk1JPQleXL3gSTe7t+hqLyX1q+SMObhwZR/rYkPnE5nDBDhlGBmt/EwJK8gfT/asPh+QyMIFwmh7zlrRMo6m7UaDiVHWOqWy5+Mq2/aoWRjRZWGNTZzSZFcfbpzQSPt72ww3jtaD7Ky1h9HT9GEK5tZ362u+UJY9C+pG7RdizuzCIAj/ZYzoUyYu6oh7WdgdHJd2EICUfNEdOClHidrxJN0x/uQfp8hGRyyvDZ1+2AiAvsg17HAwYDa5mOCpzG3/2MrDgSZCDRtwCnWJAyiUhas9CKvgMiJ72wGkAry6wKpUMvzjG2QbG79EjhJdPwV+rLDJvEvy2nOAvdWuWqm7jQHx9SID7/c/t0FgNEbZhWJau3BQfXS7H2F+3EOz+qA+fbSihhJdI1wE2rfMg8tmw0CGBRq9IrChjI4Q+kZjYHzzCArvUuAN6knBv6Qk1ltljkSlScnwNBL37IXkZmuTX8MBipZokpiPRCjYYLUIt/Is+zVi3lrS6QnOTfsCTsBXCJ9K9BTWV9Ng4rJrzBcR4zOlI/VL4l4DNe8He9DT72Ug49EKDERa6gQcs=
