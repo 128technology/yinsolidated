@@ -8,6 +8,8 @@ Custom etree.Element classes with convenience functions and properties for
 accessing the details of the consolidated model without parsing XML
 """
 
+from __future__ import unicode_literals
+
 import re
 
 import xpathparser

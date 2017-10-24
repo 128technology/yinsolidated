@@ -1,9 +1,11 @@
 ###############################################################################
-# Copyright (c) 2016 128 Technology, Inc.
+# Copyright (c) 2016-2017 128 Technology, Inc.
 # All rights reserved.
 ###############################################################################
 
 """Unit tests for the consolidated_model pyang plugin"""
+
+from __future__ import unicode_literals
 
 import os
 import unittest

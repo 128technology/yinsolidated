@@ -419,6 +419,8 @@ Become:
     </module>
 """
 
+from __future__ import unicode_literals
+
 from lxml import etree
 from pyang import plugin, statements, syntax, yin_parser
 
@@ -451,8 +453,13 @@ class ConsolidatedModelPlugin(plugin.PyangPlugin):
 
     def emit(self, _, modules, output):
         model = _build_consolidated_model(modules)
-        document = etree.tostring(model, encoding='UTF-8',
-                                  xml_declaration=True, pretty_print=True)
+
+        document = etree.tostring(
+            model,
+            xml_declaration=True,
+            pretty_print=True
+        ).decode('UTF-8')
+
         output.write(document)
 
 
@@ -527,7 +534,7 @@ def _get_module_nsmap(module_statement):
     nsmap = {}
 
     prefixes = module_statement.i_prefixes
-    for prefix, (module_name, revision) in prefixes.iteritems():
+    for prefix, (module_name, revision) in prefixes.items():
         imported_module_statement = statements.modulename_to_module(
             module_statement, module_name, revision)
         namespace = imported_module_statement.search_one('namespace').arg

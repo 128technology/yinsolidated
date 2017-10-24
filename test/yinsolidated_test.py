@@ -5,6 +5,8 @@
 
 """Unit tests for the yinsolidated module"""
 
+from __future__ import unicode_literals
+
 import os
 
 import pytest
