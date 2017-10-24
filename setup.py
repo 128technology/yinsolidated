@@ -3,13 +3,13 @@
 # All rights reserved.
 ###############################################################################
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='yinsolidated',
     version='1.1.1',
     description='Parses the consolidated YIN model format',
-    py_modules=['yinsolidate', 'yinsolidated'],
+    packages=find_packages(),
     install_requires=[
         'lxml >= 3.7.3',
         'xpathparser >= 1.0.0'
@@ -31,7 +31,7 @@ setup(
     license='MIT',
     entry_points={
         'pyang.plugin': [
-            'yinsolidate = yinsolidate:pyang_plugin_init'
+            'yinsolidate = yinsolidated.plugin:pyang_plugin_init'
         ]
     }
 )
