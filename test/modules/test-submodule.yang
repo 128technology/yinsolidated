@@ -1,0 +1,7 @@
+submodule test-submodule {
+    belongs-to test-module {
+        prefix test;
+    }
+
+    container submodule-container;
+}

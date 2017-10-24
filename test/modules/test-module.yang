@@ -1,0 +1,539 @@
+module test-module {
+    yang-version 1;
+
+    namespace "urn:xml:ns:test";
+
+    prefix test;
+
+    include test-submodule;
+
+    organization "None";
+    contact "Somebody";
+
+    description
+        "Test module containing an exhaustive set of possible YANG statements";
+
+    revision 2016-04-22 {
+        description
+            "Initial revision";
+    }
+
+    // TODO(athompson): bug in pyang? this should be allowed
+    // reference "RFC 6020";
+
+    // TODO(athompson): add deviation statement
+
+
+    /* Extensions */
+
+    extension test-extension {
+        argument test-argument {
+            yin-element false;
+        }
+
+        description "A test extension";
+
+        reference "RFC 6020";
+
+        status "current";
+    }
+
+    test:test-extension "test-value";
+
+    extension another-test-extension {
+        argument another-test-argument {
+            yin-element true;
+        }
+    }
+
+    test:another-test-extension "another-test-value";
+
+
+    /* Features */
+
+    feature test-feature {
+        description "A test feature";
+    }
+
+
+    /* Groupings */
+
+    grouping simple-test-grouping {
+        anyxml grouped-anyxml;
+    }
+
+    grouping complex-test-grouping {
+        choice grouped-choice;
+
+        container grouped-container;
+
+        description "A complex grouping";
+
+        grouping nested-grouping {
+            anyxml nested-grouped-anyxml;
+        }
+
+        leaf grouped-leaf {
+            type grouped-typedef;
+        }
+
+        leaf-list grouped-leaf-list {
+            type string;
+        }
+
+        list grouped-list {
+            config false;
+        }
+
+        reference "RFC 6020";
+
+        status "current";
+
+        typedef grouped-typedef {
+            type string;
+        }
+
+        uses nested-grouping {
+            when "grouped-leaf != 'nonsense'";
+        }
+    }
+
+
+    /* Identities */
+
+    identity test-base-identity {
+        description "A base identity";
+
+        reference "RFC 6020";
+
+        status "current";
+    }
+
+    identity test-derived-identity {
+        base test-base-identity;
+    }
+
+
+    /* Typedefs */
+
+    typedef base-typedef {
+        default "bumfuzzling";
+
+        description "A base typedef";
+
+        reference "RFC 6020";
+
+        status "current";
+
+        type string {
+            length "1..255";
+        }
+
+        units "nonsense";
+    }
+
+    typedef derived-typedef {
+        type base-typedef {
+            length "11 | 42..max";
+        }
+    }
+
+
+    /* Data Tree */
+
+    anyxml root-anyxml {
+        config false;
+
+        description "An anyxml node at the model root";
+
+        if-feature test-feature;
+
+        mandatory true;
+
+        must "../root-leaf != 'nonsense'";
+
+        reference "RFC 6020";
+
+        status "deprecated";
+
+        when "../root-leaf != 'nonsense'";
+    }
+
+    augment "/augmented-container" {
+        leaf augmenting-leaf-internal {
+            type string;
+        }
+    }
+
+    choice root-choice {
+        anyxml anyxml-case;
+
+        case test-case {
+            anyxml anyxml-within-case;
+
+            choice choice-within-case;
+
+            container container-within-case;
+
+            description "A test case";
+
+            if-feature test-feature;
+
+            leaf leaf-within-case {
+                type string;
+            }
+
+            leaf-list leaf-list-within-case {
+                type string;
+            }
+
+            list list-within-case {
+                config false;
+            }
+
+            reference "RFC 6020";
+
+            status "current";
+
+            uses simple-test-grouping;
+
+            when "../root-leaf != 'nonsense'";
+        }
+
+        config true;
+
+        container container-case;
+
+        default test-case;
+
+        description "A choice at the model root";
+
+        if-feature test-feature;
+
+        leaf leaf-case {
+            type string;
+        }
+
+        leaf-list leaf-list-case {
+            type string;
+        }
+
+        list list-case {
+            config false;
+        }
+
+        mandatory false;
+
+        reference "RFC 6020";
+
+        status "obsolete";
+
+        when "../root-leaf != 'nonsense'";
+    }
+
+    container root-container {
+        anyxml test-anyxml;
+
+        choice test-choice;
+
+        config true;
+
+        container test-nested-container;
+
+        description "A container at the model root";
+
+        grouping inner-grouping {
+            leaf grouped-leaf {
+                type string;
+            }
+        }
+
+        if-feature test-feature;
+
+        leaf test-leaf {
+            type inner-type;
+        }
+
+        leaf-list test-leaf-list {
+            type string;
+        }
+
+        list test-list {
+            config false;
+        }
+
+        must "test-leaf != 'nonsense'" {
+            error-message "test-leaf is nonsense";
+        }
+
+        presence "This container has presence";
+
+        reference "RFC 6020";
+
+        status "current";
+
+        typedef inner-type {
+            type string;
+        }
+
+        uses inner-grouping;
+
+        when "../root-leaf != 'nonsense'";
+    }
+
+    leaf root-leaf {
+        config true;
+
+        default "test-default";
+
+        description "A leaf at the model root";
+
+        if-feature test-feature;
+
+        mandatory false;
+
+        must "count(../root-leaf-list) > 0";
+
+        reference "RFC 6020";
+
+        status "current";
+
+        type string;
+
+        units "goobers";
+
+        when "count(../root-leaf-list) > 0";
+    }
+
+    leaf-list root-leaf-list {
+        config true;
+
+        description "A leaf-list at the model root";
+
+        if-feature test-feature;
+
+        max-elements 10;
+
+        min-elements 1;
+
+        must "../root-leaf != 'nonsense'";
+
+        ordered-by user;
+
+        reference "RFC 6020";
+
+        status "current";
+
+        type string;
+
+        units "awesomeness";
+
+        when "../root-leaf != 'nonsense'";
+    }
+
+    list root-list {
+        anyxml test-anyxml;
+
+        choice test-choice;
+
+        config true;
+
+        container test-container;
+
+        description "A list at the model root";
+
+        grouping inner-grouping {
+            leaf grouped-leaf {
+                type string;
+            }
+        }
+
+        if-feature test-feature;
+
+        key test-key;
+
+        leaf test-key {
+            type inner-type;
+        }
+
+        leaf-list test-leaf-list {
+            type string;
+        }
+
+        list test-nested-list {
+            config false;
+        }
+
+        max-elements 100;
+
+        min-elements 50;
+
+        must "../root-leaf != 'nonsense'";
+
+        ordered-by system;
+
+        reference "RFC 6020";
+
+        status "current";
+
+        typedef inner-type {
+            type string;
+        }
+
+        unique grouped-leaf;
+
+        uses inner-grouping;
+
+        when "../root-leaf != 'nonsense'";
+    }
+
+    uses complex-test-grouping {
+        augment grouped-container {
+            when "../grouped-leaf != 'nonsense'";
+
+            anyxml augmented-in-uses-anyxml;
+        }
+
+        if-feature test-feature;
+
+        refine grouped-leaf {
+            description "A leaf in a grouping with a refined description";
+        }
+
+        when "../root-leaf != 'nonsense'";
+    }
+
+    leaf leaf-with-typedef {
+        type derived-typedef;
+    }
+
+    leaf leaf-with-leafref {
+        type leafref {
+            path "../root-leaf";
+        }
+    }
+
+    container augmented-container;
+
+
+    /* Notifications */
+
+    notification test-notification {
+        anyxml notification-anyxml;
+
+        choice notification-choice;
+
+        container notification-container;
+
+        description "A test notification";
+
+        grouping inner-grouping {
+            leaf grouped-leaf {
+                type string;
+            }
+        }
+
+        if-feature test-feature;
+
+        leaf notification-leaf {
+            type inner-type;
+        }
+
+        leaf-list notification-leaf-list {
+            type string;
+        }
+
+        list notification-list;
+
+        reference "RFC 6020";
+
+        status "current";
+
+        typedef inner-type {
+            type string;
+        }
+
+        uses inner-grouping;
+    }
+
+
+    /* RPCs */
+
+    rpc test-rpc {
+        description "A test RPC";
+
+        grouping inner-grouping {
+            leaf grouped-leaf {
+                type string;
+            }
+        }
+
+        if-feature test-feature;
+
+        input {
+            anyxml input-anyxml;
+
+            choice input-choice;
+
+            container input-container;
+
+            grouping input-grouping {
+                anyxml grouped-anyxml;
+            }
+
+            leaf input-leaf {
+                type input-type;
+            }
+
+            leaf-list input-leaf-list {
+                type inner-type;
+            }
+
+            list input-list;
+
+            typedef input-type {
+                type string;
+            }
+
+            uses inner-grouping;
+            uses input-grouping;
+        }
+
+        output {
+            anyxml output-anyxml;
+
+            choice output-choice;
+
+            container output-container;
+
+            grouping output-grouping {
+                anyxml grouped-anyxml;
+            }
+
+            leaf output-leaf {
+                type output-type;
+            }
+
+            leaf-list output-leaf-list {
+                type inner-type;
+            }
+
+            list output-list;
+
+            typedef output-type {
+                type string;
+            }
+
+            uses inner-grouping;
+            uses output-grouping;
+        }
+
+        reference "RFC 6020";
+
+        status "current";
+
+        typedef inner-type {
+            type string;
+        }
+    }
+}

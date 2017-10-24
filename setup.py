@@ -9,7 +9,7 @@ setup(
     name='yinsolidated',
     version='1.1.1',
     description='Parses the consolidated YIN model format',
-    py_modules=['yinsolidated'],
+    py_modules=['yinsolidate', 'yinsolidated'],
     install_requires=[
         'lxml >= 3.7.3',
         'xpathparser >= 1.0.0'
@@ -28,5 +28,10 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    license='MIT'
+    license='MIT',
+    entry_points={
+        'pyang.plugin': [
+            'yinsolidate = yinsolidate:pyang_plugin_init'
+        ]
+    }
 )

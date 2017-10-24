@@ -1,0 +1,57 @@
+module augmenting-module {
+    namespace "urn:xml:ns:test:augment";
+
+    prefix aug;
+
+    import test-module {
+        prefix t;
+    }
+
+    identity augmenting-derived-identity {
+        description "A derived identity in an augmenting module";
+
+        base t:test-base-identity;
+    }
+
+    augment "/t:augmented-container" {
+        anyxml augmenting-anyxml;
+
+        choice augmenting-choice;
+
+        container augmenting-container {
+            t:test-extension "extension used in external augment";
+        }
+
+        description "An augment in another module";
+
+        if-feature t:test-feature;
+
+        leaf augmenting-leaf {
+            type string;
+        }
+
+        leaf-list augmenting-leaf-list {
+            type string;
+        }
+
+        list augmenting-list {
+            config false;
+        }
+
+        reference "RFC 6020";
+
+        status "current";
+
+        uses t:simple-test-grouping;
+
+        when "/t:root-leaf != 'nonsense'";
+    }
+
+    augment "/t:root-choice" {
+        case augmenting-case {
+            leaf augmenting-case-leaf {
+                type string;
+            }
+        }
+    }
+}
