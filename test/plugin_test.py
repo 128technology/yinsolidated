@@ -19,7 +19,6 @@ from yinsolidated.plugin import plugin
 
 
 YINSOLIDATED_PLUGIN_DIRECTORY = os.path.dirname(plugin.__file__)
-print(YINSOLIDATED_PLUGIN_DIRECTORY)
 
 YIN_NAMESPACE = 'urn:ietf:params:xml:ns:yang:yin:1'
 TEST_NAMESPACE = 'urn:xml:ns:test'
@@ -41,7 +40,7 @@ EXPECTED_MODEL_PATH = os.path.join(TEST_FILE_DIR,
 
 PYANG_COMMAND = [
     'pyang',
-    '-f', 'consolidated',
+    '-f', 'yinsolidated',
     '-p', MODULES_DIR,
 ]
 

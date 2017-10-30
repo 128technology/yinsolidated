@@ -9,7 +9,7 @@ data model
 
 Usage
 =====
-pyang -f consolidated <main-module>.yang <augmenting-module>.yang ...
+pyang -f yinsolidated <main-module>.yang <augmenting-module>.yang ...
 
 NOTE: the main module MUST be passed as the first positional argument
 
@@ -19,7 +19,7 @@ Output Format
 
 Most YANG statements are simply converted to XML using the rules defined by the
 YIN specification. However, the YIN transformation results in one XML document
-for each YANG file, and the goal of the the consolidated model is to generate a
+for each YANG file, and the goal of the the yinsolidated model is to generate a
 single XML document. Thus, the following additional transformations are
 performed:
 
@@ -212,7 +212,7 @@ Extensions are the only statements not transformed by the rules defined for
 YIN. According to the YIN definition, any usage of an extension is added as a
 child element of its parent statement, and the argument to the extension
 statement can be set as either an attribute on that element, or the text of a
-child element. In the consolidated model, any extension statement is simply
+child element. In the yinsolidated model, any extension statement is simply
 added as an element, and its argument is set as the text of that element.
 
 E.g. this YANG snippet:
@@ -263,7 +263,7 @@ Cases
 -----
 
 The case statement can be omitted in YANG if the case only consists of a
-single data definition statement. When converted to the consolidated model,
+single data definition statement. When converted to the yinsolidated model,
 the data definition element will be wrapped in a case element even if the
 case statement is omitted.
 
@@ -292,8 +292,8 @@ Omitting Resolved Statements
 ----------------------------
 
 Any statements that are resolved by the above rules become useless in the
-consolidated model because the information they convey is represented in-place.
-Thus, these statements are NOT added as elements in the consolidated model.
+yinsolidated model because the information they convey is represented in-place.
+Thus, these statements are NOT added as elements in the yinsolidated model.
 
 This includes statements with the following keywords:
     * augment
@@ -373,7 +373,7 @@ Become:
 Identities
 ----------
 
-Since the consolidated model contains only one module element, identities
+Since the yinsolidated model contains only one module element, identities
 defined in other modules are included as children of the module element. In
 order to properly represent namespaces, each identity element is given the
 namespace map from its original module as well as a 'module-prefix' attribute
@@ -455,7 +455,7 @@ class ConsolidatedModelPlugin(plugin.PyangPlugin):
 
     def add_output_format(self, formats):
         self.multiple_modules = True
-        formats['consolidated'] = self
+        formats['yinsolidated'] = self
 
     def emit(self, _, modules, output):
         model = _build_consolidated_model(modules)
