@@ -11,9 +11,15 @@ import os
 import unittest
 import subprocess
 
+import pyang
 import xmlunittest
 from lxml import etree
 
+from yinsolidated.plugin import plugin
+
+
+YINSOLIDATED_PLUGIN_DIRECTORY = os.path.dirname(plugin.__file__)
+print(YINSOLIDATED_PLUGIN_DIRECTORY)
 
 YIN_NAMESPACE = 'urn:ietf:params:xml:ns:yang:yin:1'
 TEST_NAMESPACE = 'urn:xml:ns:test'
@@ -24,21 +30,27 @@ NSMAP = {
     'aug': AUGMENTING_NAMESPACE
 }
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-MODULES_DIR = os.path.join(SCRIPT_DIR, 'modules')
+TEST_FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+MODULES_DIR = os.path.join(TEST_FILE_DIR, 'modules')
 
 MAIN_MODULE = os.path.join(MODULES_DIR, 'test-module.yang')
 AUGMENTING_MODULE = os.path.join(MODULES_DIR, 'augmenting-module.yang')
 
-EXPECTED_MODEL_PATH = os.path.join(SCRIPT_DIR,
+EXPECTED_MODEL_PATH = os.path.join(TEST_FILE_DIR,
                                    'expected_consolidated_model.xml')
 
-
-CONSOLIDATED_MODEL_XML = subprocess.check_output([
+PYANG_COMMAND = [
     'pyang',
     '-f', 'consolidated',
     '-p', MODULES_DIR,
-    MAIN_MODULE, AUGMENTING_MODULE])
+]
+
+if pyang.__version__ < '1.7.2':
+    PYANG_COMMAND.extend(['--plugindir', YINSOLIDATED_PLUGIN_DIRECTORY])
+
+PYANG_COMMAND.extend([MAIN_MODULE, AUGMENTING_MODULE])
+
+CONSOLIDATED_MODEL_XML = subprocess.check_output(PYANG_COMMAND)
 
 CONSOLIDATED_MODEL = etree.fromstring(CONSOLIDATED_MODEL_XML)
 
@@ -957,9 +969,9 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             <anyxml xmlns="{yin}"
                     name="grouped-anyxml"
                     module-prefix="aug">
+                <if-feature name="t:test-feature"/>
                 <when condition="/t:root-leaf != 'nonsense'"
                       context-node="parent"/>
-                <if-feature name="t:test-feature"/>
             </anyxml>
             """.format(**NSMAP)
 

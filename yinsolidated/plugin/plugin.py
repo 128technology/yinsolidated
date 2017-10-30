@@ -47,7 +47,7 @@ Augments
 * Similarly, any if-feature sub-statements of an augment are added as child
   elements to each of the augmenting data definitions. No modifications to
   these elements are necessary because they still make the data definition
-  dependant on the feature.
+  dependent on the feature.
 
 E.g. this YANG snippet:
 
@@ -422,7 +422,13 @@ Become:
 from __future__ import unicode_literals
 
 from lxml import etree
-from pyang import plugin, statements, syntax, yin_parser
+from pyang import (
+    plugin,
+    statements,
+    syntax,
+    yin_parser,
+    __version__ as pyang_version
+)
 
 
 _DATA_DEFINITION_KEYWORDS = ['container', 'leaf', 'leaf-list', 'list',
@@ -558,12 +564,8 @@ def _append_children(statement, yin_element):
     for sub_statement in _iterate_non_data_sub_statements(statement):
         _make_yin_element_recursive(sub_statement, yin_element)
 
-    if _is_augmenting(statement):
-        _append_when_elements_from_augment(statement.i_augment, yin_element)
-
-    if _is_member_of_grouping(statement):
-        _append_if_feature_elements_from_uses(statement.i_uses, yin_element)
-        _append_when_elements_from_uses(statement.i_uses, yin_element)
+    _append_inherited_if_feature_elements(statement, yin_element)
+    _append_inherited_when_elements(statement, yin_element)
 
     if statement.keyword == 'type':
         _append_children_for_type(statement, yin_element)
@@ -579,15 +581,20 @@ def _iterate_non_data_sub_statements(statement):
             yield sub_statement
 
 
-def _append_when_elements_from_augment(augment_statement, yin_element):
-    when_statements = augment_statement.search('when')
-    _append_when_elements_with_parent_context(when_statements, yin_element)
+def _append_inherited_if_feature_elements(statement, yin_element):
+    if _is_augmenting(statement) and pyang_version >= '1.7.1':
+        _append_if_feature_elements_from_augment(
+            statement.i_augment,
+            yin_element
+        )
+
+    if _is_member_of_grouping(statement):
+        _append_if_feature_elements_from_uses(statement.i_uses, yin_element)
 
 
-def _append_when_elements_with_parent_context(when_statements, yin_element):
-    for when_statement in when_statements:
-        when_element = _make_builtin_yin_element(when_statement, yin_element)
-        when_element.set('context-node', 'parent')
+def _append_if_feature_elements_from_augment(augment_statement, yin_element):
+    for if_feature_statement in augment_statement.search('if-feature'):
+        _make_builtin_yin_element(if_feature_statement, yin_element)
 
 
 def _is_member_of_grouping(statement):
@@ -600,6 +607,25 @@ def _append_if_feature_elements_from_uses(uses_statements, yin_element):
     for uses_statement in uses_statements:
         for if_feature_statement in uses_statement.search('if-feature'):
             _make_builtin_yin_element(if_feature_statement, yin_element)
+
+
+def _append_inherited_when_elements(statement, yin_element):
+    if _is_augmenting(statement):
+        _append_when_elements_from_augment(statement.i_augment, yin_element)
+
+    if _is_member_of_grouping(statement):
+        _append_when_elements_from_uses(statement.i_uses, yin_element)
+
+
+def _append_when_elements_from_augment(augment_statement, yin_element):
+    when_statements = augment_statement.search('when')
+    _append_when_elements_with_parent_context(when_statements, yin_element)
+
+
+def _append_when_elements_with_parent_context(when_statements, yin_element):
+    for when_statement in when_statements:
+        when_element = _make_builtin_yin_element(when_statement, yin_element)
+        when_element.set('context-node', 'parent')
 
 
 def _append_when_elements_from_uses(uses_statements, yin_element):

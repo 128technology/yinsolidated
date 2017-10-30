@@ -31,7 +31,7 @@ setup(
     license='MIT',
     entry_points={
         'pyang.plugin': [
-            'yinsolidate = yinsolidated.plugin:pyang_plugin_init'
+            'yinsolidate = yinsolidated.plugin.plugin:pyang_plugin_init'
         ]
     }
 )
