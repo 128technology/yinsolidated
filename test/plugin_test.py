@@ -3,17 +3,16 @@
 # All rights reserved.
 ###############################################################################
 
-"""Unit tests for the consolidated_model pyang plugin"""
+"""Unit tests for the yinsolidated pyang plugin"""
 
 from __future__ import unicode_literals
 
 import os
-import unittest
 import subprocess
 
 import pyang
-import xmlunittest
-from lxml import etree
+import pytest
+from lxml import doctestcompare, etree
 
 from yinsolidated.plugin import plugin
 
@@ -29,66 +28,86 @@ NSMAP = {
     'aug': AUGMENTING_NAMESPACE
 }
 
-TEST_FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-MODULES_DIR = os.path.join(TEST_FILE_DIR, 'modules')
 
-MAIN_MODULE = os.path.join(MODULES_DIR, 'test-module.yang')
-AUGMENTING_MODULE = os.path.join(MODULES_DIR, 'augmenting-module.yang')
+@pytest.fixture(scope='module')
+def consolidated_model():
+    test_file_dir = os.path.dirname(os.path.realpath(__file__))
+    modules_dir = os.path.join(test_file_dir, 'modules')
+    main_module = os.path.join(modules_dir, 'test-module.yang')
+    augmenting_module = os.path.join(modules_dir, 'augmenting-module.yang')
 
-EXPECTED_MODEL_PATH = os.path.join(TEST_FILE_DIR,
-                                   'expected_consolidated_model.xml')
+    pyang_command = [
+        'pyang',
+        '-f', 'yinsolidated',
+        '-p', modules_dir,
+    ]
 
-PYANG_COMMAND = [
-    'pyang',
-    '-f', 'yinsolidated',
-    '-p', MODULES_DIR,
-]
+    if pyang.__version__ < '1.7.2':
+        pyang_command.extend(['--plugindir', YINSOLIDATED_PLUGIN_DIRECTORY])
 
-if pyang.__version__ < '1.7.2':
-    PYANG_COMMAND.extend(['--plugindir', YINSOLIDATED_PLUGIN_DIRECTORY])
+    pyang_command.extend([main_module, augmenting_module])
 
-PYANG_COMMAND.extend([MAIN_MODULE, AUGMENTING_MODULE])
+    consolidated_model_xml = subprocess.check_output(pyang_command)
 
-CONSOLIDATED_MODEL_XML = subprocess.check_output(PYANG_COMMAND)
-
-CONSOLIDATED_MODEL = etree.fromstring(CONSOLIDATED_MODEL_XML)
+    return etree.fromstring(consolidated_model_xml)
 
 
-class ModuleTestCase(xmlunittest.XmlTestCase):
+_XML_CHECKER = doctestcompare.LXMLOutputChecker()
 
-    def test_module_root_element(self):
-        qname = etree.QName(CONSOLIDATED_MODEL.tag)
-        self.assertEqual('module', qname.localname)
-        self.assertEqual(YIN_NAMESPACE, qname.namespace)
 
-    def test_prefix_attribute(self):
-        prefix = CONSOLIDATED_MODEL.get('module-prefix')
-        self.assertEqual('test', prefix)
+def assert_xml_equal(expected, actual):
+    assert _XML_CHECKER.check_output(
+        expected,
+        actual,
+        doctestcompare.PARSE_XML
+    ), 'XML is not equivalent:\n' + _XML_CHECKER.output_difference(
+        StupidExampleWrapper(expected),
+        actual,
+        doctestcompare.PARSE_XML
+    )
 
-    def test_nsmap(self):
+
+class StupidExampleWrapper(object):
+
+    def __init__(self, xml):
+        self.want = xml
+
+
+class TestModule(object):
+
+    def test_module_root_element(self, consolidated_model):
+        qname = etree.QName(consolidated_model.tag)
+        assert qname.localname == 'module'
+        assert qname.namespace == YIN_NAMESPACE
+
+    def test_prefix_attribute(self, consolidated_model):
+        prefix = consolidated_model.get('module-prefix')
+        assert prefix == 'test'
+
+    def test_nsmap(self, consolidated_model):
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
             'test': TEST_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, CONSOLIDATED_MODEL.nsmap)
+        assert consolidated_model.nsmap == expected_nsmap
 
-    def test_yang_version(self):
-        yang_version = CONSOLIDATED_MODEL.xpath(
+    def test_yang_version(self, consolidated_model):
+        yang_version = consolidated_model.xpath(
             'yin:yang-version/@value', namespaces=NSMAP)[0]
-        self.assertEqual('1', yang_version)
+        assert yang_version == '1'
 
-    def test_namespace(self):
-        namespace = CONSOLIDATED_MODEL.xpath(
+    def test_namespace(self, consolidated_model):
+        namespace = consolidated_model.xpath(
             'yin:namespace/@uri', namespaces=NSMAP)[0]
-        self.assertEqual(TEST_NAMESPACE, namespace)
+        assert namespace == TEST_NAMESPACE
 
-    def test_prefix(self):
-        prefix = CONSOLIDATED_MODEL.xpath(
+    def test_prefix(self, consolidated_model):
+        prefix = consolidated_model.xpath(
             'yin:prefix/@value', namespaces=NSMAP)[0]
-        self.assertEqual('test', prefix)
+        assert prefix == 'test'
 
-    def test_organization(self):
-        organization_elem = CONSOLIDATED_MODEL.find(
+    def test_organization(self, consolidated_model):
+        organization_elem = consolidated_model.find(
             'yin:organization', namespaces=NSMAP)
         actual_xml = etree.tostring(organization_elem)
 
@@ -98,10 +117,10 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </organization>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_contact(self):
-        contact_elem = CONSOLIDATED_MODEL.find(
+    def test_contact(self, consolidated_model):
+        contact_elem = consolidated_model.find(
             'yin:contact', namespaces=NSMAP)
         actual_xml = etree.tostring(contact_elem)
 
@@ -111,10 +130,10 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </contact>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_description(self):
-        description_elem = CONSOLIDATED_MODEL.find(
+    def test_description(self, consolidated_model):
+        description_elem = consolidated_model.find(
             'yin:description', namespaces=NSMAP)
         actual_xml = etree.tostring(description_elem)
 
@@ -124,10 +143,10 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </description>
             """.format(**NSMAP)  # nopep8
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_revision(self):
-        revision_elem = CONSOLIDATED_MODEL.find(
+    def test_revision(self, consolidated_model):
+        revision_elem = consolidated_model.find(
             'yin:revision', namespaces=NSMAP)
         actual_xml = etree.tostring(revision_elem)
 
@@ -139,10 +158,10 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </revision>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_extension_definition(self):
-        extension_elem = CONSOLIDATED_MODEL.find(
+    def test_extension_definition(self, consolidated_model):
+        extension_elem = consolidated_model.find(
             'yin:extension[@name="test-extension"]', namespaces=NSMAP)
 
         actual_xml = etree.tostring(extension_elem)
@@ -162,10 +181,10 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </extension>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_another_extension_definition(self):
-        another_extension_elem = CONSOLIDATED_MODEL.find(
+    def test_another_extension_definition(self, consolidated_model):
+        another_extension_elem = consolidated_model.find(
             'yin:extension[@name="another-test-extension"]', namespaces=NSMAP)
 
         actual_xml = etree.tostring(another_extension_elem)
@@ -178,20 +197,20 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </extension>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_test_extension(self):
-        test_extension_text = CONSOLIDATED_MODEL.findtext(
+    def test_test_extension(self, consolidated_model):
+        test_extension_text = consolidated_model.findtext(
             'test:test-extension', namespaces=NSMAP)
-        self.assertEqual('test-value', test_extension_text)
+        assert test_extension_text == 'test-value'
 
-    def test_another_test_extension(self):
-        another_test_extension_text = CONSOLIDATED_MODEL.findtext(
+    def test_another_test_extension(self, consolidated_model):
+        another_test_extension_text = consolidated_model.findtext(
             'test:another-test-extension', namespaces=NSMAP)
-        self.assertEqual('another-test-value', another_test_extension_text)
+        assert another_test_extension_text == 'another-test-value'
 
-    def test_feature(self):
-        feature_elem = CONSOLIDATED_MODEL.find(
+    def test_feature(self, consolidated_model):
+        feature_elem = consolidated_model.find(
             'yin:feature', namespaces=NSMAP)
         actual_xml = etree.tostring(feature_elem)
 
@@ -203,10 +222,10 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </feature>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_base_identity(self):
-        base_identity_elem = CONSOLIDATED_MODEL.find(
+    def test_base_identity(self, consolidated_model):
+        base_identity_elem = consolidated_model.find(
             'yin:identity[@name="test-base-identity"]', namespaces=NSMAP)
         actual_xml = etree.tostring(base_identity_elem)
 
@@ -225,10 +244,10 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </identity>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_identity_from_augmenting_module(self):
-        augmenting_identity_elem = CONSOLIDATED_MODEL.find(
+    def test_identity_from_augmenting_module(self, consolidated_model):
+        augmenting_identity_elem = consolidated_model.find(
             'yin:identity[@name="augmenting-derived-identity"]',
             namespaces=NSMAP)
         actual_xml = etree.tostring(augmenting_identity_elem)
@@ -246,26 +265,26 @@ class ModuleTestCase(xmlunittest.XmlTestCase):
             </identity>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_no_typedefs_added(self):
-        typedef_elems = CONSOLIDATED_MODEL.findall(
+    def test_no_typedefs_added(self, consolidated_model):
+        typedef_elems = consolidated_model.findall(
             'yin:typedef', namespaces=NSMAP)
-        self.assertEqual(0, len(typedef_elems))
+        assert len(typedef_elems) == 0
 
 
-class SubmoduleTestCase(unittest.TestCase):
+class TestSubmodule(object):
 
-    def test_data_definitions_included(self):
-        submodule_container_elems = CONSOLIDATED_MODEL.findall(
+    def test_data_definitions_included(self, consolidated_model):
+        submodule_container_elems = consolidated_model.findall(
             'yin:container[@name="submodule-container"]', namespaces=NSMAP)
-        self.assertEqual(1, len(submodule_container_elems))
+        assert len(submodule_container_elems) == 1
 
 
-class ChoiceTestCase(xmlunittest.XmlTestCase):
+class TestChoice(object):
 
-    def test_choice(self):
-        choice_elem = CONSOLIDATED_MODEL.find(
+    def test_choice(self, consolidated_model):
+        choice_elem = consolidated_model.find(
             'yin:choice[@name="root-choice"]', namespaces=NSMAP)
         actual_xml = etree.tostring(choice_elem)
 
@@ -337,13 +356,13 @@ class ChoiceTestCase(xmlunittest.XmlTestCase):
             </choice>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class ContainerTestCase(xmlunittest.XmlTestCase):
+class TestContainer(object):
 
-    def test_container(self):
-        container_elem = CONSOLIDATED_MODEL.find(
+    def test_container(self, consolidated_model):
+        container_elem = consolidated_model.find(
             'yin:container[@name="root-container"]', namespaces=NSMAP)
         actual_xml = etree.tostring(container_elem)
 
@@ -387,13 +406,13 @@ class ContainerTestCase(xmlunittest.XmlTestCase):
             </container>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class LeafTestCase(xmlunittest.XmlTestCase):
+class TestLeaf(object):
 
-    def test_leaf(self):
-        leaf_elem = CONSOLIDATED_MODEL.find(
+    def test_leaf(self, consolidated_model):
+        leaf_elem = consolidated_model.find(
             'yin:leaf[@name="root-leaf"]', namespaces=NSMAP)
         actual_xml = etree.tostring(leaf_elem)
 
@@ -417,13 +436,13 @@ class LeafTestCase(xmlunittest.XmlTestCase):
             </leaf>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class LeafListTestCase(xmlunittest.XmlTestCase):
+class TestLeafList(object):
 
-    def test_leaf_list(self):
-        leaf_list_elem = CONSOLIDATED_MODEL.find(
+    def test_leaf_list(self, consolidated_model):
+        leaf_list_elem = consolidated_model.find(
             'yin:leaf-list[@name="root-leaf-list"]', namespaces=NSMAP)
         actual_xml = etree.tostring(leaf_list_elem)
 
@@ -448,13 +467,13 @@ class LeafListTestCase(xmlunittest.XmlTestCase):
             </leaf-list>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class ListTestCase(xmlunittest.XmlTestCase):
+class TestList(object):
 
-    def test_list(self):
-        list_elem = CONSOLIDATED_MODEL.find(
+    def test_list(self, consolidated_model):
+        list_elem = consolidated_model.find(
             'yin:list[@name="root-list"]', namespaces=NSMAP)
         actual_xml = etree.tostring(list_elem)
 
@@ -498,13 +517,13 @@ class ListTestCase(xmlunittest.XmlTestCase):
             </list>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class UsesTestCase(xmlunittest.XmlTestCase):
+class TestUses(object):
 
-    def test_grouped_choice(self):
-        grouped_choice_elem = CONSOLIDATED_MODEL.find(
+    def test_grouped_choice(self, consolidated_model):
+        grouped_choice_elem = consolidated_model.find(
             'yin:choice[@name="grouped-choice"]', namespaces=NSMAP)
         actual_xml = etree.tostring(grouped_choice_elem)
 
@@ -516,10 +535,10 @@ class UsesTestCase(xmlunittest.XmlTestCase):
             </choice>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_grouped_container(self):
-        grouped_container_elem = CONSOLIDATED_MODEL.find(
+    def test_grouped_container(self, consolidated_model):
+        grouped_container_elem = consolidated_model.find(
             'yin:container[@name="grouped-container"]', namespaces=NSMAP)
         actual_xml = etree.tostring(grouped_container_elem)
 
@@ -535,10 +554,10 @@ class UsesTestCase(xmlunittest.XmlTestCase):
             </container>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_grouped_leaf(self):
-        grouped_leaf_elem = CONSOLIDATED_MODEL.find(
+    def test_grouped_leaf(self, consolidated_model):
+        grouped_leaf_elem = consolidated_model.find(
             'yin:leaf[@name="grouped-leaf"]', namespaces=NSMAP)
         actual_xml = etree.tostring(grouped_leaf_elem)
 
@@ -558,10 +577,10 @@ class UsesTestCase(xmlunittest.XmlTestCase):
             </leaf>
             """.format(**NSMAP)  # nopep8
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_grouped_leaf_list(self):
-        grouped_leaf_list_elem = CONSOLIDATED_MODEL.find(
+    def test_grouped_leaf_list(self, consolidated_model):
+        grouped_leaf_list_elem = consolidated_model.find(
             'yin:leaf-list[@name="grouped-leaf-list"]', namespaces=NSMAP)
         actual_xml = etree.tostring(grouped_leaf_list_elem)
 
@@ -574,10 +593,10 @@ class UsesTestCase(xmlunittest.XmlTestCase):
             </leaf-list>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_grouped_list(self):
-        grouped_list_elem = CONSOLIDATED_MODEL.find(
+    def test_grouped_list(self, consolidated_model):
+        grouped_list_elem = consolidated_model.find(
             'yin:list[@name="grouped-list"]', namespaces=NSMAP)
         actual_xml = etree.tostring(grouped_list_elem)
 
@@ -590,10 +609,10 @@ class UsesTestCase(xmlunittest.XmlTestCase):
             </list>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
-    def test_nested_uses(self):
-        nested_grouped_anyxml_elem = CONSOLIDATED_MODEL.find(
+    def test_nested_uses(self, consolidated_model):
+        nested_grouped_anyxml_elem = consolidated_model.find(
             'yin:anyxml[@name="nested-grouped-anyxml"]', namespaces=NSMAP)
         actual_xml = etree.tostring(nested_grouped_anyxml_elem)
 
@@ -607,13 +626,13 @@ class UsesTestCase(xmlunittest.XmlTestCase):
             </anyxml>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class NotificationTestCase(xmlunittest.XmlTestCase):
+class TestNotification(object):
 
-    def test_notification(self):
-        notification_elem = CONSOLIDATED_MODEL.find(
+    def test_notification(self, consolidated_model):
+        notification_elem = consolidated_model.find(
             'yin:notification[@name="test-notification"]', namespaces=NSMAP)
         actual_xml = etree.tostring(notification_elem)
 
@@ -647,13 +666,13 @@ class NotificationTestCase(xmlunittest.XmlTestCase):
             </notification>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class RpcTestCase(xmlunittest.XmlTestCase):
+class TestRpc(object):
 
-    def test_rpc(self):
-        rpc_elem = CONSOLIDATED_MODEL.find(
+    def test_rpc(self, consolidated_model):
+        rpc_elem = consolidated_model.find(
             'yin:rpc[@name="test-rpc"]', namespaces=NSMAP)
         actual_xml = etree.tostring(rpc_elem)
 
@@ -718,13 +737,13 @@ class RpcTestCase(xmlunittest.XmlTestCase):
             </rpc>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class TypedefTestCase(xmlunittest.XmlTestCase):
+class TestTypedef(object):
 
-    def test_typedefs_expanded(self):
-        leaf_elem = CONSOLIDATED_MODEL.find(
+    def test_typedefs_expanded(self, consolidated_model):
+        leaf_elem = consolidated_model.find(
             'yin:leaf[@name="leaf-with-typedef"]', namespaces=NSMAP)
         actual_xml = etree.tostring(leaf_elem)
 
@@ -754,13 +773,13 @@ class TypedefTestCase(xmlunittest.XmlTestCase):
             </leaf>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class LeafrefTestCase(xmlunittest.XmlTestCase):
+class TestLeafref(object):
 
-    def test_leafref_type_resolved(self):
-        leaf_elem = CONSOLIDATED_MODEL.find(
+    def test_leafref_type_resolved(self, consolidated_model):
+        leaf_elem = consolidated_model.find(
             'yin:leaf[@name="leaf-with-leafref"]', namespaces=NSMAP)
         actual_xml = etree.tostring(leaf_elem)
 
@@ -773,20 +792,23 @@ class LeafrefTestCase(xmlunittest.XmlTestCase):
             </leaf>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
 
-class AugmentTestCase(xmlunittest.XmlTestCase):
+class TestAugment(object):
 
-    def setUp(self):
-        self.augmented_container_elem = CONSOLIDATED_MODEL.find(
-            'yin:container[@name="augmented-container"]', namespaces=NSMAP)
+    @pytest.fixture
+    def augmented_container_elem(self, consolidated_model):
+        return consolidated_model.find(
+            'yin:container[@name="augmented-container"]',
+            namespaces=NSMAP
+        )
 
-    def test_number_of_children(self):
-        self.assertEqual(8, len(self.augmented_container_elem))
+    def test_number_of_children(self, augmented_container_elem):
+        assert len(augmented_container_elem) == 8
 
-    def test_augmenting_leaf_internal(self):
-        augmenting_leaf_internal_elem = self.augmented_container_elem.find(
+    def test_augmenting_leaf_internal(self, augmented_container_elem):
+        augmenting_leaf_internal_elem = augmented_container_elem.find(
             'yin:leaf[@name="augmenting-leaf-internal"]', namespaces=NSMAP)
         actual_xml = etree.tostring(augmenting_leaf_internal_elem)
 
@@ -796,16 +818,16 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             </leaf>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
             'test': TEST_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, augmenting_leaf_internal_elem.nsmap)
+        assert augmenting_leaf_internal_elem.nsmap == expected_nsmap
 
-    def test_augmenting_anyxml(self):
-        augmenting_anyxml_elem = self.augmented_container_elem.find(
+    def test_augmenting_anyxml(self, augmented_container_elem):
+        augmenting_anyxml_elem = augmented_container_elem.find(
             'yin:anyxml[@name="augmenting-anyxml"]', namespaces=NSMAP)
         actual_xml = etree.tostring(augmenting_anyxml_elem)
 
@@ -819,7 +841,7 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             </anyxml>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
@@ -827,10 +849,10 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             't': TEST_NAMESPACE,
             'aug': AUGMENTING_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, augmenting_anyxml_elem.nsmap)
+        assert augmenting_anyxml_elem.nsmap == expected_nsmap
 
-    def test_augmenting_choice(self):
-        augmenting_choice_elem = self.augmented_container_elem.find(
+    def test_augmenting_choice(self, augmented_container_elem):
+        augmenting_choice_elem = augmented_container_elem.find(
             'yin:choice[@name="augmenting-choice"]', namespaces=NSMAP)
         actual_xml = etree.tostring(augmenting_choice_elem)
 
@@ -844,7 +866,7 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             </choice>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
@@ -852,10 +874,10 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             't': TEST_NAMESPACE,
             'aug': AUGMENTING_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, augmenting_choice_elem.nsmap)
+        assert augmenting_choice_elem.nsmap == expected_nsmap
 
-    def test_augmenting_container(self):
-        augmenting_container_elem = self.augmented_container_elem.find(
+    def test_augmenting_container(self, augmented_container_elem):
+        augmenting_container_elem = augmented_container_elem.find(
             'yin:container[@name="augmenting-container"]', namespaces=NSMAP)
         actual_xml = etree.tostring(augmenting_container_elem)
 
@@ -871,7 +893,7 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             </container>
             """.format(**NSMAP)  # nopep8
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
@@ -879,10 +901,10 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             't': TEST_NAMESPACE,
             'aug': AUGMENTING_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, augmenting_container_elem.nsmap)
+        assert augmenting_container_elem.nsmap == expected_nsmap
 
-    def test_augmenting_leaf(self):
-        augmenting_leaf_elem = self.augmented_container_elem.find(
+    def test_augmenting_leaf(self, augmented_container_elem):
+        augmenting_leaf_elem = augmented_container_elem.find(
             'yin:leaf[@name="augmenting-leaf"]', namespaces=NSMAP)
         actual_xml = etree.tostring(augmenting_leaf_elem)
 
@@ -897,7 +919,7 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             </leaf>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
@@ -905,10 +927,10 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             't': TEST_NAMESPACE,
             'aug': AUGMENTING_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, augmenting_leaf_elem.nsmap)
+        assert augmenting_leaf_elem.nsmap == expected_nsmap
 
-    def test_augmenting_leaf_list(self):
-        augmenting_leaf_list_elem = self.augmented_container_elem.find(
+    def test_augmenting_leaf_list(self, augmented_container_elem):
+        augmenting_leaf_list_elem = augmented_container_elem.find(
             'yin:leaf-list[@name="augmenting-leaf-list"]', namespaces=NSMAP)
         actual_xml = etree.tostring(augmenting_leaf_list_elem)
 
@@ -923,7 +945,7 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             </leaf-list>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
@@ -931,10 +953,10 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             't': TEST_NAMESPACE,
             'aug': AUGMENTING_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, augmenting_leaf_list_elem.nsmap)
+        assert augmenting_leaf_list_elem.nsmap == expected_nsmap
 
-    def test_augmenting_list(self):
-        augmenting_list_elem = self.augmented_container_elem.find(
+    def test_augmenting_list(self, augmented_container_elem):
+        augmenting_list_elem = augmented_container_elem.find(
             'yin:list[@name="augmenting-list"]', namespaces=NSMAP)
         actual_xml = etree.tostring(augmenting_list_elem)
 
@@ -949,7 +971,7 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             </list>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
@@ -957,10 +979,10 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             't': TEST_NAMESPACE,
             'aug': AUGMENTING_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, augmenting_list_elem.nsmap)
+        assert augmenting_list_elem.nsmap == expected_nsmap
 
-    def test_uses_in_augment(self):
-        grouped_anyxml_elem = self.augmented_container_elem.find(
+    def test_uses_in_augment(self, augmented_container_elem):
+        grouped_anyxml_elem = augmented_container_elem.find(
             'yin:anyxml[@name="grouped-anyxml"]', namespaces=NSMAP)
         actual_xml = etree.tostring(grouped_anyxml_elem)
 
@@ -974,7 +996,7 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             </anyxml>
             """.format(**NSMAP)
 
-        self.assertXmlEquivalentOutputs(actual_xml, expected_xml)
+        assert_xml_equal(expected_xml, actual_xml)
 
         expected_nsmap = {
             'yin': YIN_NAMESPACE,
@@ -982,8 +1004,4 @@ class AugmentTestCase(xmlunittest.XmlTestCase):
             't': TEST_NAMESPACE,
             'aug': AUGMENTING_NAMESPACE
         }
-        self.assertEqual(expected_nsmap, grouped_anyxml_elem.nsmap)
-
-
-if __name__ == '__main__':
-    unittest.main()
+        assert grouped_anyxml_elem.nsmap == expected_nsmap
