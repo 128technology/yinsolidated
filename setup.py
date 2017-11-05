@@ -8,7 +8,10 @@ from setuptools import setup, find_packages
 setup(
     name='yinsolidated',
     version='1.1.1',
-    description='Parses the consolidated YIN model format',
+    description=(
+        'Generates and parses a YIN-like representation of a YANG model, '
+        'consolidated into a single XML document'
+    ),
     packages=find_packages(),
     install_requires=[
         'lxml >= 3.7.3',
