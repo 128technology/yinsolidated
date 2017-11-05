@@ -4,8 +4,10 @@
 ###############################################################################
 
 """
-Custom etree.Element classes with convenience functions and properties for
-accessing the details of the consolidated model without parsing XML
+Parses the YINsolidated model into an lxml.etree.ElementTree containing custom
+lxml.etree.Element subclasses for each type of YANG statement. These custom
+classes provide convenient methods and properties for accessing YANG-specific
+data without interacting with the XML directly.
 """
 
 from __future__ import unicode_literals
@@ -15,17 +17,14 @@ import re
 import xpathparser
 from lxml import etree
 
+from yinsolidated import _common
 
-_YIN_NS = 'urn:ietf:params:xml:ns:yang:yin:1'
-_NSMAP = {'yin': _YIN_NS}
 
-# [RFC 6020 Section 3]
-_DATA_NODE_KEYWORDS = ['container', 'leaf', 'leaf-list', 'list', 'anyxml']
-_DATA_DEFINITION_KEYWORDS = (_DATA_NODE_KEYWORDS + ['choice', 'case'])
+_NSMAP = {'yin': _common.YIN_NS}
 
 _DATA_NODE_PREDICATE = ' or '.join(
     'self::yin:{}'.format(keyword)
-    for keyword in _DATA_NODE_KEYWORDS
+    for keyword in _common.DATA_NODE_KEYWORDS
 )
 
 
@@ -38,7 +37,7 @@ class _ConsolidatedModelLookup(etree.CustomElementClassLookup):
 
     def lookup(self, _node_type, _document, namespace, name):
         return (_get_yin_element_class(name)
-                if namespace == _YIN_NS
+                if namespace == _common.YIN_NS
                 else None)
 
 
@@ -63,7 +62,7 @@ def _get_yin_element_class(name):
     try:
         element_class = yin_element_class_map[name]
     except KeyError:
-        if name in _DATA_DEFINITION_KEYWORDS:
+        if _common.is_data_definition(name):
             element_class = DataDefinitionElement
         else:
             element_class = YinElement
@@ -71,18 +70,18 @@ def _get_yin_element_class(name):
     return element_class
 
 
-# Custom XML parser to use for the consolidated model
+# Custom XML parser to use for the YINsolidated model
 CONSOLIDATED_MODEL_PARSER = etree.XMLParser()
 CONSOLIDATED_MODEL_PARSER.set_element_class_lookup(_ConsolidatedModelLookup())
 
 
 def parse(path):
-    """Parses the consolidated model file at the given *path*"""
+    """Parses the YINsolidated model file at the given *path*"""
     return etree.parse(path, parser=CONSOLIDATED_MODEL_PARSER)
 
 
 def fromstring(xml_string):
-    """Parses the given string as the consolidated model"""
+    """Parses the given string as the YINsolidated model"""
     return etree.fromstring(xml_string, parser=CONSOLIDATED_MODEL_PARSER)
 
 
@@ -127,7 +126,7 @@ class YinElement(etree.ElementBase):
 
     def iterate_data_definitions(self):
         for child in self:
-            if etree.QName(child.tag).localname in _DATA_DEFINITION_KEYWORDS:
+            if _common.is_data_definition(etree.QName(child.tag).localname):
                 yield child
 
     def iterate_rpcs(self):
