@@ -10,3 +10,5 @@
 # Forward everything from the parser module to be available directly from the
 # package
 from yinsolidated.parser import *
+
+__version__ = '1.2.0'

@@ -5,20 +5,21 @@
 
 from setuptools import setup, find_packages
 
+import yinsolidated
+
 setup(
     name='yinsolidated',
-    version='1.1.1',
+    version=yinsolidated.__version__,
     description=(
         'Generates and parses a YIN-like representation of a YANG model, '
         'consolidated into a single XML document'
     ),
-    packages=find_packages(),
-    install_requires=[
-        'lxml >= 3.7.3',
-        'xpathparser >= 1.0.0'
-    ],
+    url='https://github.com/128technology/yinsolidated',
+    author='Alex Thompson',
+    author_email='alex@128technology.com',
+    license='MIT',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
@@ -31,7 +32,13 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    license='MIT',
+    keywords='yang yin pyang',
+    packages=find_packages(),
+    install_requires=[
+        'lxml >= 3.7.3',
+        'xpathparser >= 1.0.0'
+    ],
+    python_requires='>=2.7',
     entry_points={
         'pyang.plugin': [
             'yinsolidate = yinsolidated.plugin.plugin:pyang_plugin_init'
