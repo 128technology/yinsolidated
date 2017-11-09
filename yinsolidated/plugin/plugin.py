@@ -59,6 +59,9 @@ class ConsolidatedModelPlugin(plugin.PyangPlugin):
 
     """The plugin class to register with Pyang"""
 
+    # Disable this check because pyang's argument names are ugly
+    # pylint: disable=arguments-differ
+
     def add_output_format(self, formats):
         self.multiple_modules = True
         formats['yinsolidated'] = self

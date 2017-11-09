@@ -102,6 +102,7 @@ class TestYinElement(object):
         choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
 
         with pytest.raises(yinsolidated.MissingPrefixError):
+            # pylint: disable=pointless-statement
             choice_elem.prefix
 
     def test_namespace_map(self):

@@ -10,6 +10,9 @@ classes provide convenient methods and properties for accessing YANG-specific
 data without interacting with the XML directly.
 """
 
+# TODO(athompson): remove after resolving issue #7
+# pylint: disable=missing-docstring
+
 from __future__ import unicode_literals
 
 import re

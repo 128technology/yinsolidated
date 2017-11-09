@@ -5,6 +5,8 @@
 
 """Yinsolidated package"""
 
+# pylint: disable=wildcard-import,unused-wildcard-import
+
 # Forward everything from the parser module to be available directly from the
 # package
 from yinsolidated.parser import *
