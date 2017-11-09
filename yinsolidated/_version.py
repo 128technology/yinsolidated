@@ -3,10 +3,6 @@
 # All rights reserved.
 ###############################################################################
 
-"""YINsolidated package"""
+"""Yinsolidated version"""
 
-# pylint: disable=wildcard-import,unused-wildcard-import
-
-# Forward module definitions
-from yinsolidated._version import __version__
-from yinsolidated.parser import *
+__version__ = '1.2.0'

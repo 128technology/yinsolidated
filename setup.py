@@ -5,11 +5,13 @@
 
 from setuptools import setup, find_packages
 
-import yinsolidated
+# Read in the __version__ attribute without importing the package
+with open('yinsolidated/_version.py') as version_file:
+    exec(version_file.read())
 
 setup(
     name='yinsolidated',
-    version=yinsolidated.__version__,
+    version=__version__,
     description=(
         'Generates and parses a YIN-like representation of a YANG model, '
         'consolidated into a single XML document'
