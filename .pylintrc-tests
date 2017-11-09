@@ -1,0 +1,55 @@
+[MASTER]
+
+# Needed for lxml
+unsafe-load-any-extension=yes
+
+
+[MESSAGES CONTROL]
+
+disable=
+    C0111, ; Missing docstring
+    C0302, ; Too many lines in module
+    C1801, ; Do not use len(SEQUENCE) as condition value
+    E1103, ; Has no member (but some types could not be inferred)
+    R0201, ; Method could be a function
+    R0903, ; Too few public methods
+    R0904, ; Too many public methods
+    R0913, ; Too many arguments
+    W0142, ; Used '*' or '**' in method call
+    W0232, ; Class has no '__init__' method
+    W0511, ; TODOs
+    W0621, ; Redefining name from outer scope
+
+
+[REPORTS]
+
+output-format=colorized
+reports=no
+
+
+[BASIC]
+
+good-names=i,j,k,_
+bad-names=temp,this,that,var
+
+# Regular expression matching correct function names
+function-rgx=[a-z_][a-z0-9_]{2,60}$
+
+# Regular expression matching correct method names
+method-rgx=[a-z_][a-z0-9_]{2,60}$
+
+# Regular expression matching correct argument names
+argument-rgx=[a-z_][a-z0-9_]+$
+
+# Regular expression matching correct attribute names
+attr-rgx=[a-z_][a-z0-9_]{2,60}$
+
+
+[VARIABLES]
+
+# Tells whether we should check for unused import in __init__ files.
+init-import=yes
+
+# A regular expression matching the name of dummy variables (i.e. expectedly
+# not used).
+dummy-variables-rgx=(_+[a-z0-9_]*?$)|args|kwargs
