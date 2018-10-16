@@ -101,9 +101,13 @@ class TestYinElement(object):
             """)
         choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
 
-        with pytest.raises(yinsolidated.MissingAttributeError):
+        with pytest.raises(yinsolidated.MissingModuleNameError) as excinfo:
             # pylint: disable=pointless-statement
-            choice_elem.prefix
+            choice_elem.module_name
+            assert (
+                str(excinfo.value) ==
+                "No module-name found for ancestors of choice 'None'"
+            )
 
     def test_prefix_from_module(self):
         module_elem = yinsolidated.fromstring("""
@@ -138,9 +142,13 @@ class TestYinElement(object):
             """)
         choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
 
-        with pytest.raises(yinsolidated.MissingAttributeError):
+        with pytest.raises(yinsolidated.MissingPrefixError) as excinfo:
             # pylint: disable=pointless-statement
             choice_elem.prefix
+            assert (
+                str(excinfo.value) ==
+                "No prefix found for ancestors of choice 'None'"
+            )
 
     def test_namespace_map(self):
         module_elem = yinsolidated.fromstring("""
