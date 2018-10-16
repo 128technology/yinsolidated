@@ -68,6 +68,47 @@ class TestYinElement(object):
 
         assert choice_elem.namespace == 'inner:ns'
 
+    def test_module_name_from_module(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+                    module-name="test-module">
+                <choice/>
+            </module>
+            """)
+        choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
+
+        assert choice_elem.module_name == 'test-module'
+
+    def test_module_name_from_augmenting_node(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+                    module-name="outer-module">
+                <container name="test-container"
+                           module-name="inner-module">
+                    <choice/>
+                </container>
+            </module>
+            """)
+        choice_elem = module_elem.find('.//yin:choice', namespaces=_NSMAP)
+
+        assert choice_elem.module_name == 'inner-module'
+
+    def test_missing_module_name(self):
+        module_elem = yinsolidated.fromstring("""
+            <module xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+                <choice/>
+            </module>
+            """)
+        choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
+
+        with pytest.raises(yinsolidated.MissingModuleNameError) as excinfo:
+            # pylint: disable=pointless-statement
+            choice_elem.module_name
+            assert (
+                str(excinfo.value) ==
+                "No module-name found for ancestors of choice 'None'"
+            )
+
     def test_prefix_from_module(self):
         module_elem = yinsolidated.fromstring("""
             <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
@@ -101,9 +142,13 @@ class TestYinElement(object):
             """)
         choice_elem = module_elem.find('yin:choice', namespaces=_NSMAP)
 
-        with pytest.raises(yinsolidated.MissingPrefixError):
+        with pytest.raises(yinsolidated.MissingPrefixError) as excinfo:
             # pylint: disable=pointless-statement
             choice_elem.prefix
+            assert (
+                str(excinfo.value) ==
+                "No prefix found for ancestors of choice 'None'"
+            )
 
     def test_namespace_map(self):
         module_elem = yinsolidated.fromstring("""

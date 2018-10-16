@@ -99,6 +99,17 @@ class YinElement(etree.ElementBase):
         return self.nsmap[self.prefix]
 
     @property
+    def module_name(self):
+        ancestor_prefixes = self.xpath(
+            'ancestor-or-self::yin:*[@module-name]/@module-name',
+            namespaces=_NSMAP
+        )
+        try:
+            return ancestor_prefixes[-1]
+        except IndexError:
+            raise MissingModuleNameError(self)
+
+    @property
     def prefix(self):
         ancestor_prefixes = self.xpath(
             'ancestor-or-self::yin:*[@module-prefix]/@module-prefix',
@@ -154,16 +165,35 @@ def _change_all_whitespace_to_spaces(string):
     return re.sub(r'\s+', ' ', string).strip()
 
 
-class MissingPrefixError(Error):
+class _MissingAttributeError(Error):
 
-    """Could not find a prefix attribute"""
+    """Could not find an attribute"""
 
-    def __init__(self, data_def_element):
-        message = "No prefix attribute found for ancestors of {} '{}'".format(
+    def __init__(self, attr, data_def_element):
+        message = "No {} attribute found for ancestors of {} '{}'".format(
+            attr,
             data_def_element.keyword,
             data_def_element.name
         )
-        super(MissingPrefixError, self).__init__(message)
+        super(_MissingAttributeError, self).__init__(message)
+
+
+class MissingPrefixError(_MissingAttributeError):
+
+    """Could not find prefix attribute"""
+
+    def __init__(self, data_def_element):
+        super(MissingPrefixError, self).__init__('prefix', data_def_element)
+
+
+class MissingModuleNameError(_MissingAttributeError):
+
+    """Could not find module-name attribute"""
+
+    def __init__(self, data_def_element):
+        super(MissingModuleNameError, self).__init__(
+            'module-name', data_def_element
+        )
 
 
 class ModuleElement(YinElement):
