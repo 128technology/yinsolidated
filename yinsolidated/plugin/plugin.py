@@ -99,14 +99,17 @@ def _make_builtin_yin_element(statement, parent_elem):
     except KeyError:
         raise InvalidKeywordError(statement.keyword)
 
+    module_name = None
     module_prefix = None
     nsmap = {'yin': yin_parser.yin_namespace}
 
     if statement.keyword == 'module':
+        module_name = statement.i_modulename
         module_prefix = statement.i_prefix
         nsmap.update(_get_module_nsmap(statement))
     elif (_is_augmenting_another_module(statement) or
           statement.keyword == 'identity'):
+        module_name = statement.i_module.i_modulename
         module_prefix = statement.i_module.i_prefix
         nsmap.update(_get_module_nsmap(statement.i_module))
 
@@ -121,6 +124,9 @@ def _make_builtin_yin_element(statement, parent_elem):
 
     if module_prefix is not None:
         yin_element.set('module-prefix', module_prefix)
+
+    if module_name is not None:
+        yin_element.set('module-name', module_name)
 
     return yin_element
 

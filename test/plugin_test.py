@@ -80,6 +80,10 @@ class TestModule(object):
         assert qname.localname == 'module'
         assert qname.namespace == YIN_NAMESPACE
 
+    def test_module_name_attribute(self, consolidated_model):
+        module_name = consolidated_model.get('module-name')
+        assert module_name == 'test-module'
+
     def test_prefix_attribute(self, consolidated_model):
         prefix = consolidated_model.get('module-prefix')
         assert prefix == 'test'
@@ -232,6 +236,7 @@ class TestModule(object):
         expected_xml = """
             <identity xmlns="{yin}"
                       xmlns:test="{test}"
+                      module-name="test-module"
                       module-prefix="test"
                       name="test-base-identity">
                 <description>
@@ -256,6 +261,7 @@ class TestModule(object):
             <identity xmlns="{yin}"
                       xmlns:t="{test}"
                       xmlns:aug="{aug}"
+                      module-name="augmenting-module"
                       module-prefix="aug"
                       name="augmenting-derived-identity">
                 <description>
@@ -348,6 +354,7 @@ class TestChoice(object):
                     </list>
                 </case>
                 <case name="augmenting-case"
+                      module-name="augmenting-module"
                       module-prefix="aug">
                     <leaf name="augmenting-case-leaf">
                         <type name="string"/>
@@ -834,6 +841,7 @@ class TestAugment(object):
         expected_xml = """
             <anyxml xmlns="{yin}"
                     name="augmenting-anyxml"
+                    module-name="augmenting-module"
                     module-prefix="aug">
                 <if-feature name="t:test-feature"/>
                 <when condition="/t:root-leaf != 'nonsense'"
@@ -859,7 +867,8 @@ class TestAugment(object):
         expected_xml = """
             <choice xmlns="{yin}"
                     name="augmenting-choice"
-                    module-prefix="aug">
+                    module-prefix="aug"
+                    module-name="augmenting-module">
                 <if-feature name="t:test-feature"/>
                 <when condition="/t:root-leaf != 'nonsense'"
                       context-node="parent"/>
@@ -885,6 +894,7 @@ class TestAugment(object):
             <container xmlns="{yin}"
                        xmlns:t="{test}"
                        name="augmenting-container"
+                       module-name="augmenting-module"
                        module-prefix="aug">
                 <t:test-extension>extension used in external augment</t:test-extension>
                 <if-feature name="t:test-feature"/>
@@ -911,6 +921,7 @@ class TestAugment(object):
         expected_xml = """
             <leaf xmlns="{yin}"
                   name="augmenting-leaf"
+                  module-name="augmenting-module"
                   module-prefix="aug">
                 <type name="string"/>
                 <if-feature name="t:test-feature"/>
@@ -937,6 +948,7 @@ class TestAugment(object):
         expected_xml = """
             <leaf-list xmlns="{yin}"
                        name="augmenting-leaf-list"
+                       module-name="augmenting-module"
                        module-prefix="aug">
                 <type name="string"/>
                 <if-feature name="t:test-feature"/>
@@ -963,6 +975,7 @@ class TestAugment(object):
         expected_xml = """
             <list xmlns="{yin}"
                   name="augmenting-list"
+                  module-name="augmenting-module"
                   module-prefix="aug">
                 <config value="false"/>
                 <if-feature name="t:test-feature"/>
@@ -989,6 +1002,7 @@ class TestAugment(object):
         expected_xml = """
             <anyxml xmlns="{yin}"
                     name="grouped-anyxml"
+                    module-name="augmenting-module"
                     module-prefix="aug">
                 <if-feature name="t:test-feature"/>
                 <when condition="/t:root-leaf != 'nonsense'"
