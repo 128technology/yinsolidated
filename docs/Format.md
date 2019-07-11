@@ -203,13 +203,10 @@ Becomes:
 
 ## Extensions
 
-`extension` statements are the only statements not transformed by the rules
-defined for YIN. According to the YIN definition, any usage of an `extension` is
-added as a child element of its parent statement, and the argument to the
-`extension` statement can be set as either an attribute on that element or the
-text of a child element. In the **YINsolidated** model, any `extension`
-statement is simply added as an element, and its argument is set as the text of
-that element.
+`extension` statements can be represented in the **YINsolidated** model in two different ways.
+
+### Simple Extensions
+This is the default format, which provides a simplified representation over the traditional YIN format. Each `extension` statement is simply added as a child element of its parent statement, and its argument is set as the text of that element.
 
 E.g. this YANG snippet:
 
@@ -230,7 +227,9 @@ extension attribute-ext {
 }
 
 foo:element-ext "Element text";
-foo:attribute-ext "Attribute text";
+foo:attribute-ext "Attribute text" {
+    description "This won't appear in YINsolidated";
+}
 ```
 
 Becomes:
@@ -238,6 +237,48 @@ Becomes:
 ```xml
 <foo:element-ext xmlns:foo="foo:ns">Element text<foo:element-ext>
 <foo:attribute-ext xmlns:foo="foo:ns">Attribute text<foo:attribute-ext>
+```
+
+### Complex (YIN-formatted) Extensions
+The simple format does not support sub-statements on extensions. To support this use case, the traditional YIN format can be enabled by adding the tag `#yinformat` to the extension description.
+
+In this format, each `extension` statement is added as a child element of its parent statement, and its argument can be set either as an attribute on that element or as a child element.
+
+E.g. this YANG snippet:
+
+```yang
+namespace "foo:ns";
+prefix foo;
+
+extension element-ext {
+    argument element-arg {
+        yin-element true;
+    }
+    description "This should follow #yinformat";
+}
+
+extension attribute-ext {
+    argument attribute-arg {
+        yin-element false;
+    }
+    description "This should follow #yinformat";
+}
+
+foo:element-ext "Element text";
+foo:attribute-ext "Attribute text" {
+    description "This will appear in YINsolidated";
+}
+```
+
+Becomes:
+
+```xml
+<foo:element-ext xmlns:foo="foo:ns">
+    <foo:element-arg>Element text</foo:element-arg>
+<foo:element-ext>
+<foo:attribute-ext xmlns:foo="foo:ns" attribute-arg="Attribute text">
+    <description>This will appear in YINsolidated</description>
+<foo:attribute-ext>
 ```
 
 

@@ -26,28 +26,85 @@ module test-module {
 
     /* Extensions */
 
-    extension test-extension {
-        argument test-argument {
-            yin-element false;
+    extension simple-extension-no-arg {
+        description
+            "An extension that takes no argument and does not support substatements";
+    }
+
+    test:simple-extension-no-arg {
+        description "This won't appear in YINsolidated";
+    }
+
+    extension simple-extension-attribute-arg {
+        argument attribute-argument;
+
+        description
+            "An extension whose argument would appear as an XML attribute in YIN but " +
+            "appears simply as text in YINsolidated and does not support substatements";
+    }
+
+    test:simple-extension-attribute-arg "test-value" {
+        description "This won't appear in YINsolidated";
+    }
+
+    extension simple-extension-element-arg {
+        argument element-argument {
+            yin-element true;
         }
 
-        description "A test extension";
+        description
+            "An extension whose argument would appear as an XML subelement in YIN " +
+            "but appears simply as text in YINsolidated and does not support " +
+            "substatements";
 
         reference "RFC 6020";
 
         status "current";
     }
 
-    test:test-extension "test-value";
-
-    extension another-test-extension {
-        argument another-test-argument {
-            yin-element true;
-        }
+    test:simple-extension-element-arg "test-value" {
+        description "This won't appear in YINsolidated";
     }
 
-    test:another-test-extension "another-test-value";
+    extension complex-extension-no-arg {
+        description
+            "An extension that takes no argument but supports substatements because " +
+            "the #yinformat tag is included";
+    }
 
+    test:complex-extension-no-arg {
+        description "This will appear in YINsolidated";
+        test:simple-extension-no-arg;
+    }
+
+    extension complex-extension-attribute-arg {
+        argument attribute-argument;
+
+        description
+            "An extension whose argument appears as an XML attribute in YINsolidated " +
+            "and supports substatements because the #yinformat tag is included";
+    }
+
+    test:complex-extension-attribute-arg "another-test-value" {
+        description "This will appear in YINsolidated";
+        test:simple-extension-attribute-arg "test-value";
+    }
+
+    extension complex-extension-element-arg {
+        argument element-argument {
+            yin-element true;
+        }
+
+        description
+            "An extension whose argument appears as an XML subelement in " +
+            "YINsolidated and supports substatements because the #yinformat tag is " +
+            "included";
+    }
+
+    test:complex-extension-element-arg "another-test-value" {
+        description "This will appear in YINsolidated";
+        test:simple-extension-element-arg "test-value";
+    }
 
     /* Features */
 

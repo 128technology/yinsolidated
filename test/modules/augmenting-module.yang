@@ -19,7 +19,7 @@ module augmenting-module {
         choice augmenting-choice;
 
         container augmenting-container {
-            t:test-extension "extension used in external augment";
+            t:simple-extension-attribute-arg "extension used in external augment";
         }
 
         description "An augment in another module";
