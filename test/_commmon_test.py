@@ -1,7 +1,4 @@
-###############################################################################
-# Copyright (c) 2017 128 Technology, Inc.
-# All rights reserved.
-###############################################################################
+# Copyright 2017 128 Technology, Inc.
 
 """Unit tests for the _common module"""
 

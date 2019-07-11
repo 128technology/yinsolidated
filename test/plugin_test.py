@@ -1,7 +1,4 @@
-###############################################################################
-# Copyright (c) 2016-2017 128 Technology, Inc.
-# All rights reserved.
-###############################################################################
+# Copyright 2016 128 Technology, Inc.
 
 """Unit tests for the yinsolidated pyang plugin"""
 
@@ -166,52 +163,120 @@ class TestModule(object):
 
     def test_extension_definition(self, consolidated_model):
         extension_elem = consolidated_model.find(
-            'yin:extension[@name="test-extension"]', namespaces=NSMAP)
+            'yin:extension[@name="simple-extension-element-arg"]',
+            namespaces=NSMAP
+        )
 
         actual_xml = etree.tostring(extension_elem)
 
         expected_xml = """
-            <extension xmlns="{yin}" name="test-extension">
-                <argument name="test-argument">
-                    <yin-element value="false"/>
+            <extension xmlns="{yin}" name="simple-extension-element-arg">
+                <argument name="element-argument">
+                    <yin-element value="true"/>
                 </argument>
                 <description>
-                    <text>A test extension</text>
+                    <text>An extension whose argument would appear as an XML subelement in YIN but appears simply as text in YINsolidated and does not support substatements</text>
                 </description>
                 <reference>
                     <text>RFC 6020</text>
                 </reference>
                 <status value="current"/>
             </extension>
-            """.format(**NSMAP)
+            """.format(**NSMAP)  # nopep8
 
         assert_xml_equal(expected_xml, actual_xml)
 
-    def test_another_extension_definition(self, consolidated_model):
-        another_extension_elem = consolidated_model.find(
-            'yin:extension[@name="another-test-extension"]', namespaces=NSMAP)
+    def test_simple_extension_no_arg(self, consolidated_model):
+        extension_elem = consolidated_model.find(
+            'test:simple-extension-no-arg', namespaces=NSMAP)
 
-        actual_xml = etree.tostring(another_extension_elem)
+        actual_xml = etree.tostring(extension_elem)
 
         expected_xml = """
-            <extension xmlns="{yin}" name="another-test-extension">
-                <argument name="another-test-argument">
-                    <yin-element value="true"/>
-                </argument>
-            </extension>
+            <test:simple-extension-no-arg xmlns:test="{test}"/>
             """.format(**NSMAP)
 
         assert_xml_equal(expected_xml, actual_xml)
 
-    def test_test_extension(self, consolidated_model):
-        test_extension_text = consolidated_model.findtext(
-            'test:test-extension', namespaces=NSMAP)
-        assert test_extension_text == 'test-value'
+    def test_simple_extension_attribute_arg(self, consolidated_model):
+        extension_elem = consolidated_model.find(
+            'test:simple-extension-attribute-arg', namespaces=NSMAP)
 
-    def test_another_test_extension(self, consolidated_model):
-        another_test_extension_text = consolidated_model.findtext(
-            'test:another-test-extension', namespaces=NSMAP)
-        assert another_test_extension_text == 'another-test-value'
+        actual_xml = etree.tostring(extension_elem)
+
+        expected_xml = """
+            <test:simple-extension-attribute-arg xmlns:test="{test}">test-value</test:simple-extension-attribute-arg>
+            """.format(**NSMAP)  # nopep8
+
+        assert_xml_equal(expected_xml, actual_xml)
+
+    def test_simple_extension_element_arg(self, consolidated_model):
+        extension_elem = consolidated_model.find(
+            'test:simple-extension-element-arg', namespaces=NSMAP)
+
+        actual_xml = etree.tostring(extension_elem)
+
+        expected_xml = """
+            <test:simple-extension-element-arg xmlns:test="{test}">test-value</test:simple-extension-element-arg>
+            """.format(**NSMAP)  # nopep8
+
+        assert_xml_equal(expected_xml, actual_xml)
+
+    def test_complex_extension_no_arg(self, consolidated_model):
+        extension_elem = consolidated_model.find(
+            'test:complex-extension-no-arg', namespaces=NSMAP)
+
+        actual_xml = etree.tostring(extension_elem)
+
+        expected_xml = """
+            <test:complex-extension-no-arg xmlns="{yin}" xmlns:test="{test}">
+                <description>
+                    <text>This will appear in YINsolidated</text>
+                </description>
+                <test:simple-extension-no-arg/>
+            </test:complex-extension-no-arg>
+            """.format(**NSMAP)
+
+        assert_xml_equal(expected_xml, actual_xml)
+
+    def test_complex_extension_attribute_arg(self, consolidated_model):
+        extension_elem = consolidated_model.find(
+            'test:complex-extension-attribute-arg', namespaces=NSMAP)
+
+        actual_xml = etree.tostring(extension_elem)
+
+        expected_xml = """
+            <test:complex-extension-attribute-arg
+                xmlns="{yin}"
+                xmlns:test="{test}"
+                attribute-argument="another-test-value">
+
+                <description>
+                    <text>This will appear in YINsolidated</text>
+                </description>
+                <test:simple-extension-attribute-arg>test-value</test:simple-extension-attribute-arg>
+            </test:complex-extension-attribute-arg>
+            """.format(**NSMAP)  # nopep8
+
+        assert_xml_equal(expected_xml, actual_xml)
+
+    def test_complex_extension_element_arg(self, consolidated_model):
+        extension_elem = consolidated_model.find(
+            'test:complex-extension-element-arg', namespaces=NSMAP)
+
+        actual_xml = etree.tostring(extension_elem)
+
+        expected_xml = """
+            <test:complex-extension-element-arg xmlns="{yin}" xmlns:test="{test}">
+                <test:element-argument>another-test-value</test:element-argument>
+                <description>
+                    <text>This will appear in YINsolidated</text>
+                </description>
+                <test:simple-extension-element-arg>test-value</test:simple-extension-element-arg>
+            </test:complex-extension-element-arg>
+            """.format(**NSMAP)  # nopep8
+
+        assert_xml_equal(expected_xml, actual_xml)
 
     def test_feature(self, consolidated_model):
         feature_elem = consolidated_model.find(
@@ -896,7 +961,7 @@ class TestAugment(object):
                        name="augmenting-container"
                        module-name="augmenting-module"
                        module-prefix="aug">
-                <t:test-extension>extension used in external augment</t:test-extension>
+                <t:simple-extension-attribute-arg>extension used in external augment</t:simple-extension-attribute-arg>
                 <if-feature name="t:test-feature"/>
                 <when condition="/t:root-leaf != 'nonsense'"
                       context-node="parent"/>

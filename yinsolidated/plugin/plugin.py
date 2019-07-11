@@ -1,7 +1,4 @@
-###############################################################################
-# Copyright (c) 2016-2017 128 Technology, Inc.
-# All rights reserved.
-###############################################################################
+# Copyright 2016 128 Technology, Inc.
 
 """
 Pyang plugin that generates a single, consolidated XML representation of a YANG
@@ -288,7 +285,45 @@ def _make_extension_element(statement, parent_elem):
     nsmap = {prefix: namespace}
 
     extension_element = etree.SubElement(parent_elem, tag, nsmap=nsmap)
-    extension_element.text = statement.arg
+
+    if _is_complex_extension(statement.i_extension):
+        argument_name, is_arg_yin_element = _get_exension_argument_details(
+            statement.i_extension
+        )
+        _add_statement_argument(
+            argument_name,
+            statement.arg,
+            namespace,
+            is_arg_yin_element,
+            extension_element,
+        )
+        _append_children(statement, extension_element)
+    else:
+        extension_element.text = statement.arg
+
+
+def _is_complex_extension(extension_statement):
+    extension_description = extension_statement.search_one('description')
+    return (
+        extension_description is not None and
+        "#yinformat" in extension_description.arg
+    )
+
+
+def _get_exension_argument_details(extension_statement):
+    argument_statement = extension_statement.search_one('argument')
+    if argument_statement is None:
+        return None, False
+
+    argument_name = argument_statement.arg
+
+    yin_element_statement = argument_statement.search_one('yin-element')
+    is_arg_yin_element = (
+        yin_element_statement is not None and
+        yin_element_statement.arg == 'true'
+    )
+
+    return argument_name, is_arg_yin_element
 
 
 def _add_external_identities(augmenting_modules, module_element):
