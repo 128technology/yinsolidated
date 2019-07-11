@@ -163,7 +163,9 @@ class TestModule(object):
 
     def test_extension_definition(self, consolidated_model):
         extension_elem = consolidated_model.find(
-            'yin:extension[@name="simple-extension-element-arg"]', namespaces=NSMAP)
+            'yin:extension[@name="simple-extension-element-arg"]',
+            namespaces=NSMAP
+        )
 
         actual_xml = etree.tostring(extension_elem)
 
@@ -180,7 +182,7 @@ class TestModule(object):
                 </reference>
                 <status value="current"/>
             </extension>
-            """.format(**NSMAP)
+            """.format(**NSMAP)  # nopep8
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -204,7 +206,7 @@ class TestModule(object):
 
         expected_xml = """
             <test:simple-extension-attribute-arg xmlns:test="{test}">test-value</test:simple-extension-attribute-arg>
-            """.format(**NSMAP)
+            """.format(**NSMAP)  # nopep8
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -216,7 +218,7 @@ class TestModule(object):
 
         expected_xml = """
             <test:simple-extension-element-arg xmlns:test="{test}">test-value</test:simple-extension-element-arg>
-            """.format(**NSMAP)
+            """.format(**NSMAP)  # nopep8
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -254,7 +256,7 @@ class TestModule(object):
                 </description>
                 <test:simple-extension-attribute-arg>test-value</test:simple-extension-attribute-arg>
             </test:complex-extension-attribute-arg>
-            """.format(**NSMAP)
+            """.format(**NSMAP)  # nopep8
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -272,7 +274,7 @@ class TestModule(object):
                 </description>
                 <test:simple-extension-element-arg>test-value</test:simple-extension-element-arg>
             </test:complex-extension-element-arg>
-            """.format(**NSMAP)
+            """.format(**NSMAP)  # nopep8
 
         assert_xml_equal(expected_xml, actual_xml)
 
