@@ -1,7 +1,4 @@
-###############################################################################
-# Copyright (c) 2016-2017 128 Technology, Inc.
-# All rights reserved.
-###############################################################################
+# Copyright 2016 128 Technology, Inc.
 
 """
 Parses the YINsolidated model into an lxml.etree.ElementTree containing custom

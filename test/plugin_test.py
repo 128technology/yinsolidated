@@ -1,7 +1,4 @@
-###############################################################################
-# Copyright (c) 2016-2017 128 Technology, Inc.
-# All rights reserved.
-###############################################################################
+# Copyright 2016 128 Technology, Inc.
 
 """Unit tests for the yinsolidated pyang plugin"""
 

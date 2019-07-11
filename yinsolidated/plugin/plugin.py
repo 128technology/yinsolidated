@@ -1,7 +1,4 @@
-###############################################################################
-# Copyright (c) 2016-2017 128 Technology, Inc.
-# All rights reserved.
-###############################################################################
+# Copyright 2016 128 Technology, Inc.
 
 """
 Pyang plugin that generates a single, consolidated XML representation of a YANG
