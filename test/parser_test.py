@@ -1632,6 +1632,13 @@ class TestIdentityElement(object):
                           name="external-derived-identity">
                     <base name="t:base-identity"/>
                 </identity>
+                <identity xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+                          xmlns:o="other:ns"
+                          xmlns:t="test:ns"
+                          module-prefix="o"
+                          name="nested-derived-identity">
+                    <base name="o:external-derived-identity"/>
+                </identity>
             </module>
             """)
         base_identity = module_element.find('yin:identity', namespaces=_NSMAP)
@@ -1639,6 +1646,13 @@ class TestIdentityElement(object):
 
         derived_identities = base_identity.get_derived_identities()
 
-        assert len(derived_identities) == 2
+        assert len(derived_identities) == 3
         assert derived_identities[0].name == 'derived-identity-1'
         assert derived_identities[1].name == 'external-derived-identity'
+        assert derived_identities[2].name == 'nested-derived-identity'
+
+        direct_identities = base_identity.get_directly_derived_identities()
+
+        assert len(direct_identities) == 2
+        assert direct_identities[0].name == 'derived-identity-1'
+        assert direct_identities[1].name == 'external-derived-identity'
