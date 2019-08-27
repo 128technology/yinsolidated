@@ -623,12 +623,15 @@ class IdentityElement(YinElement):
         return list(self.iterate_derived_identities())
 
     def iterate_derived_identities(self):
-        for identity_elem in self._iterate_directly_derived_identities():
+        for identity_elem in self.iterate_directly_derived_identities():
             yield identity_elem
             for nested_identity in identity_elem.iterate_derived_identities():
                 yield nested_identity
 
-    def _iterate_directly_derived_identities(self):
+    def get_directly_derived_identities(self):
+        return list(self.iterate_directly_derived_identities())
+
+    def iterate_directly_derived_identities(self):
         root = self.getroottree()
         for identity_elem in root.iterfind('yin:identity', namespaces=_NSMAP):
             if identity_elem.base == (self.name, self.namespace):
