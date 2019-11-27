@@ -1,23 +1,52 @@
 # Copyright 2019 128 Technology, Inc.
 
-import os
-import contextlib
-import sys
-import runpy
-import pytest
-import io
+from __future__ import print_function, absolute_import, unicode_literals
 
-import pyang
+import contextlib
+import copy
+import os
+import runpy
+import sys
+
 from lxml import etree
+import pyang
+import pytest
 
 from yinsolidated.plugin import plugin
 
 YINSOLIDATED_PLUGIN_DIRECTORY = os.path.dirname(plugin.__file__)
 
 
+# Use the correct type of IO buffer depending on how strings are encoded
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
+
 def pytest_addoption(parser):
     parser.addoption("--pyang-path", action="store",
                      help="path to pyang executable")
+
+
+@contextlib.contextmanager
+def redirect_stdout(target):
+    original = sys.stdout
+    sys.stdout = target
+    try:
+        yield
+    finally:
+        sys.stdout = original
+
+
+@contextlib.contextmanager
+def replace_argv(new_argv):
+    original_argv = copy.copy(sys.argv)
+    sys.argv = new_argv
+    try:
+        yield
+    finally:
+        sys.argv = original_argv
 
 
 @pytest.fixture(scope='session')
@@ -40,18 +69,20 @@ def consolidated_model(request):
     pyang_args.extend([main_module, augmenting_module])
     pyang_path = request.config.getoption("--pyang-path")
 
-    sys.argv = [pyang_path] + pyang_args
-
-    stream = io.StringIO()
+    stream = StringIO()
     try:
-        with contextlib.redirect_stdout(stream):
-            runpy.run_path(pyang_path, run_name="__main__")
+        with redirect_stdout(stream):
+            with replace_argv([pyang_path] + pyang_args):
+                runpy.run_path(pyang_path, run_name="__main__")
     except SystemExit as err:
         if err.code != 0:
             raise
+    finally:
+        # This is a hack so we can use runpy multiple types on pytest < 5.x
+        pyang.plugin.plugins = []
 
     try:
-        return etree.fromstring(stream.getvalue().encode("utf-8"))
+        yield etree.fromstring(stream.getvalue().encode())
     except etree.XMLSyntaxError:
         print(stream.getvalue(), file=sys.stderr)
         raise

@@ -13,13 +13,12 @@ module test-module {
     description
         "Test module containing an exhaustive set of possible YANG statements";
 
+    reference "RFC 6020";
+
     revision 2016-04-22 {
         description
             "Initial revision";
     }
-
-    // TODO(athompson): bug in pyang? this should be allowed
-    // reference "RFC 6020";
 
     // TODO(athompson): add deviation statement
 
@@ -163,7 +162,7 @@ module test-module {
         }
 
         uses nested-grouping {
-            when "grouped-leaf != 'nonsense'";
+            when "../grouped-leaf != 'nonsense'";
         }
     }
 
@@ -266,7 +265,7 @@ module test-module {
 
             uses simple-test-grouping;
 
-            when "../root-leaf != 'nonsense'";
+            when "root-leaf != 'nonsense'";
         }
 
         config true;
@@ -297,7 +296,7 @@ module test-module {
 
         status "obsolete";
 
-        when "../root-leaf != 'nonsense'";
+        when "root-leaf != 'nonsense'";
     }
 
     container root-container {
@@ -469,7 +468,7 @@ module test-module {
             description "A leaf in a grouping with a refined description";
         }
 
-        when "../root-leaf != 'nonsense'";
+        when "root-leaf != 'nonsense'";
     }
 
     leaf leaf-with-typedef {

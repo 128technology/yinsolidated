@@ -4,17 +4,9 @@
 
 from __future__ import unicode_literals
 
-import os
-import subprocess
-
-import pyang
 import pytest
 from lxml import doctestcompare, etree
 
-from yinsolidated.plugin import plugin
-
-
-YINSOLIDATED_PLUGIN_DIRECTORY = os.path.dirname(plugin.__file__)
 
 YIN_NAMESPACE = 'urn:ietf:params:xml:ns:yang:yin:1'
 TEST_NAMESPACE = 'urn:xml:ns:test'
@@ -24,29 +16,6 @@ NSMAP = {
     'test': TEST_NAMESPACE,
     'aug': AUGMENTING_NAMESPACE
 }
-
-
-@pytest.fixture(scope='module')
-def consolidated_model():
-    test_file_dir = os.path.dirname(os.path.realpath(__file__))
-    modules_dir = os.path.join(test_file_dir, 'modules')
-    main_module = os.path.join(modules_dir, 'test-module.yang')
-    augmenting_module = os.path.join(modules_dir, 'augmenting-module.yang')
-
-    pyang_command = [
-        'pyang',
-        '-f', 'yinsolidated',
-        '-p', modules_dir,
-    ]
-
-    if pyang.__version__ < '1.7.2':
-        pyang_command.extend(['--plugindir', YINSOLIDATED_PLUGIN_DIRECTORY])
-
-    pyang_command.extend([main_module, augmenting_module])
-
-    consolidated_model_xml = subprocess.check_output(pyang_command)
-
-    return etree.fromstring(consolidated_model_xml)
 
 
 _XML_CHECKER = doctestcompare.LXMLOutputChecker()
@@ -372,7 +341,7 @@ class TestChoice(object):
                     <text>RFC 6020</text>
                 </reference>
                 <status value="obsolete"/>
-                <when condition="../root-leaf != 'nonsense'"/>
+                <when condition="root-leaf != 'nonsense'"/>
                 <case name="anyxml-case">
                     <anyxml name="anyxml-case"/>
                 </case>
@@ -385,7 +354,7 @@ class TestChoice(object):
                         <text>RFC 6020</text>
                     </reference>
                     <status value="current"/>
-                    <when condition="../root-leaf != 'nonsense'"/>
+                    <when condition="root-leaf != 'nonsense'"/>
                     <anyxml name="anyxml-within-case"/>
                     <choice name="choice-within-case"/>
                     <container name="container-within-case"/>
@@ -589,6 +558,7 @@ class TestList(object):
             </list>
             """.format(**NSMAP)
 
+        print(actual_xml.decode())
         assert_xml_equal(expected_xml, actual_xml)
 
 
@@ -602,7 +572,7 @@ class TestUses(object):
         expected_xml = """
             <choice xmlns="{yin}" name="grouped-choice">
                 <if-feature name="test-feature"/>
-                <when condition="../root-leaf != 'nonsense'"
+                <when condition="root-leaf != 'nonsense'"
                       context-node="parent"/>
             </choice>
             """.format(**NSMAP)
@@ -617,7 +587,7 @@ class TestUses(object):
         expected_xml = """
             <container xmlns="{yin}" name="grouped-container">
                 <if-feature name="test-feature"/>
-                <when condition="../root-leaf != 'nonsense'"
+                <when condition="root-leaf != 'nonsense'"
                       context-node="parent"/>
                 <anyxml name="augmented-in-uses-anyxml">
                     <when condition="../grouped-leaf != 'nonsense'"
@@ -644,7 +614,7 @@ class TestUses(object):
                     <text>A leaf in a grouping with a refined description</text>
                 </description>
                 <if-feature name="test-feature"/>
-                <when condition="../root-leaf != 'nonsense'"
+                <when condition="root-leaf != 'nonsense'"
                       context-node="parent"/>
             </leaf>
             """.format(**NSMAP)  # nopep8
@@ -660,7 +630,7 @@ class TestUses(object):
             <leaf-list xmlns="{yin}" name="grouped-leaf-list">
                 <type name="string"/>
                 <if-feature name="test-feature"/>
-                <when condition="../root-leaf != 'nonsense'"
+                <when condition="root-leaf != 'nonsense'"
                       context-node="parent"/>
             </leaf-list>
             """.format(**NSMAP)
@@ -718,7 +688,7 @@ class TestUses(object):
             <list xmlns="{yin}" name="grouped-list">
                 <config value="false"/>
                 <if-feature name="test-feature"/>
-                <when condition="../root-leaf != 'nonsense'"
+                <when condition="root-leaf != 'nonsense'"
                       context-node="parent"/>
             </list>
             """.format(**NSMAP)
@@ -733,9 +703,9 @@ class TestUses(object):
         expected_xml = """
             <anyxml xmlns="{yin}" name="nested-grouped-anyxml">
                 <if-feature name="test-feature"/>
-                <when condition="../root-leaf != 'nonsense'"
+                <when condition="root-leaf != 'nonsense'"
                       context-node="parent"/>
-                <when condition="grouped-leaf != 'nonsense'"
+                <when condition="../grouped-leaf != 'nonsense'"
                       context-node="parent"/>
             </anyxml>
             """.format(**NSMAP)
