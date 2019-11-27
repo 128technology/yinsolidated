@@ -640,6 +640,7 @@ class TestUses(object):
 
         assert_xml_equal(expected_xml, actual_xml)
 
+    @pytest.mark.skip("https://github.com/mbj4668/pyang/issues/527")
     def test_grouped_leaf_list_ref(self, consolidated_model):
         grouped_leaf_list_elem = consolidated_model.find(
             'yin:leaf-list[@name="grouped-leaf-list-ref"]',
@@ -660,6 +661,7 @@ class TestUses(object):
 
         assert_xml_equal(expected_xml, actual_xml)
 
+    @pytest.mark.skip("https://github.com/mbj4668/pyang/issues/527")
     def test_grouped_leaf_ref(self, consolidated_model):
         grouped_leaf_list_elem = consolidated_model.find(
             'yin:leaf[@name="grouped-leaf-ref"]',
