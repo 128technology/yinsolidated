@@ -138,6 +138,18 @@ module test-module {
             type string;
         }
 
+        leaf-list grouped-leaf-list-ref {
+            type leafref {
+                path "../root-leaf";
+            }
+        }
+
+        leaf grouped-leaf-ref {
+            type leafref {
+                path "../root-leaf";
+            }
+        }
+
         list grouped-list {
             config false;
         }
