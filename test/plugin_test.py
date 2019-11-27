@@ -558,7 +558,6 @@ class TestList(object):
             </list>
             """.format(**NSMAP)
 
-        print(actual_xml.decode())
         assert_xml_equal(expected_xml, actual_xml)
 
 
