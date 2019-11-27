@@ -13,17 +13,16 @@ NOTE: the main module MUST be passed as the first positional argument
 
 from __future__ import unicode_literals
 
-import io
-import contextlib
-import logging
-
 from lxml import etree
-from pyang import __version__ as pyang_version
-from pyang import plugin, statements, syntax, yin_parser
+from pyang import (
+    plugin,
+    statements,
+    syntax,
+    yin_parser,
+    __version__ as pyang_version
+)
 
 from yinsolidated import _common
-
-LOG = logging.getLogger(__name__)
 
 
 _EXTRA_PYANG_DATA_KEYWORDS = [
@@ -47,15 +46,6 @@ _DATA_KEYWORDS = (
 )
 
 
-@contextlib.contextmanager
-def log_print(header="Redirected stdout:"):
-    msgbuf = io.StringIO()
-    with contextlib.redirect_stdout(msgbuf):
-        print(header)
-        yield
-    LOG.debug(msgbuf.getvalue())
-
-
 def pyang_plugin_init():
     """Required function definition for Pyang to register the plugin"""
 
@@ -73,8 +63,8 @@ class ConsolidatedModelPlugin(plugin.PyangPlugin):
         self.multiple_modules = True
         formats['yinsolidated'] = self
 
-    def emit(self, ctx, modules, output):
-        model = _build_consolidated_model(ctx, modules)
+    def emit(self, _, modules, output):
+        model = _build_consolidated_model(modules)
 
         document = etree.tostring(
             model,
@@ -85,7 +75,7 @@ class ConsolidatedModelPlugin(plugin.PyangPlugin):
         output.write(document)
 
 
-def _build_consolidated_model(ctx, modules):
+def _build_consolidated_model(modules):
     main_module = modules[0]
     module_element = _make_builtin_yin_element_recursive(main_module)
 
@@ -101,13 +91,6 @@ def _make_builtin_yin_element_recursive(statement, parent_elem=None):
 
 
 def _make_builtin_yin_element(statement, parent_elem):
-    if statement.keyword in {"uses", "grouping"}:
-        msg = "Stmt {!r}:\n  validated: {}\n  expanded: {}".format(
-            statement,
-            getattr(statement, "i_is_validated", False),
-            getattr(statement, "i_expanded", False))
-        LOG.debug(msg)
-
     try:
         argument_name, is_arg_yin_element = syntax.yin_map[statement.keyword]
     except KeyError:
@@ -190,16 +173,6 @@ def _add_statement_argument(arg_name, arg_value, namespace, is_element,
 
 
 def _append_children(statement, yin_element):
-    if _is_member_of_grouping(statement) and "ref" in statement.arg:
-        uses = statement.i_uses[0]
-        LOG.debug("Member %r of grouping %r: %r",
-                  statement.arg, uses.arg, statement)
-        LOG.debug("Children: %r", getattr(uses, "i_children", []))
-        LOG.debug("substmts: %r", [(sub.keyword, sub.arg, sub)
-                                   for sub in statement.substmts])
-        LOG.debug("i_learef_ptr: %r", getattr(
-            statement, "i_leafref_ptr", None))
-
     for sub_statement in _iterate_non_data_sub_statements(statement):
         _make_yin_element_recursive(sub_statement, yin_element)
 
@@ -238,7 +211,8 @@ def _append_if_feature_elements_from_augment(augment_statement, yin_element):
 
 def _is_member_of_grouping(statement):
     return (_common.is_data_definition(statement.keyword) and
-            getattr(statement, 'i_uses', None) is not None)
+            hasattr(statement, 'i_uses') and
+            statement.i_uses is not None)
 
 
 def _append_if_feature_elements_from_uses(uses_statements, yin_element):
@@ -278,55 +252,28 @@ def _append_children_for_type(type_statement, yin_element):
                                     parent_elem=yin_element)
 
     data_node = type_statement.parent
-    if "ref" in data_node.arg:
-        LOG.debug("type stmt: %r", type_statement)
-        LOG.debug("data_node %r: %r", data_node.arg, data_node)
-        LOG.debug("i_uses: %r", getattr(data_node, "i_uses", None))
-        LOG.debug("__dict__: %r", getattr(data_node, "__dict__", {}))
-
-        with log_print():
-            data_node.pprint()
-
     if _has_leafref_pointer(data_node):
         referenced_leaf, _ = data_node.i_leafref_ptr
-
-        LOG.debug("Data node with leafref:")
-        LOG.debug("============================")
-
-        with log_print():
-            data_node.pprint()
-
-        LOG.debug("Referenced leaf:")
-        LOG.debug("============================")
-        with log_print():
-            referenced_leaf.pprint()
-
         referenced_type_statement = referenced_leaf.search_one('type')
         _make_yin_element_recursive(referenced_type_statement,
                                     parent_elem=yin_element)
 
-    elif "ref" in data_node.arg:
-        LOG.debug("Data node without leafref:")
-        LOG.debug("i_uses: %r", getattr(data_node, "i_uses", None))
-        LOG.debug("============================")
-        with log_print():
-            data_node.pprint()
-
 
 def _is_typedef(type_statement):
-    return getattr(type_statement, 'i_typedef', None) is not None
+    return (hasattr(type_statement, 'i_typedef') and
+            type_statement.i_typedef is not None)
 
 
 def _has_leafref_pointer(data_node):
-    return getattr(data_node, 'i_leafref_ptr', None) is not None
+    return (hasattr(data_node, 'i_leafref_ptr') and
+            data_node.i_leafref_ptr is not None)
 
 
 def _make_yin_element_recursive(statement, parent_elem):
     if hasattr(statement, 'i_extension'):
         _make_extension_element(statement, parent_elem)
     else:
-        _make_builtin_yin_element_recursive(
-            statement, parent_elem=parent_elem)
+        _make_builtin_yin_element_recursive(statement, parent_elem=parent_elem)
 
 
 def _make_extension_element(statement, parent_elem):
