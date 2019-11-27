@@ -174,6 +174,11 @@ def _add_statement_argument(arg_name, arg_value, namespace, is_element,
 
 def _append_children(statement, yin_element):
     for sub_statement in _iterate_non_data_sub_statements(statement):
+        if sub_statement.keyword in {"if-feature", "when"}:
+            if _is_augmenting(statement) or _is_member_of_grouping(statement):
+                # These are handled by the _append_inherited functions
+                continue
+
         _make_yin_element_recursive(sub_statement, yin_element)
 
     _append_inherited_if_feature_elements(statement, yin_element)
