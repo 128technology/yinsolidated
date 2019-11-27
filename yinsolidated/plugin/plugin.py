@@ -173,13 +173,7 @@ def _add_statement_argument(arg_name, arg_value, namespace, is_element,
 
 
 def _append_children(statement, yin_element):
-    for sub_statement in _iterate_non_data_sub_statements(statement):
-        if sub_statement.keyword in {"if-feature", "when"}:
-            if _is_augmenting(statement) or _is_member_of_grouping(statement):
-                # These are handled by the _append_inherited functions
-                continue
-
-        _make_yin_element_recursive(sub_statement, yin_element)
+    _append_non_data_sub_statements(statement, yin_element)
 
     _append_inherited_if_feature_elements(statement, yin_element)
     _append_inherited_when_elements(statement, yin_element)
@@ -192,14 +186,41 @@ def _append_children(statement, yin_element):
             _make_yin_element_recursive(data_definition, yin_element)
 
 
+def _append_non_data_sub_statements(statement, yin_element):
+    for sub_statement in _iterate_non_data_sub_statements(statement):
+        should_skip_if_feature = (
+            sub_statement.keyword == "if-feature" and (
+                _should_append_if_features(statement) or
+                _is_member_of_grouping(statement)
+            )
+        )
+
+        should_skip_when = (
+            sub_statement.keyword == "when" and (
+                _is_augmenting(statement) or
+                _is_member_of_grouping(statement)
+            )
+        )
+
+        if should_skip_if_feature or should_skip_when:
+            # This is handled by the _append_inherited functions
+            continue
+
+        _make_yin_element_recursive(sub_statement, yin_element)
+
+
 def _iterate_non_data_sub_statements(statement):
     for sub_statement in statement.substmts:
         if sub_statement.keyword not in _DATA_KEYWORDS:
             yield sub_statement
 
 
+def _should_append_if_features(statement):
+    return _is_augmenting(statement) and pyang_version >= '1.7.1'
+
+
 def _append_inherited_if_feature_elements(statement, yin_element):
-    if _is_augmenting(statement) and pyang_version >= '1.7.1':
+    if _should_append_if_features(statement):
         _append_if_feature_elements_from_augment(
             statement.i_augment,
             yin_element
