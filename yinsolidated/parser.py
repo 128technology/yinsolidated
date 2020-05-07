@@ -478,6 +478,7 @@ class TypeElement(YinElement):
 
         if base is not None:
             base_elem = self._find_identity(base)
+            yield base_elem
 
             for identity_elem in base_elem.iterate_derived_identities():
                 yield identity_elem
