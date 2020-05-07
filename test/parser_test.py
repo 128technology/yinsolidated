@@ -1003,9 +1003,10 @@ class TestTypeElement(object):
 
         identities = type_elem.get_identities()
 
-        assert len(identities) == 2
-        assert identities[0].name == 'derived-identity'
-        assert identities[1].name == 'nested-derived-identity'
+        assert len(identities) == 3
+        assert identities[0].name == 'base-identity'
+        assert identities[1].name == 'derived-identity'
+        assert identities[2].name == 'nested-derived-identity'
 
     def test_identities_base_in_different_namespace(self):
         module_elem = yinsolidated.fromstring("""
@@ -1041,8 +1042,9 @@ class TestTypeElement(object):
 
         identities = type_elem.get_identities()
 
-        assert len(identities) == 1
-        assert identities[0].name == 'another-derived-identity'
+        assert len(identities) == 2
+        assert identities[0].name == 'another-base-identity'
+        assert identities[1].name == 'another-derived-identity'
 
     def test_missing_identity(self):
         module_elem = yinsolidated.fromstring("""
