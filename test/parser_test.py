@@ -1707,7 +1707,7 @@ class TestWhenElement(object):
                 <when condition="../foo/bar = 'alpha' | /t:root/test = 'bravo'"/>
             </container>
             """
-        )  # nopep8
+        )
 
         when_element = container_elem.find("yin:when", namespaces=_NSMAP)
 

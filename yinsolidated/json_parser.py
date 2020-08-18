@@ -1,10 +1,9 @@
 # Copyright 2016 128 Technology, Inc.
 
 """
-Parses the YINsolidated model into an lxml.etree.ElementTree containing custom
-lxml.etree.Element subclasses for each type of YANG statement. These custom
-classes provide convenient methods and properties for accessing YANG-specific
-data without interacting with the XML directly.
+Parses the YINsolidated model into an JSON document containing custom dict subclasses
+for each type of YANG statement. These custom classes provide convenientmethods and
+properties for accessing YANG-specific data without interacting with the XML directly.
 """
 
 # TODO: remove after resolving issue #7
@@ -12,35 +11,40 @@ data without interacting with the XML directly.
 
 from __future__ import unicode_literals
 
+import json
 import re
 
 import xpathparser
-from lxml import etree
 
 from yinsolidated import _common, _error
 
 
-_NSMAP = {"yin": _common.YIN_NS}
-
-_DATA_NODE_PREDICATE = " or ".join(
-    "self::yin:{}".format(keyword) for keyword in _common.DATA_NODE_KEYWORDS
-)
-
-
 class Error(Exception):
+    """Base exception."""
 
-    """Base exception"""
+
+def parse(contents):
+    """Parse the YINsolidated model from JSON or a string."""
+    contents = json.loads(contents) if isinstance(contents, str) else contents
+    return _parse(contents)
 
 
-class _ConsolidatedModelLookup(etree.CustomElementClassLookup):
-    def lookup(self, _node_type, _document, namespace, name):
-        return _get_yin_element_class(name) if namespace == _common.YIN_NS else None
+def _parse(raw, parent=None):
+    if not isinstance(raw, dict):
+        raise Error(
+            "expected dict, got {type}: {value}".format(type=type(raw), value=raw)
+        )
+    cls = _get_yin_element_class(raw.get("keyword"))
+    children = raw.pop("children", [])
+    parsed = cls(raw, parent=parent)
+    for child in children:
+        _parse(child, parent=parsed)
+    return parsed
 
 
 def _get_yin_element_class(name):
     yin_element_class_map = {
         "module": ModuleElement,
-        "rpc": RpcElement,
         "container": ContainerElement,
         "leaf": LeafElement,
         "leaf-list": LeafListElement,
@@ -66,49 +70,61 @@ def _get_yin_element_class(name):
     return element_class
 
 
-# Custom XML parser to use for the YINsolidated model
-CONSOLIDATED_MODEL_PARSER = etree.XMLParser()
-CONSOLIDATED_MODEL_PARSER.set_element_class_lookup(_ConsolidatedModelLookup())
+class YinElement(dict):
+    def __init__(self, data, parent=None):
+        super(YinElement, self).__init__(data)
+        self._parent = parent
 
+        if parent:
+            parent.setdefault("children", []).append(self)
 
-def parse(path):
-    """Parses the YINsolidated model file at the given *path*"""
-    return etree.parse(path, parser=CONSOLIDATED_MODEL_PARSER)
+    @property
+    def parent(self):
+        return self._parent
 
-
-def fromstring(xml_string):
-    """Parses the given string as the YINsolidated model"""
-    return etree.fromstring(xml_string, parser=CONSOLIDATED_MODEL_PARSER)
-
-
-class YinElement(etree.ElementBase):
     @property
     def keyword(self):
-        return etree.QName(self.tag).localname
+        return self.get("keyword")
+
+    @property
+    def name(self):
+        return self.get("name")
+
+    @property
+    def nsmap(self):
+        return self.get("nsmap")
+
+    @property
+    def prefix(self):
+        return self.get("prefix")
 
     @property
     def namespace(self):
         return self.nsmap[self.prefix]
 
     @property
+    def children(self):
+        return self.get("children") or []
+
+    @property
     def module_name(self):
-        ancestor_prefixes = self.xpath(
-            "ancestor-or-self::yin:*[@module-name]/@module-name", namespaces=_NSMAP
-        )
-        try:
-            return ancestor_prefixes[-1]
-        except IndexError:
-            raise _error.MissingModuleNameError(self)
+        for parent in self.iter_parents(include_self=True):
+            try:
+                return parent["module-name"]
+            except KeyError:
+                pass
+
+        raise _error.MissingModuleNameError(self)
 
     @property
     def prefix(self):
-        ancestor_prefixes = self.xpath(
-            "ancestor-or-self::yin:*[@module-prefix]/@module-prefix", namespaces=_NSMAP
-        )
-        try:
-            return ancestor_prefixes[-1]
-        except IndexError:
-            raise _error.MissingPrefixError(self)
+        for parent in self.iter_parents(include_self=True):
+            try:
+                return parent["module-prefix"]
+            except KeyError:
+                pass
+
+        raise _error.MissingPrefixError(self)
 
     @property
     def namespace_map(self):
@@ -120,7 +136,8 @@ class YinElement(etree.ElementBase):
 
     @property
     def description(self):
-        description = self.findtext("yin:description/yin:text", namespaces=_NSMAP)
+        node = self.find("description")
+        description = node["text"] if node is not None else None
 
         if description is not None:
             description = _change_all_whitespace_to_spaces(description)
@@ -128,24 +145,54 @@ class YinElement(etree.ElementBase):
         return description
 
     def iterate_data_definitions(self):
-        for child in self:
-            if _common.is_data_definition(etree.QName(child.tag).localname):
-                yield child
-
-    def iterate_rpcs(self):
-        for child in self:
-            if etree.QName(child.tag).localname == "rpc":
+        for child in self.children:
+            if _common.is_data_definition(child.keyword):
                 yield child
 
     def get_ancestor_data_nodes(self):
-        return self.xpath(
-            "ancestor::*[{}]".format(_DATA_NODE_PREDICATE), namespaces=_NSMAP
-        )
+        return [
+            parent
+            for parent in reversed(list(self.iter_parents()))
+            if _common.is_data_node(parent.keyword)
+        ]
+
+    def iter_parents(self, include_self=False):
+        current = self if include_self else self.parent
+
+        while current is not None:
+            yield current
+            current = current.parent
 
     def get_ancestor_or_self_data_nodes(self):
-        return self.xpath(
-            "ancestor-or-self::*[{}]".format(_DATA_NODE_PREDICATE), namespaces=_NSMAP
-        )
+        return [
+            node
+            for node in reversed(list(self.iter_parents(include_self=True)))
+            if _common.is_data_node(node.keyword)
+        ]
+
+    # the following functions mimic some of the common etree.Element functions (minus
+    # namespaces or namespace prefixes)
+
+    def find(self, keyword):
+        for child in self.children:
+            if child.keyword == keyword:
+                return child
+        return None
+
+    def iterfind(self, keyword):
+        return (child for child in self.children if child.keyword == keyword)
+
+    def findall(self, keyword):
+        return list(self.iterfind(keyword))
+
+    def getparent(self):
+        return self.parent
+
+    def getroottree(self):
+        parent = self
+        while parent.parent is not None:
+            parent = parent.parent
+        return parent
 
 
 def _change_all_whitespace_to_spaces(string):
@@ -153,42 +200,28 @@ def _change_all_whitespace_to_spaces(string):
 
 
 class ModuleElement(YinElement):
-    @property
-    def name(self):
-        return self.get("name")
+    pass
 
 
 class DefinitionElement(YinElement):
-    @property
-    def name(self):
-        return self.get("name")
-
     @property
     def status(self):
         return _get_status(self)
 
 
-class RpcElement(DefinitionElement):
-    @property
-    def input(self):
-        return self.find("yin:input", namespaces=_NSMAP)
-
-    @property
-    def output(self):
-        return self.find("yin:output", namespaces=_NSMAP)
-
-
 class DataDefinitionElement(DefinitionElement):
     @property
     def is_config(self):
-        return self.xpath(
-            'count(ancestor-or-self::yin:*[yin:config/@value = "false"]) = 0',
-            namespaces=_NSMAP,
-        )
+        for node in self.iter_parents(include_self=True):
+            config_node = node.find("config")
+            if config_node and config_node["value"] == "false":
+                return False
+
+        return True
 
     @property
     def when_elements(self):
-        return self.findall("yin:when", namespaces=_NSMAP)
+        return self.findall("when")
 
 
 class ContainerElement(DataDefinitionElement):
@@ -200,8 +233,8 @@ class ContainerElement(DataDefinitionElement):
 def _get_subelem_attribute_or_default(
     data_def_element, subelem_name, attr_name, default=None
 ):
-    element = data_def_element.find("yin:{}".format(subelem_name), namespaces=_NSMAP)
-    return element.get(attr_name) if element is not None else default
+    sub_elem = data_def_element.find(subelem_name)
+    return sub_elem.get(attr_name, default) if sub_elem is not None else default
 
 
 class LeafElement(DataDefinitionElement):
@@ -231,7 +264,7 @@ class LeafElement(DataDefinitionElement):
 
 
 def _get_type(element):
-    return element.find("yin:type", namespaces=_NSMAP)
+    return element.find("type")
 
 
 def _get_status(element):
@@ -302,7 +335,7 @@ class ListElement(DataDefinitionElement):
     def key_ids(self):
         keys = []
 
-        key_string = self.xpath("string(yin:key/@value)", namespaces=_NSMAP)
+        key_string = _get_subelem_attribute_or_default(self, "key", "value", default="")
         for key_identifier in key_string.split():
             if ":" in key_identifier:
                 prefix, name = key_identifier.split(":")
@@ -341,10 +374,6 @@ class AnyxmlElement(DataDefinitionElement):
 
 class TypeElement(YinElement):
     @property
-    def name(self):
-        return self.get("name")
-
-    @property
     def unprefixed_name(self):
         return self.name.split(":")[-1]
 
@@ -362,15 +391,15 @@ class TypeElement(YinElement):
 
     @property
     def typedef(self):
-        return self.find("yin:typedef", namespaces=_NSMAP)
+        return self.find("typedef")
 
     @property
     def bits(self):
-        return self.base_type.findall("yin:bit", namespaces=_NSMAP)
+        return self.base_type.findall("bit")
 
     @property
     def enums(self):
-        return self.base_type.findall("yin:enum", namespaces=_NSMAP)
+        return self.base_type.findall("enum")
 
     @property
     def fraction_digits(self):
@@ -393,7 +422,7 @@ class TypeElement(YinElement):
 
     @property
     def patterns(self):
-        return self.base_type.findall("yin:pattern", namespaces=_NSMAP)
+        return self.base_type.findall("pattern")
 
     @property
     def range(self):
@@ -407,20 +436,12 @@ class TypeElement(YinElement):
     @property
     def referenced_type(self):
         base_type_elem = self.base_type
-        return (
-            base_type_elem.find("yin:type", namespaces=_NSMAP)
-            if base_type_elem.name == "leafref"
-            else None
-        )
+        return base_type_elem.find("type") if base_type_elem.name == "leafref" else None
 
     @property
     def subtypes(self):
         base_type_elem = self.base_type
-        return (
-            base_type_elem.findall("yin:type", namespaces=_NSMAP)
-            if base_type_elem.name == "union"
-            else []
-        )
+        return base_type_elem.findall("type") if base_type_elem.name == "union" else []
 
     @property
     def base_identity(self):
@@ -446,7 +467,7 @@ class TypeElement(YinElement):
             identity, data_node.namespace_map, data_node.namespace
         )
 
-        for identity_elem in root.iterfind("yin:identity", namespaces=_NSMAP):
+        for identity_elem in root.iterfind("identity"):
             identifier = (identity_elem.name, identity_elem.namespace)
             if identifier == identifier_to_find:
                 return identity_elem
@@ -474,10 +495,6 @@ class MissingIdentityError(Error):
 
 class TypedefElement(YinElement):
     @property
-    def name(self):
-        return self.get("name")
-
-    @property
     def type(self):
         return _get_type(self)
 
@@ -492,20 +509,12 @@ class TypedefElement(YinElement):
 
 class BitElement(YinElement):
     @property
-    def name(self):
-        return self.get("name")
-
-    @property
     def position(self):
         position = _get_subelem_attribute_or_default(self, "position", "value")
         return int(position) if position is not None else None
 
 
 class EnumElement(YinElement):
-    @property
-    def name(self):
-        return self.get("name")
-
     @property
     def value(self):
         value = _get_subelem_attribute_or_default(self, "value", "value")
@@ -519,7 +528,7 @@ class PatternElement(YinElement):
 
     @property
     def error_message(self):
-        return self.findtext("yin:error-message/yin:value", namespaces=_NSMAP)
+        return _get_subelem_attribute_or_default(self, "error-message", "value")
 
 
 class WhenElement(YinElement):
@@ -553,10 +562,6 @@ def _ensure_xpath_names_prefixed(expression, prefix):
 
 class IdentityElement(YinElement):
     @property
-    def name(self):
-        return self.get("name")
-
-    @property
     def base(self):
         base = _get_subelem_attribute_or_default(self, "base", "name")
 
@@ -584,6 +589,6 @@ class IdentityElement(YinElement):
 
     def iterate_directly_derived_identities(self):
         root = self.getroottree()
-        for identity_elem in root.iterfind("yin:identity", namespaces=_NSMAP):
+        for identity_elem in root.iterfind("identity"):
             if identity_elem.base == (self.name, self.namespace):
                 yield identity_elem

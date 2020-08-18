@@ -136,7 +136,7 @@ class TestModule(object):
             </description>
             """.format(
             **NSMAP
-        )  # nopep8
+        )
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -178,7 +178,7 @@ class TestModule(object):
             </extension>
             """.format(
             **NSMAP
-        )  # nopep8
+        )
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -208,7 +208,7 @@ class TestModule(object):
             <test:simple-extension-attribute-arg xmlns:test="{test}">test-value</test:simple-extension-attribute-arg>
             """.format(
             **NSMAP
-        )  # nopep8
+        )
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -223,7 +223,7 @@ class TestModule(object):
             <test:simple-extension-element-arg xmlns:test="{test}">test-value</test:simple-extension-element-arg>
             """.format(
             **NSMAP
-        )  # nopep8
+        )
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -267,7 +267,7 @@ class TestModule(object):
             </test:complex-extension-attribute-arg>
             """.format(
             **NSMAP
-        )  # nopep8
+        )
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -288,7 +288,7 @@ class TestModule(object):
             </test:complex-extension-element-arg>
             """.format(
             **NSMAP
-        )  # nopep8
+        )
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -684,7 +684,7 @@ class TestUses(object):
             </leaf>
             """.format(
             **NSMAP
-        )  # nopep8
+        )
 
         assert_xml_equal(expected_xml, actual_xml)
 
@@ -1027,7 +1027,7 @@ class TestAugment(object):
             </container>
             """.format(
             **NSMAP
-        )  # nopep8
+        )
 
         assert_xml_equal(expected_xml, actual_xml)
 

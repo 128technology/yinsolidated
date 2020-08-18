@@ -18,10 +18,10 @@ module test-module {
             "Initial revision";
     }
 
-    // TODO(athompson): bug in pyang? this should be allowed
+    // TODO: bug in pyang? this should be allowed
     // reference "RFC 6020";
 
-    // TODO(athompson): add deviation statement
+    // TODO: add deviation statement
 
 
     /* Extensions */

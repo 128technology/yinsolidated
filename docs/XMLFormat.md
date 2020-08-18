@@ -6,12 +6,10 @@ for each YANG file, and the goal of the the **YINsolidated** model is to
 generate a single XML document. Thus, the following additional transformations
 are performed:
 
-
 ## Submodules
 
 All data definitions within a `submodule` are included as child elements of the
 main module element.
-
 
 ## Augments
 
@@ -64,7 +62,6 @@ Becomes:
 </container>
 ```
 
-
 ## Uses
 
 * All `uses` statements are resolved such that all data definitions sub-
@@ -113,7 +110,6 @@ Becomes:
     </leaf>
 </container>
 ```
-
 
 ## Typedefs
 
@@ -164,7 +160,6 @@ Becomes:
 </leaf>
 ```
 
-
 ## Leafrefs
 
 Any `leafref` type is resolved such that the `type` statement of the referenced
@@ -200,12 +195,12 @@ Becomes:
 </leaf>
 ```
 
-
 ## Extensions
 
 `extension` statements can be represented in the **YINsolidated** model in two different ways.
 
 ### Simple Extensions
+
 This is the default format, which provides a simplified representation over the traditional YIN format. Each `extension` statement is simply added as a child element of its parent statement, and its argument is set as the text of that element.
 
 E.g. this YANG snippet:
@@ -240,6 +235,7 @@ Becomes:
 ```
 
 ### Complex (YIN-formatted) Extensions
+
 The simple format does not support sub-statements on extensions. To support this use case, the traditional YIN format can be enabled by adding the tag `#yinformat` to the extension description.
 
 In this format, each `extension` statement is added as a child element of its parent statement, and its argument can be set either as an attribute on that element or as a child element.
@@ -281,7 +277,6 @@ Becomes:
 <foo:attribute-ext>
 ```
 
-
 ## RPC Input and Output
 
 Both an `input` child element and an `output` child element are added to each
@@ -302,7 +297,6 @@ Becomes:
     <output/>
 </rpc>
 ```
-
 
 ## Cases
 
@@ -335,13 +329,13 @@ Becomes:
 </choice>
 ```
 
-
 ## Omitting Resolved Statements
 
 Any statements that are resolved by the above rules become useless in the
 **YINsolidated** model because the information they convey is represented in-
 place. Thus, the following statements are **NOT** added as elements in the
 **YINsolidated** model:
+
 * `augment`
 * `belongs-to`
 * `grouping`
@@ -350,7 +344,6 @@ place. Thus, the following statements are **NOT** added as elements in the
 * `refine`
 * `submodule`
 * `uses`
-
 
 ## Namespaces and Prefixes
 
@@ -417,7 +410,6 @@ Become:
     </container>
 </module>
 ```
-
 
 ## Identities
 

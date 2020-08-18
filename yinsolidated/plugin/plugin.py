@@ -13,8 +13,11 @@ NOTE: the main module MUST be passed as the first positional argument
 
 from __future__ import unicode_literals
 
+import json
+import optparse
+
 from lxml import etree
-from pyang import plugin, statements, syntax, yin_parser, __version__ as pyang_version
+from pyang import __version__ as pyang_version, plugin, statements, syntax, yin_parser
 
 from yinsolidated import _common
 
@@ -41,36 +44,57 @@ class ConsolidatedModelPlugin(plugin.PyangPlugin):
     # Disable this check because pyang's argument names are ugly
     # pylint: disable=arguments-differ
 
+    def add_opts(self, optparser):
+        """Override."""
+        optparser.add_options(
+            [
+                optparse.make_option(
+                    "--yinsolidated-output-format",
+                    dest="yinsoldated_output_format",
+                    choices=["xml", "json"],
+                    default="xml",
+                    help="The format of the output model",
+                ),
+            ]
+        )
+
     def add_output_format(self, formats):
+        """Override."""
         self.multiple_modules = True
         formats["yinsolidated"] = self
 
-    def emit(self, _, modules, output):
-        model = _build_consolidated_model(modules)
+    def emit(self, ctx, modules, output):
+        """Override."""
+        fmt = ctx.opts.yinsoldated_output_format
+        model = _build_consolidated_model(modules, fmt)
 
-        document = etree.tostring(
-            model, xml_declaration=True, pretty_print=True
-        ).decode("UTF-8")
+        document = (
+            etree.tostring(model, xml_declaration=True, pretty_print=True).decode(
+                "UTF-8"
+            )
+            if fmt == "xml"
+            else json.dumps(model, indent=2)
+        )
 
         output.write(document)
 
 
-def _build_consolidated_model(modules):
+def _build_consolidated_model(modules, fmt):
     main_module = modules[0]
-    module_element = _make_builtin_yin_element_recursive(main_module)
+    module_element = _make_builtin_yin_element_recursive(main_module, fmt=fmt)
 
-    _add_external_identities(modules[1:], module_element)
+    _add_external_identities(modules[1:], module_element, fmt)
 
     return module_element
 
 
-def _make_builtin_yin_element_recursive(statement, parent_elem=None):
-    yin_element = _make_builtin_yin_element(statement, parent_elem)
-    _append_children(statement, yin_element)
+def _make_builtin_yin_element_recursive(statement, parent_elem=None, fmt="xml"):
+    yin_element = _make_builtin_yin_element(statement, parent_elem, fmt)
+    _append_children(statement, yin_element, fmt)
     return yin_element
 
 
-def _make_builtin_yin_element(statement, parent_elem):
+def _make_builtin_yin_element(statement, parent_elem, fmt):
     try:
         argument_name, is_arg_yin_element = syntax.yin_map[statement.keyword]
     except KeyError:
@@ -89,13 +113,20 @@ def _make_builtin_yin_element(statement, parent_elem):
         module_prefix = statement.i_module.i_prefix
         nsmap.update(_get_module_nsmap(statement.i_module))
 
-    tag = etree.QName(yin_parser.yin_namespace, statement.keyword)
-
-    yin_element = (
-        etree.Element(tag, nsmap=nsmap)
-        if parent_elem is None
-        else etree.SubElement(parent_elem, tag, nsmap=nsmap)
-    )
+    if fmt == "xml":
+        tag = etree.QName(yin_parser.yin_namespace, statement.keyword)
+        yin_element = (
+            etree.Element(tag, nsmap=nsmap)
+            if parent_elem is None
+            else etree.SubElement(parent_elem, tag, nsmap=nsmap)
+        )
+    else:
+        yin_element = _JsonElement(
+            keyword=statement.keyword,
+            namespace=yin_parser.yin_namespace,
+            parent_elem=parent_elem,
+            nsmap=nsmap,
+        )
 
     _add_statement_argument(
         argument_name,
@@ -103,6 +134,7 @@ def _make_builtin_yin_element(statement, parent_elem):
         yin_parser.yin_namespace,
         is_arg_yin_element,
         yin_element,
+        fmt,
     )
 
     if module_prefix is not None:
@@ -112,6 +144,35 @@ def _make_builtin_yin_element(statement, parent_elem):
         yin_element.set("module-name", module_name)
 
     return yin_element
+
+
+class _JsonElement(dict):
+    def __init__(self, *args, **kwargs):
+        parent_elem = kwargs.pop("parent_elem", None)
+        super(_JsonElement, self).__init__(*args, **kwargs)
+
+        if parent_elem is not None:
+            parent_elem["children"].append(self)
+
+    @property
+    def text(self):
+        """Compatibility shim to mimic an etree.Element."""
+        return self["text"]
+
+    @text.setter
+    def text(self, value):
+        """Compatibility shim to mimic an etree.Element."""
+        self["text"] = value
+
+    def __missing__(self, key):
+        # lazily create the children sub-list.
+        if key == "children":
+            return self.setdefault(key, [])
+        raise KeyError(key)
+
+    def set(self, key, value):
+        """Compatibility shim to mimic an etree.Element."""
+        self[key] = value
 
 
 class InvalidKeywordError(Exception):
@@ -150,29 +211,36 @@ def _get_module_nsmap(module_statement):
     return nsmap
 
 
-def _add_statement_argument(arg_name, arg_value, namespace, is_element, yin_element):
-    if arg_name is not None:
-        if is_element:
+def _add_statement_argument(
+    arg_name, arg_value, namespace, is_element, yin_element, fmt
+):
+    if arg_name is None:
+        return
+
+    if is_element:
+        if fmt == "xml":
             tag = etree.QName(namespace, arg_name)
             arg_element = etree.SubElement(yin_element, tag)
             arg_element.text = arg_value
         else:
-            yin_element.set(arg_name, arg_value)
+            yin_element[arg_name] = arg_value
+    else:
+        yin_element.set(arg_name, arg_value)
 
 
-def _append_children(statement, yin_element):
+def _append_children(statement, yin_element, fmt):
     for sub_statement in _iterate_non_data_sub_statements(statement):
-        _make_yin_element_recursive(sub_statement, yin_element)
+        _make_yin_element_recursive(sub_statement, yin_element, fmt)
 
-    _append_inherited_if_feature_elements(statement, yin_element)
-    _append_inherited_when_elements(statement, yin_element)
+    _append_inherited_if_feature_elements(statement, yin_element, fmt)
+    _append_inherited_when_elements(statement, yin_element, fmt)
 
     if statement.keyword == "type":
-        _append_children_for_type(statement, yin_element)
+        _append_children_for_type(statement, yin_element, fmt)
 
     if hasattr(statement, "i_children"):
         for data_definition in statement.i_children:
-            _make_yin_element_recursive(data_definition, yin_element)
+            _make_yin_element_recursive(data_definition, yin_element, fmt)
 
 
 def _iterate_non_data_sub_statements(statement):
@@ -181,17 +249,17 @@ def _iterate_non_data_sub_statements(statement):
             yield sub_statement
 
 
-def _append_inherited_if_feature_elements(statement, yin_element):
+def _append_inherited_if_feature_elements(statement, yin_element, fmt):
     if _is_augmenting(statement) and pyang_version >= "1.7.1":
-        _append_if_feature_elements_from_augment(statement.i_augment, yin_element)
+        _append_if_feature_elements_from_augment(statement.i_augment, yin_element, fmt)
 
     if _is_member_of_grouping(statement):
-        _append_if_feature_elements_from_uses(statement.i_uses, yin_element)
+        _append_if_feature_elements_from_uses(statement.i_uses, yin_element, fmt)
 
 
-def _append_if_feature_elements_from_augment(augment_statement, yin_element):
+def _append_if_feature_elements_from_augment(augment_statement, yin_element, fmt):
     for if_feature_statement in augment_statement.search("if-feature"):
-        _make_builtin_yin_element(if_feature_statement, yin_element)
+        _make_builtin_yin_element(if_feature_statement, yin_element, fmt)
 
 
 def _is_member_of_grouping(statement):
@@ -202,46 +270,50 @@ def _is_member_of_grouping(statement):
     )
 
 
-def _append_if_feature_elements_from_uses(uses_statements, yin_element):
+def _append_if_feature_elements_from_uses(uses_statements, yin_element, fmt):
     for uses_statement in uses_statements:
         for if_feature_statement in uses_statement.search("if-feature"):
-            _make_builtin_yin_element(if_feature_statement, yin_element)
+            _make_builtin_yin_element(if_feature_statement, yin_element, fmt)
 
 
-def _append_inherited_when_elements(statement, yin_element):
+def _append_inherited_when_elements(statement, yin_element, fmt):
     if _is_augmenting(statement):
-        _append_when_elements_from_augment(statement.i_augment, yin_element)
+        _append_when_elements_from_augment(statement.i_augment, yin_element, fmt)
 
     if _is_member_of_grouping(statement):
-        _append_when_elements_from_uses(statement.i_uses, yin_element)
+        _append_when_elements_from_uses(statement.i_uses, yin_element, fmt)
 
 
-def _append_when_elements_from_augment(augment_statement, yin_element):
+def _append_when_elements_from_augment(augment_statement, yin_element, fmt):
     when_statements = augment_statement.search("when")
-    _append_when_elements_with_parent_context(when_statements, yin_element)
+    _append_when_elements_with_parent_context(when_statements, yin_element, fmt)
 
 
-def _append_when_elements_with_parent_context(when_statements, yin_element):
+def _append_when_elements_with_parent_context(when_statements, yin_element, fmt):
     for when_statement in when_statements:
-        when_element = _make_builtin_yin_element(when_statement, yin_element)
+        when_element = _make_builtin_yin_element(when_statement, yin_element, fmt)
         when_element.set("context-node", "parent")
 
 
-def _append_when_elements_from_uses(uses_statements, yin_element):
+def _append_when_elements_from_uses(uses_statements, yin_element, fmt):
     for uses_statement in uses_statements:
         when_statements = uses_statement.search("when")
-        _append_when_elements_with_parent_context(when_statements, yin_element)
+        _append_when_elements_with_parent_context(when_statements, yin_element, fmt)
 
 
-def _append_children_for_type(type_statement, yin_element):
+def _append_children_for_type(type_statement, yin_element, fmt):
     if _is_typedef(type_statement):
-        _make_yin_element_recursive(type_statement.i_typedef, parent_elem=yin_element)
+        _make_yin_element_recursive(
+            type_statement.i_typedef, parent_elem=yin_element, fmt=fmt
+        )
 
     data_node = type_statement.parent
     if _has_leafref_pointer(data_node):
         referenced_leaf, _ = data_node.i_leafref_ptr
         referenced_type_statement = referenced_leaf.search_one("type")
-        _make_yin_element_recursive(referenced_type_statement, parent_elem=yin_element)
+        _make_yin_element_recursive(
+            referenced_type_statement, parent_elem=yin_element, fmt=fmt
+        )
 
 
 def _is_typedef(type_statement):
@@ -252,14 +324,14 @@ def _has_leafref_pointer(data_node):
     return hasattr(data_node, "i_leafref_ptr") and data_node.i_leafref_ptr is not None
 
 
-def _make_yin_element_recursive(statement, parent_elem):
+def _make_yin_element_recursive(statement, parent_elem, fmt):
     if hasattr(statement, "i_extension"):
-        _make_extension_element(statement, parent_elem)
+        _make_extension_element(statement, parent_elem, fmt)
     else:
-        _make_builtin_yin_element_recursive(statement, parent_elem=parent_elem)
+        _make_builtin_yin_element_recursive(statement, parent_elem=parent_elem, fmt=fmt)
 
 
-def _make_extension_element(statement, parent_elem):
+def _make_extension_element(statement, parent_elem, fmt):
     extension_module = statement.i_extension.i_module
     namespace = extension_module.search_one("namespace").arg
 
@@ -267,7 +339,12 @@ def _make_extension_element(statement, parent_elem):
     tag = etree.QName(namespace, keyword)
     nsmap = {prefix: namespace}
 
-    extension_element = etree.SubElement(parent_elem, tag, nsmap=nsmap)
+    if fmt == "xml":
+        extension_element = etree.SubElement(parent_elem, tag, nsmap=nsmap)
+    else:
+        extension_element = _JsonElement(
+            keyword=keyword, namespace=namespace, nsmap=nsmap, parent_elem=parent_elem,
+        )
 
     if _is_complex_extension(statement.i_extension):
         argument_name, is_arg_yin_element = _get_exension_argument_details(
@@ -279,8 +356,9 @@ def _make_extension_element(statement, parent_elem):
             namespace,
             is_arg_yin_element,
             extension_element,
+            fmt,
         )
-        _append_children(statement, extension_element)
+        _append_children(statement, extension_element, fmt)
     else:
         extension_element.text = statement.arg
 
@@ -307,7 +385,7 @@ def _get_exension_argument_details(extension_statement):
     return argument_name, is_arg_yin_element
 
 
-def _add_external_identities(augmenting_modules, module_element):
+def _add_external_identities(augmenting_modules, module_element, fmt):
     for module in augmenting_modules:
         for identity in module.i_identities.values():
-            _make_builtin_yin_element_recursive(identity, module_element)
+            _make_builtin_yin_element_recursive(identity, module_element, fmt)
