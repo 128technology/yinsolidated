@@ -1,4 +1,4 @@
-# Copyright 2016 128 Technology, Inc.
+# Copyright 2020 128 Technology, Inc.
 
 """
 Parses the YINsolidated model into an JSON document containing custom dict subclasses

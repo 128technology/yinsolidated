@@ -58,7 +58,7 @@ $ pyang --plugindir $PLUGINDIR -f yinsolidated -o yinsolidatedModel.xml main-mod
 
 ## Parsing a YINsolidated model
 
-### From a file
+### From a XML file
 
 ```python
 import yinsolidated
@@ -66,7 +66,7 @@ import yinsolidated
 model_tree = yinsolidated.parse('yinsolidatedModel.xml')
 ```
 
-### From a string
+### From a XML string
 
 ```python
 import yinsolidated
@@ -74,18 +74,19 @@ import yinsolidated
 with open('yinsolidatedModel.xml') as model_file:
     model_string = model_file.read()
 
-model_tree_from_xml = yinsolidated.fromstring(model_string)
+model_tree = yinsolidated.fromstring(model_string)
 ```
 
-### From JSON
+### From a JSON file
 
 ```python
 import yinsolidated
 
-model_tree = yinsolidated.parse_json(
-    # generated using --yinsolidated-output-format=json
-    'yinsolidatedModel.json'
-)
+# generated using --yinsolidated-output-format=json
+with open('yinsolidatedModel.json') as model_file:
+    contents = model_file.read()
+
+model_tree = yinsolidated.parse_json(contents)
 ```
 
 ## Documentation

@@ -1,9 +1,7 @@
-###############################################################################
-# Copyright (c) 2016-2017 128 Technology, Inc.
-# All rights reserved.
-###############################################################################
+# Copyright 2016 128 Technology, Inc.
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
+
 
 # Read in the __version__ attribute without importing the package
 with open("yinsolidated/_version.py") as version_file:
