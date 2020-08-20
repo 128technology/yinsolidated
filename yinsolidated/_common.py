@@ -2,25 +2,14 @@
 
 """Shared constants and utilities"""
 
-YIN_NS = 'urn:ietf:params:xml:ns:yang:yin:1'
+YIN_NS = "urn:ietf:params:xml:ns:yang:yin:1"
 
 
 # [RFC 6020 Section 3]
 
-DATA_NODE_KEYWORDS = [
-    'container',
-    'leaf',
-    'leaf-list',
-    'list',
-    'anyxml'
-]
+DATA_NODE_KEYWORDS = ["container", "leaf", "leaf-list", "list", "anyxml"]
 
-DATA_DEFINITION_KEYWORDS = DATA_NODE_KEYWORDS + [
-    'choice',
-    'case',
-    'augment',
-    'uses'
-]
+DATA_DEFINITION_KEYWORDS = DATA_NODE_KEYWORDS + ["choice", "case", "augment", "uses"]
 
 
 def is_data_node(keyword):
