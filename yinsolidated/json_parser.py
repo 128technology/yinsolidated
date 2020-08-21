@@ -165,20 +165,32 @@ class YinElement(dict):
             if _common.is_data_node(node.keyword)
         ]
 
-    # the following functions mimic some of the common etree.Element functions (minus
-    # namespaces or namespace prefixes)
+    # the following functions mimic some of the common etree.Element functions
 
-    def find(self, keyword):
+    def find(self, keyword, namespace=None):
         for child in self.children:
-            if child.keyword == keyword:
+            if child._is_match(keyword, namespace):  # pylint: disable=protected-access
                 return child
         return None
 
-    def iterfind(self, keyword):
-        return (child for child in self.children if child.keyword == keyword)
+    def _is_match(self, keyword, namespace):
+        if self.keyword != keyword:
+            return False
+        return namespace is None or namespace == self.namespace
 
-    def findall(self, keyword):
-        return list(self.iterfind(keyword))
+    def iterfind(self, keyword, namespace=None, recursive=False):
+        for child in self.children:
+            if child._is_match(keyword, namespace):  # pylint: disable=protected-access
+                yield child
+
+            if recursive:
+                for match in child.iterfind(
+                    keyword, namespace=namespace, recursive=True
+                ):
+                    yield match
+
+    def findall(self, keyword, namespace=None, recursive=False):
+        return list(self.iterfind(keyword, namespace=namespace,recursive=recursive))
 
     def getparent(self):
         return self.parent

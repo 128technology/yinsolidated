@@ -4,6 +4,8 @@
 
 from __future__ import unicode_literals
 
+import types
+
 import pytest
 
 import yinsolidated
@@ -184,6 +186,7 @@ def ancestor_data_node_model():
         {
             "keyword": "module",
             "module-prefix": "t",
+            "nsmap": {"t": "test:ns"},
             "children": [
                 {
                     "keyword": "container",
@@ -222,7 +225,11 @@ def ancestor_data_node_model():
                                                         {
                                                             "keyword": "type",
                                                             "name": "string",
-                                                        }
+                                                        },
+                                                        {
+                                                            "keyword": "container",
+                                                            "name": "nested-container",
+                                                        },
                                                     ],
                                                 }
                                             ],
@@ -232,7 +239,14 @@ def ancestor_data_node_model():
                             ],
                         }
                     ],
-                }
+                },
+                {"keyword": "list", "name": "sibling-list",},
+                {
+                    "keyword": "container",
+                    "module-prefix": "o",
+                    "nsmap": {"o": "other:ns"},
+                    "name": "sibling-container",
+                },
             ],
         }
     )
@@ -272,6 +286,68 @@ class TestGetAncestorOrSelfDataNodes(object):
         assert data_node_ancestors[0].keyword == "container"
         assert data_node_ancestors[1].keyword == "list"
         assert data_node_ancestors[2].keyword == "leaf"
+
+
+class TestFind(object):
+    def test_find(self, ancestor_data_node_model):
+        assert ancestor_data_node_model.find("container").name == "test-container"
+
+    def test_find_failure(self, ancestor_data_node_model):
+        assert ancestor_data_node_model.find("leaf") is None
+
+    def test_find_with_namespace(self, ancestor_data_node_model):
+        assert (
+            ancestor_data_node_model.find("container", namespace="test:ns").name
+            == "test-container"
+        )
+
+    def test_find_with_namespace_failure(self, ancestor_data_node_model):
+        assert ancestor_data_node_model.find("container", namespace="bad:ns") is None
+
+    @pytest.mark.parametrize(
+        "keyword, namespace, recursive, expected_count",
+        [
+            pytest.param("container", None, False, 2, id="without_namespace"),
+            pytest.param("container", "other:ns", False, 1, id="with_namespace"),
+            pytest.param("container", None, True, 3, id="recursive_without_namespac"),
+            pytest.param(
+                "container", "test:ns", True, 2, id="recursive_with_namespace"
+            ),
+            pytest.param("leaf", None, False, 0, id="missing"),
+            pytest.param("bad", None, True, 0, id="recursive_missing"),
+        ],
+    )
+    def test_iterfind(
+        self, ancestor_data_node_model, keyword, namespace, recursive, expected_count
+    ):
+        results = ancestor_data_node_model.iterfind(
+            keyword, namespace=namespace, recursive=recursive
+        )
+
+        assert isinstance(results, types.GeneratorType)
+        assert len(list(results)) == expected_count
+
+    @pytest.mark.parametrize(
+        "keyword, namespace, recursive, expected_count",
+        [
+            pytest.param("container", None, False, 2, id="without_namespace"),
+            pytest.param("container", "other:ns", False, 1, id="with_namespace"),
+            pytest.param("container", None, True, 3, id="recursive_without_namespac"),
+            pytest.param(
+                "container", "test:ns", True, 2, id="recursive_with_namespace"
+            ),
+            pytest.param("leaf", None, False, 0, id="missing"),
+            pytest.param("bad", None, True, 0, id="recursive_missing"),
+        ],
+    )
+    def test_findall(
+        self, ancestor_data_node_model, keyword, namespace, recursive, expected_count
+    ):
+        results = ancestor_data_node_model.findall(
+            keyword, namespace=namespace, recursive=recursive
+        )
+
+        assert len(results) == expected_count
 
 
 class TestModuleElement(object):
