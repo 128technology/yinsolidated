@@ -27,11 +27,6 @@ _DATA_NODE_PREDICATE = " or ".join(
 )
 
 
-class Error(Exception):
-
-    """Base exception"""
-
-
 class _ConsolidatedModelLookup(etree.CustomElementClassLookup):
     def lookup(self, _node_type, _document, namespace, name):
         return _get_yin_element_class(name) if namespace == _common.YIN_NS else None
@@ -451,7 +446,7 @@ class TypeElement(YinElement):
             if identifier == identifier_to_find:
                 return identity_elem
 
-        raise MissingIdentityError(*identifier_to_find)
+        raise _error.MissingIdentityError(*identifier_to_find)
 
 
 def _parse_identifier(identifier, nsmap, default_namespace):
@@ -463,13 +458,6 @@ def _parse_identifier(identifier, nsmap, default_namespace):
         namespace = default_namespace
 
     return name, namespace
-
-
-class MissingIdentityError(Error):
-    def __init__(self, name, namespace):
-        super(MissingIdentityError, self).__init__(
-            "Could not find identity {} in namespace {}".format(name, namespace)
-        )
 
 
 class TypedefElement(YinElement):

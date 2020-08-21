@@ -31,7 +31,7 @@ def parse(contents):
 
 def _parse(raw, parent=None):
     if not isinstance(raw, dict):
-        raise Error(
+        raise _error.Error(
             "expected dict, got {type}: {value}".format(type=type(raw), value=raw)
         )
     cls = _get_yin_element_class(raw.get("keyword"))
@@ -491,13 +491,6 @@ def _parse_identifier(identifier, nsmap, default_namespace):
         namespace = default_namespace
 
     return name, namespace
-
-
-class MissingIdentityError(Error):
-    def __init__(self, name, namespace):
-        super(MissingIdentityError, self).__init__(
-            "Could not find identity {} in namespace {}".format(name, namespace)
-        )
 
 
 class TypedefElement(YinElement):

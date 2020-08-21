@@ -40,3 +40,10 @@ class MissingNamespaceError(_MissingAttributeError):
 
     def __init__(self, data_def_element):
         super(MissingNamespaceError, self).__init__("namespace", data_def_element)
+
+
+class MissingIdentityError(Error):
+    def __init__(self, name, namespace):
+        super(MissingIdentityError, self).__init__(
+            "Could not find identity {} in namespace {}".format(name, namespace)
+        )
