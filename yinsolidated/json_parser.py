@@ -19,8 +19,7 @@ import xpathparser
 from yinsolidated import _common, _error
 
 
-class Error(Exception):
-    """Base exception."""
+_YIN = "urn:ietf:params:xml:ns:yang:yin:1"
 
 
 def parse(contents):
@@ -131,7 +130,7 @@ class YinElement(dict):
 
     @property
     def description(self):
-        node = self.find("description")
+        node = self.find("description", namespace=_YIN)
         description = node["text"] if node is not None else None
 
         if description is not None:
@@ -176,7 +175,9 @@ class YinElement(dict):
     def _is_match(self, keyword, namespace):
         if self.keyword != keyword:
             return False
-        return namespace is None or namespace == self.namespace
+        # NOTE: This is not equivalent to *self.namespace*. This is the namespace of the
+        # *keyword*, not of the *YinElement*.
+        return namespace is None or namespace == self.get("namespace")
 
     def iterfind(self, keyword, namespace=None, recursive=False):
         for child in self.children:
@@ -190,7 +191,7 @@ class YinElement(dict):
                     yield match
 
     def findall(self, keyword, namespace=None, recursive=False):
-        return list(self.iterfind(keyword, namespace=namespace,recursive=recursive))
+        return list(self.iterfind(keyword, namespace=namespace, recursive=recursive))
 
     def getparent(self):
         return self.parent
@@ -220,7 +221,7 @@ class DataDefinitionElement(DefinitionElement):
     @property
     def is_config(self):
         for node in self.iter_parents(include_self=True):
-            config_node = node.find("config")
+            config_node = node.find("config", namespace=_YIN)
             if config_node and config_node["value"] == "false":
                 return False
 
@@ -228,7 +229,7 @@ class DataDefinitionElement(DefinitionElement):
 
     @property
     def when_elements(self):
-        return self.findall("when")
+        return self.findall("when", namespace=_YIN)
 
 
 class ContainerElement(DataDefinitionElement):
@@ -238,9 +239,9 @@ class ContainerElement(DataDefinitionElement):
 
 
 def _get_subelem_attribute_or_default(
-    data_def_element, subelem_name, attr_name, default=None
+    data_def_element, subelem_name, attr_name, default=None, namespace=_YIN
 ):
-    sub_elem = data_def_element.find(subelem_name)
+    sub_elem = data_def_element.find(subelem_name, namespace=namespace)
     return sub_elem.get(attr_name, default) if sub_elem is not None else default
 
 
@@ -271,7 +272,7 @@ class LeafElement(DataDefinitionElement):
 
 
 def _get_type(element):
-    return element.find("type")
+    return element.find("type", namespace=_YIN)
 
 
 def _get_status(element):
@@ -398,15 +399,15 @@ class TypeElement(YinElement):
 
     @property
     def typedef(self):
-        return self.find("typedef")
+        return self.find("typedef", namespace=_YIN)
 
     @property
     def bits(self):
-        return self.base_type.findall("bit")
+        return self.base_type.findall("bit", namespace=_YIN)
 
     @property
     def enums(self):
-        return self.base_type.findall("enum")
+        return self.base_type.findall("enum", namespace=_YIN)
 
     @property
     def fraction_digits(self):
@@ -429,7 +430,7 @@ class TypeElement(YinElement):
 
     @property
     def patterns(self):
-        return self.base_type.findall("pattern")
+        return self.base_type.findall("pattern", namespace=_YIN)
 
     @property
     def range(self):
@@ -443,12 +444,20 @@ class TypeElement(YinElement):
     @property
     def referenced_type(self):
         base_type_elem = self.base_type
-        return base_type_elem.find("type") if base_type_elem.name == "leafref" else None
+        return (
+            base_type_elem.find("type", namespace=_YIN)
+            if base_type_elem.name == "leafref"
+            else None
+        )
 
     @property
     def subtypes(self):
         base_type_elem = self.base_type
-        return base_type_elem.findall("type") if base_type_elem.name == "union" else []
+        return (
+            base_type_elem.findall("type", namespace=_YIN)
+            if base_type_elem.name == "union"
+            else []
+        )
 
     @property
     def base_identity(self):
@@ -474,12 +483,12 @@ class TypeElement(YinElement):
             identity, data_node.nsmap, data_node.namespace
         )
 
-        for identity_elem in root.iterfind("identity"):
+        for identity_elem in root.iterfind("identity", namespace=_YIN):
             identifier = (identity_elem.name, identity_elem.namespace)
             if identifier == identifier_to_find:
                 return identity_elem
 
-        raise MissingIdentityError(*identifier_to_find)
+        raise _error.MissingIdentityError(*identifier_to_find)
 
 
 def _parse_identifier(identifier, nsmap, default_namespace):
@@ -587,6 +596,6 @@ class IdentityElement(YinElement):
 
     def iterate_directly_derived_identities(self):
         root = self.getroottree()
-        for identity_elem in root.iterfind("identity"):
+        for identity_elem in root.iterfind("identity", namespace=_YIN):
             if identity_elem.base == (self.name, self.namespace):
                 yield identity_elem
