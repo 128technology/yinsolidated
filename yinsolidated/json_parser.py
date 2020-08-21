@@ -94,6 +94,13 @@ class YinElement(dict):
         return self.get("nsmap") or {}
 
     @property
+    def namespace_map(self):
+        nsmap = {}
+        for element in self.iter_parents(include_self=True):
+            nsmap.update(element.nsmap)
+        return nsmap
+
+    @property
     def namespace(self):
         prefix = self.prefix
         for element in self.iter_parents(include_self=True):
@@ -480,7 +487,7 @@ class TypeElement(YinElement):
         data_node = self.getparent()
 
         identifier_to_find = _parse_identifier(
-            identity, data_node.nsmap, data_node.namespace
+            identity, data_node.namespace_map, data_node.namespace
         )
 
         for identity_elem in root.iterfind("identity", namespace=_YIN):
@@ -578,7 +585,9 @@ class IdentityElement(YinElement):
             name = None
             namespace = None
         else:
-            name, namespace = _parse_identifier(base, self.nsmap, self.namespace)
+            name, namespace = _parse_identifier(
+                base, self.namespace_map, self.namespace
+            )
 
         return name, namespace
 
