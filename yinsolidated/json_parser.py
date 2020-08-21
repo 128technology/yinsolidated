@@ -92,15 +92,18 @@ class YinElement(dict):
 
     @property
     def nsmap(self):
-        return self.get("nsmap")
-
-    @property
-    def prefix(self):
-        return self.get("prefix")
+        return self.get("nsmap") or {}
 
     @property
     def namespace(self):
-        return self.nsmap[self.prefix]
+        prefix = self.prefix
+        for element in self.iter_parents(include_self=True):
+            try:
+                return element.nsmap[prefix]
+            except KeyError:
+                pass
+
+        raise _error.MissingNamespaceError(self)
 
     @property
     def children(self):
@@ -125,14 +128,6 @@ class YinElement(dict):
                 pass
 
         raise _error.MissingPrefixError(self)
-
-    @property
-    def namespace_map(self):
-        return {
-            prefix: namespace
-            for prefix, namespace in self.nsmap.items()
-            if prefix is not None
-        }
 
     @property
     def description(self):
@@ -464,7 +459,7 @@ class TypeElement(YinElement):
         data_node = self.getparent()
 
         identifier_to_find = _parse_identifier(
-            identity, data_node.namespace_map, data_node.namespace
+            identity, data_node.nsmap, data_node.namespace
         )
 
         for identity_elem in root.iterfind("identity"):
@@ -569,9 +564,7 @@ class IdentityElement(YinElement):
             name = None
             namespace = None
         else:
-            name, namespace = _parse_identifier(
-                base, self.namespace_map, self.namespace
-            )
+            name, namespace = _parse_identifier(base, self.nsmap, self.namespace)
 
         return name, namespace
 

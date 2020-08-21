@@ -20,15 +20,8 @@ class TestYinElement(object):
             {
                 "keyword": "module",
                 "module-prefix": "t",
-                "children": [
-                    {
-                        "keyword": "choice",
-                        "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
-                            "t": "test:ns",
-                        },
-                    }
-                ],
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1", "t": "test:ns"},
+                "children": [{"keyword": "choice"}],
             }
         )
         choice_elem = module_elem.find("choice")
@@ -49,20 +42,8 @@ class TestYinElement(object):
                     {
                         "keyword": "test-container",
                         "module-prefix": "in",
-                        "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
-                            "in": "inner:ns",
-                        },
-                        "children": [
-                            {
-                                "keyword": "choice",
-                                "namespace": "inner:ns",
-                                "nsmap": {
-                                    "yin": "urn:ietf:params:xml:ns:yang:yin:1",
-                                    "in": "inner:ns",
-                                },
-                            }
-                        ],
+                        "nsmap": {"in": "inner:ns",},
+                        "children": [{"keyword": "choice"}],
                     }
                 ],
             }
@@ -1694,7 +1675,7 @@ class TestWhenElement(object):
         when_element = container_elem.find("when")
 
         assert when_element.condition == "t:foo = 'bar'"
-        assert when_element.namespace_map == {"t": "test:ns"}
+        assert when_element.nsmap == {"t": "test:ns"}
 
     def test_prefix_added(self):
         container_elem = yinsolidated.parse_json(
@@ -1717,7 +1698,7 @@ class TestWhenElement(object):
             "../d:foo/d:bar = 'alpha' | /t:root/d:test = 'bravo'"
         )
 
-        assert when_element.namespace_map == {"d": "default:ns", "t": "test:ns"}
+        assert when_element.nsmap == {"d": "default:ns", "t": "test:ns"}
 
     def test_self_context(self):
         when_element = yinsolidated.parse_json({"keyword": "when"},)

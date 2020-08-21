@@ -12,65 +12,41 @@
     {
       "keyword": "yang-version",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "value": "1"
     },
     {
       "keyword": "namespace",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "uri": "urn:xml:ns:test"
     },
     {
       "keyword": "prefix",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "value": "test"
     },
     {
       "keyword": "organization",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "text": "None"
     },
     {
       "keyword": "contact",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "text": "Somebody"
     },
     {
       "keyword": "description",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "text": "Test module containing an exhaustive set of possible YANG statements"
     },
     {
       "keyword": "revision",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "date": "2016-04-22",
       "children": [
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "Initial revision"
         }
       ]
@@ -78,17 +54,11 @@
     {
       "keyword": "extension",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "simple-extension-no-arg",
       "children": [
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "An extension that takes no argument and does not support substatements"
         }
       ]
@@ -104,25 +74,16 @@
     {
       "keyword": "extension",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "simple-extension-attribute-arg",
       "children": [
         {
           "keyword": "argument",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "attribute-argument"
         },
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "An extension whose argument would appear as an XML attribute in YIN but appears simply as text in YINsolidated and does not support substatements"
         }
       ]
@@ -138,25 +99,16 @@
     {
       "keyword": "extension",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "simple-extension-element-arg",
       "children": [
         {
           "keyword": "argument",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "element-argument",
           "children": [
             {
               "keyword": "yin-element",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "value": "true"
             }
           ]
@@ -164,25 +116,16 @@
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "An extension whose argument would appear as an XML subelement in YIN but appears simply as text in YINsolidated and does not support substatements"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "current"
         }
       ]
@@ -198,17 +141,11 @@
     {
       "keyword": "extension",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "complex-extension-no-arg",
       "children": [
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "An extension that takes no argument but supports substatements because the #yinformat tag is included"
         }
       ]
@@ -223,9 +160,6 @@
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "This will appear in YINsolidated"
         },
         {
@@ -241,25 +175,16 @@
     {
       "keyword": "extension",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "complex-extension-attribute-arg",
       "children": [
         {
           "keyword": "argument",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "attribute-argument"
         },
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "An extension whose argument appears as an XML attribute in YINsolidated and supports substatements because the #yinformat tag is included"
         }
       ]
@@ -275,9 +200,6 @@
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "This will appear in YINsolidated"
         },
         {
@@ -293,25 +215,16 @@
     {
       "keyword": "extension",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "complex-extension-element-arg",
       "children": [
         {
           "keyword": "argument",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "element-argument",
           "children": [
             {
               "keyword": "yin-element",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "value": "true"
             }
           ]
@@ -319,9 +232,6 @@
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "An extension whose argument appears as an XML subelement in YINsolidated and supports substatements because the #yinformat tag is included"
         }
       ]
@@ -337,9 +247,6 @@
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "This will appear in YINsolidated"
         },
         {
@@ -355,17 +262,11 @@
     {
       "keyword": "feature",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "test-feature",
       "children": [
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A test feature"
         }
       ]
@@ -374,7 +275,6 @@
       "keyword": "identity",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
       "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1",
         "test": "urn:xml:ns:test"
       },
       "name": "test-base-identity",
@@ -384,25 +284,16 @@
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A base identity"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "current"
         }
       ]
@@ -411,7 +302,6 @@
       "keyword": "identity",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
       "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1",
         "test": "urn:xml:ns:test"
       },
       "name": "test-derived-identity",
@@ -421,9 +311,6 @@
         {
           "keyword": "base",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-base-identity"
         }
       ]
@@ -431,81 +318,51 @@
     {
       "keyword": "container",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "submodule-container"
     },
     {
       "keyword": "anyxml",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "root-anyxml",
       "children": [
         {
           "keyword": "config",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "false"
         },
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "An anyxml node at the model root"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "mandatory",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "true"
         },
         {
           "keyword": "must",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "deprecated"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'"
         }
       ]
@@ -513,89 +370,56 @@
     {
       "keyword": "choice",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "root-choice",
       "children": [
         {
           "keyword": "config",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "true"
         },
         {
           "keyword": "default",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "test-case"
         },
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A choice at the model root"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "mandatory",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "false"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "obsolete"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'"
         },
         {
           "keyword": "case",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "anyxml-case",
           "children": [
             {
               "keyword": "anyxml",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "anyxml-case"
             }
           ]
@@ -603,89 +427,56 @@
         {
           "keyword": "case",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-case",
           "children": [
             {
               "keyword": "description",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "text": "A test case"
             },
             {
               "keyword": "if-feature",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "test-feature"
             },
             {
               "keyword": "reference",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "text": "RFC 6020"
             },
             {
               "keyword": "status",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "value": "current"
             },
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "../root-leaf != 'nonsense'"
             },
             {
               "keyword": "anyxml",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "anyxml-within-case"
             },
             {
               "keyword": "choice",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "choice-within-case"
             },
             {
               "keyword": "container",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "container-within-case"
             },
             {
               "keyword": "leaf",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "leaf-within-case",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "string"
                 }
               ]
@@ -693,17 +484,11 @@
             {
               "keyword": "leaf-list",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "leaf-list-within-case",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "string"
                 }
               ]
@@ -711,17 +496,11 @@
             {
               "keyword": "list",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "list-within-case",
               "children": [
                 {
                   "keyword": "config",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "value": "false"
                 }
               ]
@@ -729,9 +508,6 @@
             {
               "keyword": "anyxml",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "grouped-anyxml"
             }
           ]
@@ -739,17 +515,11 @@
         {
           "keyword": "case",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "container-case",
           "children": [
             {
               "keyword": "container",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "container-case"
             }
           ]
@@ -757,25 +527,16 @@
         {
           "keyword": "case",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "leaf-case",
           "children": [
             {
               "keyword": "leaf",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "leaf-case",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "string"
                 }
               ]
@@ -785,25 +546,16 @@
         {
           "keyword": "case",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "leaf-list-case",
           "children": [
             {
               "keyword": "leaf-list",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "leaf-list-case",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "string"
                 }
               ]
@@ -813,25 +565,16 @@
         {
           "keyword": "case",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "list-case",
           "children": [
             {
               "keyword": "list",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "list-case",
               "children": [
                 {
                   "keyword": "config",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "value": "false"
                 }
               ]
@@ -842,7 +585,6 @@
           "keyword": "case",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
           "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
             "aug": "urn:xml:ns:test:augment",
             "t": "urn:xml:ns:test"
           },
@@ -853,17 +595,11 @@
             {
               "keyword": "leaf",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "augmenting-case-leaf",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "string"
                 }
               ]
@@ -875,49 +611,31 @@
     {
       "keyword": "container",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "root-container",
       "children": [
         {
           "keyword": "config",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "true"
         },
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A container at the model root"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "must",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "test-leaf != 'nonsense'",
           "children": [
             {
               "keyword": "error-message",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "value": "test-leaf is nonsense"
             }
           ]
@@ -925,89 +643,56 @@
         {
           "keyword": "presence",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "This container has presence"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "current"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'"
         },
         {
           "keyword": "anyxml",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-anyxml"
         },
         {
           "keyword": "choice",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-choice"
         },
         {
           "keyword": "container",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-nested-container"
         },
         {
           "keyword": "leaf",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-leaf",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "inner-type",
               "children": [
                 {
                   "keyword": "typedef",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "inner-type",
                   "children": [
                     {
                       "keyword": "type",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "name": "string"
                     }
                   ]
@@ -1019,17 +704,11 @@
         {
           "keyword": "leaf-list",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-leaf-list",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             }
           ]
@@ -1037,17 +716,11 @@
         {
           "keyword": "list",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-list",
           "children": [
             {
               "keyword": "config",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "value": "false"
             }
           ]
@@ -1055,17 +728,11 @@
         {
           "keyword": "leaf",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "grouped-leaf",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             }
           ]
@@ -1075,97 +742,61 @@
     {
       "keyword": "leaf",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "root-leaf",
       "children": [
         {
           "keyword": "config",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "true"
         },
         {
           "keyword": "default",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "test-default"
         },
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A leaf at the model root"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "mandatory",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "false"
         },
         {
           "keyword": "must",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "count(../root-leaf-list) > 0"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "current"
         },
         {
           "keyword": "type",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "string"
         },
         {
           "keyword": "units",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "goobers"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "count(../root-leaf-list) > 0"
         }
       ]
@@ -1173,105 +804,66 @@
     {
       "keyword": "leaf-list",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "root-leaf-list",
       "children": [
         {
           "keyword": "config",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "true"
         },
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A leaf-list at the model root"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "max-elements",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "10"
         },
         {
           "keyword": "min-elements",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "1"
         },
         {
           "keyword": "must",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'"
         },
         {
           "keyword": "ordered-by",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "user"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "current"
         },
         {
           "keyword": "type",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "string"
         },
         {
           "keyword": "units",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "awesomeness"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'"
         }
       ]
@@ -1279,161 +871,101 @@
     {
       "keyword": "list",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "root-list",
       "children": [
         {
           "keyword": "config",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "true"
         },
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A list at the model root"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "key",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "test-key"
         },
         {
           "keyword": "max-elements",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "100"
         },
         {
           "keyword": "min-elements",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "50"
         },
         {
           "keyword": "must",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'"
         },
         {
           "keyword": "ordered-by",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "system"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "current"
         },
         {
           "keyword": "unique",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "tag": "grouped-leaf"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'"
         },
         {
           "keyword": "anyxml",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-anyxml"
         },
         {
           "keyword": "choice",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-choice"
         },
         {
           "keyword": "container",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-container"
         },
         {
           "keyword": "leaf",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-key",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "inner-type",
               "children": [
                 {
                   "keyword": "typedef",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "inner-type",
                   "children": [
                     {
                       "keyword": "type",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "name": "string"
                     }
                   ]
@@ -1445,17 +977,11 @@
         {
           "keyword": "leaf-list",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-leaf-list",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             }
           ]
@@ -1463,17 +989,11 @@
         {
           "keyword": "list",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-nested-list",
           "children": [
             {
               "keyword": "config",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "value": "false"
             }
           ]
@@ -1481,17 +1001,11 @@
         {
           "keyword": "leaf",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "grouped-leaf",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             }
           ]
@@ -1501,25 +1015,16 @@
     {
       "keyword": "choice",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "grouped-choice",
       "children": [
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'",
           "context-node": "parent"
         }
@@ -1528,42 +1033,27 @@
     {
       "keyword": "container",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "grouped-container",
       "children": [
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'",
           "context-node": "parent"
         },
         {
           "keyword": "anyxml",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "augmented-in-uses-anyxml",
           "children": [
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "../grouped-leaf != 'nonsense'",
               "context-node": "parent"
             }
@@ -1574,33 +1064,21 @@
     {
       "keyword": "leaf",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "grouped-leaf",
       "children": [
         {
           "keyword": "type",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "grouped-typedef",
           "children": [
             {
               "keyword": "typedef",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "grouped-typedef",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "string"
                 }
               ]
@@ -1610,25 +1088,16 @@
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A leaf in a grouping with a refined description"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'",
           "context-node": "parent"
         }
@@ -1637,33 +1106,21 @@
     {
       "keyword": "leaf-list",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "grouped-leaf-list",
       "children": [
         {
           "keyword": "type",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "string"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'",
           "context-node": "parent"
         }
@@ -1672,33 +1129,21 @@
     {
       "keyword": "list",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "grouped-list",
       "children": [
         {
           "keyword": "config",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "false"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'",
           "context-node": "parent"
         }
@@ -1707,34 +1152,22 @@
     {
       "keyword": "anyxml",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "nested-grouped-anyxml",
       "children": [
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "../root-leaf != 'nonsense'",
           "context-node": "parent"
         },
         {
           "keyword": "when",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "condition": "grouped-leaf != 'nonsense'",
           "context-node": "parent"
         }
@@ -1743,97 +1176,61 @@
     {
       "keyword": "leaf",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "leaf-with-typedef",
       "children": [
         {
           "keyword": "type",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "derived-typedef",
           "children": [
             {
               "keyword": "typedef",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "derived-typedef",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "base-typedef",
                   "children": [
                     {
                       "keyword": "length",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "value": "11 | 42..max"
                     },
                     {
                       "keyword": "typedef",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "name": "base-typedef",
                       "children": [
                         {
                           "keyword": "default",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "value": "bumfuzzling"
                         },
                         {
                           "keyword": "description",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "text": "A base typedef"
                         },
                         {
                           "keyword": "reference",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "text": "RFC 6020"
                         },
                         {
                           "keyword": "status",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "value": "current"
                         },
                         {
                           "keyword": "type",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "name": "string",
                           "children": [
                             {
                               "keyword": "length",
                               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                              "nsmap": {
-                                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                              },
                               "value": "1..255"
                             }
                           ]
@@ -1841,9 +1238,6 @@
                         {
                           "keyword": "units",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "name": "nonsense"
                         }
                       ]
@@ -1859,33 +1253,21 @@
     {
       "keyword": "leaf",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "leaf-with-leafref",
       "children": [
         {
           "keyword": "type",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "leafref",
           "children": [
             {
               "keyword": "path",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "value": "../root-leaf"
             },
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             }
           ]
@@ -1895,25 +1277,16 @@
     {
       "keyword": "container",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "augmented-container",
       "children": [
         {
           "keyword": "leaf",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "augmenting-leaf-internal",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             }
           ]
@@ -1922,7 +1295,6 @@
           "keyword": "anyxml",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
           "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
             "aug": "urn:xml:ns:test:augment",
             "t": "urn:xml:ns:test"
           },
@@ -1933,17 +1305,11 @@
             {
               "keyword": "if-feature",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "t:test-feature"
             },
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "/t:root-leaf != 'nonsense'",
               "context-node": "parent"
             }
@@ -1953,7 +1319,6 @@
           "keyword": "choice",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
           "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
             "aug": "urn:xml:ns:test:augment",
             "t": "urn:xml:ns:test"
           },
@@ -1964,17 +1329,11 @@
             {
               "keyword": "if-feature",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "t:test-feature"
             },
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "/t:root-leaf != 'nonsense'",
               "context-node": "parent"
             }
@@ -1984,7 +1343,6 @@
           "keyword": "container",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
           "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
             "aug": "urn:xml:ns:test:augment",
             "t": "urn:xml:ns:test"
           },
@@ -2003,17 +1361,11 @@
             {
               "keyword": "if-feature",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "t:test-feature"
             },
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "/t:root-leaf != 'nonsense'",
               "context-node": "parent"
             }
@@ -2023,7 +1375,6 @@
           "keyword": "leaf",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
           "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
             "aug": "urn:xml:ns:test:augment",
             "t": "urn:xml:ns:test"
           },
@@ -2034,25 +1385,16 @@
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             },
             {
               "keyword": "if-feature",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "t:test-feature"
             },
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "/t:root-leaf != 'nonsense'",
               "context-node": "parent"
             }
@@ -2062,7 +1404,6 @@
           "keyword": "leaf-list",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
           "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
             "aug": "urn:xml:ns:test:augment",
             "t": "urn:xml:ns:test"
           },
@@ -2073,25 +1414,16 @@
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             },
             {
               "keyword": "if-feature",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "t:test-feature"
             },
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "/t:root-leaf != 'nonsense'",
               "context-node": "parent"
             }
@@ -2101,7 +1433,6 @@
           "keyword": "list",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
           "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
             "aug": "urn:xml:ns:test:augment",
             "t": "urn:xml:ns:test"
           },
@@ -2112,25 +1443,16 @@
             {
               "keyword": "config",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "value": "false"
             },
             {
               "keyword": "if-feature",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "t:test-feature"
             },
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "/t:root-leaf != 'nonsense'",
               "context-node": "parent"
             }
@@ -2140,7 +1462,6 @@
           "keyword": "anyxml",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
           "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
             "aug": "urn:xml:ns:test:augment",
             "t": "urn:xml:ns:test"
           },
@@ -2151,17 +1472,11 @@
             {
               "keyword": "if-feature",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "t:test-feature"
             },
             {
               "keyword": "when",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "condition": "/t:root-leaf != 'nonsense'",
               "context-node": "parent"
             }
@@ -2172,97 +1487,61 @@
     {
       "keyword": "notification",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "test-notification",
       "children": [
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A test notification"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "current"
         },
         {
           "keyword": "anyxml",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "notification-anyxml"
         },
         {
           "keyword": "choice",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "notification-choice"
         },
         {
           "keyword": "container",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "notification-container"
         },
         {
           "keyword": "leaf",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "notification-leaf",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "inner-type",
               "children": [
                 {
                   "keyword": "typedef",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "inner-type",
                   "children": [
                     {
                       "keyword": "type",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "name": "string"
                     }
                   ]
@@ -2274,17 +1553,11 @@
         {
           "keyword": "leaf-list",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "notification-leaf-list",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             }
           ]
@@ -2292,25 +1565,16 @@
         {
           "keyword": "list",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "notification-list"
         },
         {
           "keyword": "leaf",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "grouped-leaf",
           "children": [
             {
               "keyword": "type",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "string"
             }
           ]
@@ -2320,104 +1584,65 @@
     {
       "keyword": "rpc",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-      "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-      },
       "name": "test-rpc",
       "children": [
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A test RPC"
         },
         {
           "keyword": "if-feature",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "test-feature"
         },
         {
           "keyword": "reference",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "RFC 6020"
         },
         {
           "keyword": "status",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "value": "current"
         },
         {
           "keyword": "input",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "children": [
             {
               "keyword": "anyxml",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "input-anyxml"
             },
             {
               "keyword": "choice",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "input-choice"
             },
             {
               "keyword": "container",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "input-container"
             },
             {
               "keyword": "leaf",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "input-leaf",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "input-type",
                   "children": [
                     {
                       "keyword": "typedef",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "name": "input-type",
                       "children": [
                         {
                           "keyword": "type",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "name": "string"
                         }
                       ]
@@ -2429,33 +1654,21 @@
             {
               "keyword": "leaf-list",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "input-leaf-list",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "inner-type",
                   "children": [
                     {
                       "keyword": "typedef",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "name": "inner-type",
                       "children": [
                         {
                           "keyword": "type",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "name": "string"
                         }
                       ]
@@ -2467,25 +1680,16 @@
             {
               "keyword": "list",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "input-list"
             },
             {
               "keyword": "leaf",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "grouped-leaf",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "string"
                 }
               ]
@@ -2493,9 +1697,6 @@
             {
               "keyword": "anyxml",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "grouped-anyxml"
             }
           ]
@@ -2503,64 +1704,40 @@
         {
           "keyword": "output",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "children": [
             {
               "keyword": "anyxml",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "output-anyxml"
             },
             {
               "keyword": "choice",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "output-choice"
             },
             {
               "keyword": "container",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "output-container"
             },
             {
               "keyword": "leaf",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "output-leaf",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "output-type",
                   "children": [
                     {
                       "keyword": "typedef",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "name": "output-type",
                       "children": [
                         {
                           "keyword": "type",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "name": "string"
                         }
                       ]
@@ -2572,33 +1749,21 @@
             {
               "keyword": "leaf-list",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "output-leaf-list",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "inner-type",
                   "children": [
                     {
                       "keyword": "typedef",
                       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                      "nsmap": {
-                        "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                      },
                       "name": "inner-type",
                       "children": [
                         {
                           "keyword": "type",
                           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                          "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                          },
                           "name": "string"
                         }
                       ]
@@ -2610,25 +1775,16 @@
             {
               "keyword": "list",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "output-list"
             },
             {
               "keyword": "leaf",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "grouped-leaf",
               "children": [
                 {
                   "keyword": "type",
                   "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-                  "nsmap": {
-                    "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-                  },
                   "name": "string"
                 }
               ]
@@ -2636,9 +1792,6 @@
             {
               "keyword": "anyxml",
               "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-              "nsmap": {
-                "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-              },
               "name": "grouped-anyxml"
             }
           ]
@@ -2649,7 +1802,6 @@
       "keyword": "identity",
       "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
       "nsmap": {
-        "yin": "urn:ietf:params:xml:ns:yang:yin:1",
         "aug": "urn:xml:ns:test:augment",
         "t": "urn:xml:ns:test"
       },
@@ -2660,17 +1812,11 @@
         {
           "keyword": "description",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "text": "A derived identity in an augmenting module"
         },
         {
           "keyword": "base",
           "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
-          "nsmap": {
-            "yin": "urn:ietf:params:xml:ns:yang:yin:1"
-          },
           "name": "t:test-base-identity"
         }
       ]

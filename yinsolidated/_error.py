@@ -32,3 +32,11 @@ class MissingModuleNameError(_MissingAttributeError):
 
     def __init__(self, data_def_element):
         super(MissingModuleNameError, self).__init__("module-name", data_def_element)
+
+
+class MissingNamespaceError(_MissingAttributeError):
+
+    """Could not find namespace attribute"""
+
+    def __init__(self, data_def_element):
+        super(MissingNamespaceError, self).__init__("namespace", data_def_element)

@@ -102,11 +102,12 @@ def _make_builtin_yin_element(statement, parent_elem, fmt):
 
     module_name = None
     module_prefix = None
-    nsmap = {"yin": yin_parser.yin_namespace}
+    nsmap = {}
 
     if statement.keyword == "module":
         module_name = statement.i_modulename
         module_prefix = statement.i_prefix
+        nsmap["yin"] = yin_parser.yin_namespace
         nsmap.update(_get_module_nsmap(statement))
     elif _is_augmenting_another_module(statement) or statement.keyword == "identity":
         module_name = statement.i_module.i_modulename
@@ -147,12 +148,14 @@ def _make_builtin_yin_element(statement, parent_elem, fmt):
 
 
 class _JsonElement(dict):
-    def __init__(self, *args, **kwargs):
-        parent_elem = kwargs.pop("parent_elem", None)
-        super(_JsonElement, self).__init__(*args, **kwargs)
+    def __init__(self, keyword, namespace, nsmap, parent_elem):
+        super(_JsonElement, self).__init__(keyword=keyword, namespace=namespace)
 
         if parent_elem is not None:
             parent_elem["children"].append(self)
+
+        if nsmap:
+            self["nsmap"] = nsmap
 
     @property
     def text(self):
