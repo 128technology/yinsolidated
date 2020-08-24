@@ -4,6 +4,8 @@
 
 from __future__ import unicode_literals
 
+import types
+
 import pytest
 
 import yinsolidated
@@ -20,15 +22,8 @@ class TestYinElement(object):
             {
                 "keyword": "module",
                 "module-prefix": "t",
-                "children": [
-                    {
-                        "keyword": "choice",
-                        "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
-                            "t": "test:ns",
-                        },
-                    }
-                ],
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1", "t": "test:ns"},
+                "children": [{"keyword": "choice"}],
             }
         )
         choice_elem = module_elem.find("choice")
@@ -49,20 +44,8 @@ class TestYinElement(object):
                     {
                         "keyword": "test-container",
                         "module-prefix": "in",
-                        "nsmap": {
-                            "yin": "urn:ietf:params:xml:ns:yang:yin:1",
-                            "in": "inner:ns",
-                        },
-                        "children": [
-                            {
-                                "keyword": "choice",
-                                "namespace": "inner:ns",
-                                "nsmap": {
-                                    "yin": "urn:ietf:params:xml:ns:yang:yin:1",
-                                    "in": "inner:ns",
-                                },
-                            }
-                        ],
+                        "nsmap": {"in": "inner:ns"},
+                        "children": [{"keyword": "choice"}],
                     }
                 ],
             }
@@ -76,6 +59,7 @@ class TestYinElement(object):
             {
                 "keyword": "module",
                 "module-name": "test-module",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1"},
                 "children": [{"keyword": "choice"}],
             }
         )
@@ -88,6 +72,7 @@ class TestYinElement(object):
             {
                 "keyword": "module",
                 "module-name": "test-module",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1"},
                 "children": [
                     {
                         "keyword": "container",
@@ -105,6 +90,7 @@ class TestYinElement(object):
         module_elem = yinsolidated.parse_json(
             {
                 "keyword": "module",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1"},
                 "children": [{"keyword": "container", "name": "test"}],
             }
         )
@@ -121,6 +107,7 @@ class TestYinElement(object):
             {
                 "keyword": "module",
                 "module-prefix": "test",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1"},
                 "children": [{"keyword": "choice"}],
             }
         )
@@ -133,6 +120,7 @@ class TestYinElement(object):
             {
                 "keyword": "module",
                 "module-prefix": "outer",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1"},
                 "children": [
                     {
                         "keyword": "container",
@@ -150,6 +138,7 @@ class TestYinElement(object):
         module_elem = yinsolidated.parse_json(
             {
                 "keyword": "module",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1"},
                 "children": [{"keyword": "container", "name": "test"}],
             }
         )
@@ -165,6 +154,7 @@ class TestYinElement(object):
         module_elem = yinsolidated.parse_json(
             {
                 "keyword": "module",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1"},
                 "children": [{"keyword": "description", "text": "short description"}],
             }
         )
@@ -180,6 +170,7 @@ class TestYinElement(object):
         module_elem = yinsolidated.parse_json(
             {
                 "keyword": "module",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1"},
                 "children": [
                     {"keyword": "container"},
                     {"keyword": "list"},
@@ -202,26 +193,30 @@ def ancestor_data_node_model():
     return yinsolidated.parse_json(
         {
             "keyword": "module",
-            "module-prefix": "t",
             "children": [
                 {
                     "keyword": "container",
+                    "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                     "name": "test-container",
                     "children": [
                         {
                             "keyword": "list",
+                            "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                             "name": "test-list",
                             "children": [
                                 {
                                     "keyword": "choice",
+                                    "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                     "name": "test-choice",
                                     "children": [
                                         {
                                             "keyword": "case",
+                                            "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                             "name": "case-0",
                                             "children": [
                                                 {
                                                     "keyword": "leaf",
+                                                    "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                                     "children": [
                                                         {
                                                             "keyword": "type",
@@ -234,16 +229,23 @@ def ancestor_data_node_model():
                                         {
                                             "keyword": "case",
                                             "name": "case-1",
+                                            "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                             "children": [
                                                 {
                                                     "keyword": "leaf-list",
+                                                    "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                                     "children": [
                                                         {
                                                             "keyword": "type",
                                                             "name": "string",
-                                                        }
+                                                        },
                                                     ],
-                                                }
+                                                },
+                                                {
+                                                    "keyword": "container",
+                                                    "name": "nested-container",
+                                                    "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                                },
                                             ],
                                         },
                                     ],
@@ -251,7 +253,17 @@ def ancestor_data_node_model():
                             ],
                         }
                     ],
-                }
+                },
+                {
+                    "keyword": "list",
+                    "name": "sibling-list",
+                    "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                },
+                {
+                    "keyword": "container",
+                    "name": "sibling-container",
+                    "namespace": "not:yin:ns",
+                },
             ],
         }
     )
@@ -293,6 +305,64 @@ class TestGetAncestorOrSelfDataNodes(object):
         assert data_node_ancestors[2].keyword == "leaf"
 
 
+class TestFind(object):
+    def test_find(self, ancestor_data_node_model):
+        assert ancestor_data_node_model.find("container").name == "test-container"
+
+    def test_find_failure(self, ancestor_data_node_model):
+        assert ancestor_data_node_model.find("leaf") is None
+
+    def test_find_with_namespace(self, ancestor_data_node_model):
+        assert (
+            ancestor_data_node_model.find(
+                "container", namespace="urn:ietf:params:xml:ns:yang:yin:1"
+            ).name
+            == "test-container"
+        )
+
+    def test_find_with_namespace_failure(self, ancestor_data_node_model):
+        assert ancestor_data_node_model.find("container", namespace="bad:ns") is None
+
+    @pytest.mark.parametrize(
+        "keyword, namespace, recursive, expected_count",
+        [
+            pytest.param("container", None, False, 2, id="without_namespace"),
+            pytest.param(
+                "container",
+                "urn:ietf:params:xml:ns:yang:yin:1",
+                False,
+                1,
+                id="with_namespace",
+            ),
+            pytest.param("container", None, True, 3, id="recursive_without_namespac"),
+            pytest.param(
+                "container",
+                "urn:ietf:params:xml:ns:yang:yin:1",
+                True,
+                2,
+                id="recursive_with_namespace",
+            ),
+            pytest.param("leaf", None, False, 0, id="missing"),
+            pytest.param("bad", None, True, 0, id="recursive_missing"),
+        ],
+    )
+    def test_findall(
+        self, ancestor_data_node_model, keyword, namespace, recursive, expected_count
+    ):
+        iter_results = ancestor_data_node_model.iterfind(
+            keyword, namespace=namespace, recursive=recursive
+        )
+
+        assert isinstance(iter_results, types.GeneratorType)
+        assert len(list(iter_results)) == expected_count
+
+        results = ancestor_data_node_model.findall(
+            keyword, namespace=namespace, recursive=recursive
+        )
+
+        assert len(results) == expected_count
+
+
 class TestModuleElement(object):
     def test_name(self):
         module_elem = yinsolidated.parse_json({"keyword": "module", "name": "test"})
@@ -310,7 +380,13 @@ class TestDefinitionElement(object):
         choice_elem = yinsolidated.parse_json(
             {
                 "keyword": "choice",
-                "children": [{"keyword": "status", "value": "obsolete"}],
+                "children": [
+                    {
+                        "keyword": "status",
+                        "value": "obsolete",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -327,14 +403,20 @@ class TestDataDefinitionElement(object):
         choice_elem = yinsolidated.parse_json(
             {
                 "keyword": "choice",
-                "children": [{"keyword": "config", "value": "false"}],
+                "children": [
+                    {
+                        "keyword": "config",
+                        "value": "false",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
         assert not choice_elem.is_config
 
     def test_is_config_no_parent(self):
-        choice_elem = yinsolidated.parse_json({"keyword": "choice"})
+        choice_elem = yinsolidated.parse_json({"keyword": "choice",})
 
         assert choice_elem.is_config
 
@@ -342,8 +424,14 @@ class TestDataDefinitionElement(object):
         choice_elem = yinsolidated.parse_json(
             {
                 "keyword": "choice",
+                "module-prefix": "t",
+                "nsmap": {"yin": "urn:ietf:params:xml:ns:yang:yin:1", "t": "test:ns"},
                 "children": [
-                    {"keyword": "config", "value": "false"},
+                    {
+                        "keyword": "config",
+                        "value": "false",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                     {"keyword": "leaf"},
                 ],
             }
@@ -357,8 +445,16 @@ class TestDataDefinitionElement(object):
             {
                 "keyword": "container",
                 "children": [
-                    {"keyword": "when", "condition": "xxx"},
-                    {"keyword": "when", "condition": "yyy"},
+                    {
+                        "keyword": "when",
+                        "condition": "xxx",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
+                    {
+                        "keyword": "when",
+                        "condition": "yyy",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             }
         )
@@ -372,7 +468,11 @@ class TestContainerElement(object):
             {
                 "keyword": "container",
                 "children": [
-                    {"keyword": "presence", "value": "My existence is meaningful"},
+                    {
+                        "keyword": "presence",
+                        "value": "My existence is meaningful",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             }
         )
@@ -380,7 +480,7 @@ class TestContainerElement(object):
         assert container_elem.presence == "My existence is meaningful"
 
     def test_no_presence(self):
-        container_elem = yinsolidated.parse_json({"keyword": "container",})
+        container_elem = yinsolidated.parse_json({"keyword": "container"})
 
         assert container_elem.presence is None
 
@@ -388,14 +488,32 @@ class TestContainerElement(object):
 class TestLeafElement(object):
     def test_type(self):
         leaf_elem = yinsolidated.parse_json(
-            {"keyword": "leaf", "children": [{"keyword": "type", "name": "uint8"}]}
+            {
+                "keyword": "leaf",
+                "children": [
+                    {
+                        "keyword": "type",
+                        "name": "uint8",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
+            }
         )
 
         assert leaf_elem.type.base_type.name == "uint8"
 
     def test_default(self):
         leaf_elem = yinsolidated.parse_json(
-            {"keyword": "leaf", "children": [{"keyword": "default", "value": "600"}]}
+            {
+                "keyword": "leaf",
+                "children": [
+                    {
+                        "keyword": "default",
+                        "value": "600",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
+            }
         )
 
         assert leaf_elem.default == "600"
@@ -407,7 +525,16 @@ class TestLeafElement(object):
 
     def test_units(self):
         leaf_elem = yinsolidated.parse_json(
-            {"keyword": "leaf", "children": [{"keyword": "units", "name": "seconds"}]}
+            {
+                "keyword": "leaf",
+                "children": [
+                    {
+                        "keyword": "units",
+                        "name": "seconds",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
+            }
         )
 
         assert leaf_elem.units == "seconds"
@@ -419,7 +546,16 @@ class TestLeafElement(object):
 
     def test_is_mandatory(self):
         leaf_elem = yinsolidated.parse_json(
-            {"keyword": "leaf", "children": [{"keyword": "mandatory", "value": "true"}]}
+            {
+                "keyword": "leaf",
+                "children": [
+                    {
+                        "keyword": "mandatory",
+                        "value": "true",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
+            }
         )
 
         assert leaf_elem.is_mandatory
@@ -428,7 +564,13 @@ class TestLeafElement(object):
         leaf_elem = yinsolidated.parse_json(
             {
                 "keyword": "leaf",
-                "children": [{"keyword": "mandatory", "value": "false"}],
+                "children": [
+                    {
+                        "keyword": "mandatory",
+                        "value": "false",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -446,8 +588,16 @@ class TestLeafElement(object):
                 "module-prefix": "t",
                 "nsmap": {"t": "test:ns"},
                 "children": [
-                    {"keyword": "key", "value": "alpha", "nsmap": {"t": "test:ns"},},
-                    {"keyword": "leaf", "name": "alpha", "nsmap": {"t": "test:ns"},},
+                    {
+                        "keyword": "key",
+                        "value": "alpha",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
+                    {
+                        "keyword": "leaf",
+                        "name": "alpha",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             }
         )
@@ -462,8 +612,16 @@ class TestLeafElement(object):
                 "module-prefix": "t",
                 "nsmap": {"t": "test:ns"},
                 "children": [
-                    {"keyword": "key", "value": "bravo", "nsmap": {"t": "test:ns"}},
-                    {"keyword": "leaf", "name": "alpha", "nsmap": {"t": "test:ns"}},
+                    {
+                        "keyword": "key",
+                        "value": "bravo",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
+                    {
+                        "keyword": "leaf",
+                        "name": "alpha",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             }
         )
@@ -472,7 +630,7 @@ class TestLeafElement(object):
         assert not leaf_elem.is_list_key
 
     def test_non_list_child_not_key(self):
-        leaf_elem = yinsolidated.parse_json({"keyword": "leaf",})
+        leaf_elem = yinsolidated.parse_json({"keyword": "leaf"})
 
         assert not leaf_elem.is_list_key
 
@@ -480,7 +638,18 @@ class TestLeafElement(object):
 class TestLeafListElement(object):
     def test_type(self):
         leaf_list_elem = yinsolidated.parse_json(
-            {"keyword": "leaf-list", "children": [{"keyword": "type", "name": "uint8"}]}
+            {
+                "keyword": "leaf-list",
+                "module-prefix": "t",
+                "nsmap": {"t": "test:ns"},
+                "children": [
+                    {
+                        "keyword": "type",
+                        "name": "uint8",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
+            }
         )
 
         assert leaf_list_elem.type.base_type.name == "uint8"
@@ -489,7 +658,15 @@ class TestLeafListElement(object):
         leaf_list_elem = yinsolidated.parse_json(
             {
                 "keyword": "leaf-list",
-                "children": [{"keyword": "units", "name": "seconds"}],
+                "module-prefix": "t",
+                "nsmap": {"t": "test:ns"},
+                "children": [
+                    {
+                        "keyword": "units",
+                        "name": "seconds",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -504,7 +681,15 @@ class TestLeafListElement(object):
         leaf_list_elem = yinsolidated.parse_json(
             {
                 "keyword": "leaf-list",
-                "children": [{"keyword": "min-elements", "value": "10"}],
+                "module-prefix": "t",
+                "nsmap": {"t": "test:ns"},
+                "children": [
+                    {
+                        "keyword": "min-elements",
+                        "value": "10",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -519,14 +704,30 @@ class TestLeafListElement(object):
         leaf_list_elem = yinsolidated.parse_json(
             {
                 "keyword": "leaf-list",
-                "children": [{"keyword": "max-elements", "value": "10"}],
+                "module-prefix": "t",
+                "nsmap": {"t": "test:ns"},
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                "children": [
+                    {
+                        "keyword": "max-elements",
+                        "value": "10",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
         assert leaf_list_elem.max_elements == 10
 
     def test_no_max_elements(self):
-        leaf_list_elem = yinsolidated.parse_json({"keyword": "leaf-list",})
+        leaf_list_elem = yinsolidated.parse_json(
+            {
+                "keyword": "leaf-list",
+                "module-prefix": "t",
+                "nsmap": {"t": "test:ns"},
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+            }
+        )
 
         assert leaf_list_elem.max_elements is None
 
@@ -534,14 +735,30 @@ class TestLeafListElement(object):
         leaf_list_elem = yinsolidated.parse_json(
             {
                 "keyword": "leaf-list",
-                "children": [{"keyword": "ordered-by", "value": "user"}],
+                "module-prefix": "t",
+                "nsmap": {"t": "test:ns"},
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                "children": [
+                    {
+                        "keyword": "ordered-by",
+                        "value": "user",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
         assert leaf_list_elem.ordered_by == "user"
 
     def test_no_ordered_by(self):
-        leaf_list_elem = yinsolidated.parse_json({"keyword": "leaf-list",})
+        leaf_list_elem = yinsolidated.parse_json(
+            {
+                "keyword": "leaf-list",
+                "module-prefix": "t",
+                "nsmap": {"t": "test:ns"},
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+            }
+        )
 
         assert leaf_list_elem.ordered_by == "system"
 
@@ -556,8 +773,13 @@ class TestListElement(object):
                     {
                         "keyword": "list",
                         "nsmap": {"a": "alpha:ns", "b": "bravo:ns", "c": "charlie:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
-                            {"keyword": "key", "value": "a:alpha b:bravo charlie"},
+                            {
+                                "keyword": "key",
+                                "value": "a:alpha b:bravo charlie",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            },
                         ],
                     },
                 ],
@@ -580,7 +802,13 @@ class TestListElement(object):
         list_elem = yinsolidated.parse_json(
             {
                 "keyword": "list",
-                "children": [{"keyword": "unique", "tag": "alpha bravo charlie"},],
+                "children": [
+                    {
+                        "keyword": "unique",
+                        "tag": "alpha bravo charlie",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -590,7 +818,13 @@ class TestListElement(object):
         list_elem = yinsolidated.parse_json(
             {
                 "keyword": "list",
-                "children": [{"keyword": "min-elements", "value": "10"}],
+                "children": [
+                    {
+                        "keyword": "min-elements",
+                        "value": "10",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -605,7 +839,13 @@ class TestListElement(object):
         list_elem = yinsolidated.parse_json(
             {
                 "keyword": "list",
-                "children": [{"keyword": "max-elements", "value": "10"}],
+                "children": [
+                    {
+                        "keyword": "max-elements",
+                        "value": "10",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -620,7 +860,13 @@ class TestListElement(object):
         list_elem = yinsolidated.parse_json(
             {
                 "keyword": "list",
-                "children": [{"keyword": "ordered-by", "value": "user"}],
+                "children": [
+                    {
+                        "keyword": "ordered-by",
+                        "value": "user",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -637,7 +883,13 @@ class TestAnyxmlElement(object):
         anyxml_elem = yinsolidated.parse_json(
             {
                 "keyword": "anyxml",
-                "children": [{"keyword": "mandatory", "value": "true"}],
+                "children": [
+                    {
+                        "keyword": "mandatory",
+                        "value": "true",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -647,14 +899,20 @@ class TestAnyxmlElement(object):
         anyxml_elem = yinsolidated.parse_json(
             {
                 "keyword": "anyxml",
-                "children": [{"keyword": "mandatory", "value": "false"}],
+                "children": [
+                    {
+                        "keyword": "mandatory",
+                        "value": "false",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
         assert not anyxml_elem.is_mandatory
 
     def test_not_mandatory_implicit(self):
-        anyxml_elem = yinsolidated.parse_json({"keyword": "anyxml",})
+        anyxml_elem = yinsolidated.parse_json({"keyword": "anyxml"})
 
         assert not anyxml_elem.is_mandatory
 
@@ -672,7 +930,14 @@ class TestTypeElement(object):
                         "keyword": "type",
                         "name": "counter",
                         "nsmap": {"a": "a:ns"},
-                        "children": [{"keyword": "typedef", "name": "uint32"}],
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "children": [
+                            {
+                                "keyword": "typedef",
+                                "name": "uint32",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
+                        ],
                     }
                 ],
             }
@@ -699,16 +964,23 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "percentage",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "meter",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
                                     {
                                         "keyword": "typedef",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                         "name": "meter",
                                         "children": [
-                                            {"keyword": "type", "name": "uint8"}
+                                            {
+                                                "keyword": "type",
+                                                "name": "uint8",
+                                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                            }
                                         ],
                                     }
                                 ],
@@ -730,11 +1002,19 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "test-leafref",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "leafref",
-                                "children": [{"keyword": "type", "name": "uint32"}],
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                "children": [
+                                    {
+                                        "keyword": "type",
+                                        "name": "uint32",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
+                                ],
                             }
                         ],
                     }
@@ -753,13 +1033,23 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "test-union",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "union",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
-                                    {"keyword": "type", "name": "uint32"},
-                                    {"keyword": "type", "name": "string"},
+                                    {
+                                        "keyword": "type",
+                                        "name": "uint32",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
+                                    {
+                                        "keyword": "type",
+                                        "name": "string",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
                                 ],
                             }
                         ],
@@ -779,7 +1069,14 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "counter",
-                        "children": [{"keyword": "type", "name": "uint32"}],
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "children": [
+                            {
+                                "keyword": "type",
+                                "name": "uint32",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
+                        ],
                     }
                 ],
             }
@@ -798,8 +1095,16 @@ class TestTypeElement(object):
                 "keyword": "type",
                 "name": "bits",
                 "children": [
-                    {"keyword": "bit", "name": "alpha"},
-                    {"keyword": "bit", "name": "bravo"},
+                    {
+                        "keyword": "bit",
+                        "name": "alpha",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
+                    {
+                        "keyword": "bit",
+                        "name": "bravo",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             },
         )
@@ -816,13 +1121,23 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "bits",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
-                                    {"keyword": "bit", "name": "alpha"},
-                                    {"keyword": "bit", "name": "bravo"},
+                                    {
+                                        "keyword": "bit",
+                                        "name": "alpha",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
+                                    {
+                                        "keyword": "bit",
+                                        "name": "bravo",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
                                 ],
                             }
                         ],
@@ -840,8 +1155,16 @@ class TestTypeElement(object):
                 "keyword": "type",
                 "name": "enumeration",
                 "children": [
-                    {"keyword": "enum", "name": "alpha"},
-                    {"keyword": "enum", "name": "bravo"},
+                    {
+                        "keyword": "enum",
+                        "name": "alpha",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
+                    {
+                        "keyword": "enum",
+                        "name": "bravo",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             },
         )
@@ -858,13 +1181,23 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "fake-typedef",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "enumeration",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
-                                    {"keyword": "enum", "name": "alpha"},
-                                    {"keyword": "enum", "name": "bravo"},
+                                    {
+                                        "keyword": "enum",
+                                        "name": "alpha",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
+                                    {
+                                        "keyword": "enum",
+                                        "name": "bravo",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
                                 ],
                             }
                         ],
@@ -881,7 +1214,13 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "decimal64",
-                "children": [{"keyword": "fraction-digits", "value": "2"}],
+                "children": [
+                    {
+                        "keyword": "fraction-digits",
+                        "value": "2",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -896,12 +1235,18 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "decimal64",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
-                                    {"keyword": "fraction-digits", "value": "2"}
+                                    {
+                                        "keyword": "fraction-digits",
+                                        "value": "2",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
                                 ],
                             },
                         ],
@@ -913,7 +1258,7 @@ class TestTypeElement(object):
         assert type_elem.fraction_digits == "2"
 
     def test_no_fraction_digits(self):
-        type_elem = yinsolidated.parse_json({"keyword": "type", "name": "string"},)
+        type_elem = yinsolidated.parse_json({"keyword": "type", "name": "string"})
 
         assert type_elem.fraction_digits is None
 
@@ -922,7 +1267,13 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "identityref",
-                "children": [{"keyword": "base", "name": "base-identity"}],
+                "children": [
+                    {
+                        "keyword": "base",
+                        "name": "base-identity",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -937,12 +1288,18 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "identityref",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
-                                    {"keyword": "base", "name": "base-identity"}
+                                    {
+                                        "keyword": "base",
+                                        "name": "base-identity",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
                                 ],
                             }
                         ],
@@ -958,31 +1315,49 @@ class TestTypeElement(object):
             {
                 "keyword": "module",
                 "module-prefix": "t",
+                "nsmap": {"t": "test:ns"},
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                 "children": [
                     {
                         "keyword": "identity",
                         "name": "base-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                     },
                     {
                         "keyword": "identity",
                         "name": "derived-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
-                        "children": [{"keyword": "base", "name": "base-identity"}],
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "children": [
+                            {
+                                "keyword": "base",
+                                "name": "base-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
+                        ],
                     },
                     {
                         "keyword": "identity",
                         "name": "nested-derived-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
-                        "children": [{"keyword": "base", "name": "derived-identity"}],
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "children": [
+                            {
+                                "keyword": "base",
+                                "name": "derived-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
+                        ],
                     },
                     {
                         "keyword": "identity",
                         "name": "another-base-identity",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "module-prefix": "o",
                     },
                     {
@@ -990,20 +1365,31 @@ class TestTypeElement(object):
                         "name": "another-derived-identity",
                         "module-prefix": "o",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
-                            {"keyword": "base", "name": "another-derived-identity"}
+                            {
+                                "keyword": "base",
+                                "name": "another-derived-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
                         ],
                     },
                     {
                         "keyword": "leaf",
                         "name": "test-leaf",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "identityref",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
-                                    {"keyword": "base", "name": "base-identity"}
+                                    {
+                                        "keyword": "base",
+                                        "name": "base-identity",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
                                 ],
                             }
                         ],
@@ -1030,25 +1416,41 @@ class TestTypeElement(object):
                         "name": "base-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                     },
                     {
                         "keyword": "identity",
                         "name": "derived-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
-                        "children": [{"keyword": "base", "name": "base-identity"}],
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "children": [
+                            {
+                                "keyword": "base",
+                                "name": "base-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
+                        ],
                     },
                     {
                         "keyword": "identity",
                         "name": "nested-derived-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
-                        "children": [{"keyword": "base", "name": "derived-identity"}],
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "children": [
+                            {
+                                "keyword": "base",
+                                "name": "derived-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
+                        ],
                     },
                     {
                         "keyword": "identity",
                         "name": "another-base-identity",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "module-prefix": "o",
                     },
                     {
@@ -1056,22 +1458,30 @@ class TestTypeElement(object):
                         "name": "another-derived-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
-                            {"keyword": "base", "name": "o:another-base-identity"}
+                            {
+                                "keyword": "base",
+                                "name": "o:another-base-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
                         ],
                     },
                     {
                         "keyword": "leaf",
                         "name": "test-leaf",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "identityref",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
                                     {
                                         "keyword": "base",
                                         "name": "o:another-base-identity",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                     }
                                 ],
                             }
@@ -1088,35 +1498,44 @@ class TestTypeElement(object):
         assert len(identities) == 1
         assert identities[0].name == "another-derived-identity"
 
-        def test_missing_identity(self):
-            module_elem = yinsolidated.parse_json(
-                {
-                    "keyword": "module",
-                    "module-prefix": "t",
-                    "children": [
-                        {
-                            "keyword": "leaf",
-                            "name": "test-leaf",
-                            "children": [
-                                {
-                                    "keyword": "type",
-                                    "name": "identityref",
-                                    "children": [
-                                        {"keyword": "base", "name": "t:base-identity"}
-                                    ],
-                                }
-                            ],
-                        }
-                    ],
-                },
-            )
-            type_elem = module_elem.find("leaf").find("type")
+    def test_missing_identity(self):
+        module_elem = yinsolidated.parse_json(
+            {
+                "keyword": "module",
+                "module-prefix": "t",
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                "nsmap": {"t": "test:ns"},
+                "children": [
+                    {
+                        "keyword": "leaf",
+                        "name": "test-leaf",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "nsmap": {"t": "test:ns"},
+                        "children": [
+                            {
+                                "keyword": "type",
+                                "name": "identityref",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                "children": [
+                                    {
+                                        "keyword": "base",
+                                        "name": "t:base-identity",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
+                                ],
+                            }
+                        ],
+                    }
+                ],
+            },
+        )
+        type_elem = module_elem.find("leaf").find("type")
 
-            with pytest.raises(yinsolidated.MissingIdentityError):
-                type_elem.get_identities()
+        with pytest.raises(yinsolidated.MissingIdentityError):
+            type_elem.get_identities()
 
     def test_no_identities(self):
-        type_elem = yinsolidated.parse_json({"keyword": "type", "name": "string"},)
+        type_elem = yinsolidated.parse_json({"keyword": "type", "name": "string"})
 
         assert len(type_elem.get_identities()) == 0
 
@@ -1125,7 +1544,13 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "string",
-                "children": [{"keyword": "length", "value": "1..253"}],
+                "children": [
+                    {
+                        "keyword": "length",
+                        "value": "1..253",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -1140,11 +1565,19 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "string",
-                                "children": [{"keyword": "length", "value": "1..253"}],
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                "children": [
+                                    {
+                                        "keyword": "length",
+                                        "value": "1..253",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
+                                ],
                             },
                         ],
                     }
@@ -1158,26 +1591,32 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "fake-type",
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                 "children": [
                     {
                         "keyword": "typedef",
                         "name": "indirect-fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "another-fake-type",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
                                     {
                                         "keyword": "typedef",
                                         "name": "fake-type",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                         "children": [
                                             {
                                                 "keyword": "type",
                                                 "name": "string",
+                                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                                 "children": [
                                                     {
                                                         "keyword": "length",
                                                         "value": "8..110",
+                                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                                     }
                                                 ],
                                             },
@@ -1197,19 +1636,32 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "fake-type",
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                 "children": [
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "string",
-                                "children": [{"keyword": "length", "value": "1..17"}],
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                "children": [
+                                    {
+                                        "keyword": "length",
+                                        "value": "1..17",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
+                                ],
                             },
                         ],
                     },
-                    {"keyword": "length", "value": "9..17"},
+                    {
+                        "keyword": "length",
+                        "value": "9..17",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             },
         )
@@ -1226,7 +1678,14 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "leafref",
-                "children": [{"keyword": "path", "value": "/a/fake/path"}],
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                "children": [
+                    {
+                        "keyword": "path",
+                        "value": "/a/fake/path",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -1237,16 +1696,23 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "fake-type",
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                 "children": [
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "leafref",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
-                                    {"keyword": "path", "value": "/a/fake/path"}
+                                    {
+                                        "keyword": "path",
+                                        "value": "/a/fake/path",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
                                 ],
                             },
                         ],
@@ -1258,7 +1724,7 @@ class TestTypeElement(object):
         assert type_elem.path == "/a/fake/path"
 
     def test_no_path(self):
-        type_elem = yinsolidated.parse_json({"keyword": "type", "name": "string"},)
+        type_elem = yinsolidated.parse_json({"keyword": "type", "name": "string"})
 
         assert type_elem.path is None
 
@@ -1271,14 +1737,20 @@ class TestTypeElement(object):
                     {
                         "keyword": "pattern",
                         "value": "[a-zA-Z0-9_\\-]*",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "error-message",
                                 "value": "Must be alphanumeric",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                             }
                         ],
                     },
-                    {"keyword": "pattern", "value": ".*"},
+                    {
+                        "keyword": "pattern",
+                        "value": ".*",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             },
         )
@@ -1300,22 +1772,30 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "string",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
                                     {
                                         "keyword": "pattern",
                                         "value": "[a-zA-Z0-9_\\-]*",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                         "children": [
                                             {
                                                 "keyword": "error-message",
                                                 "value": "Must be alphanumeric",
+                                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                             }
                                         ],
                                     },
-                                    {"keyword": "pattern", "value": ".*"},
+                                    {
+                                        "keyword": "pattern",
+                                        "value": ".*",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
                                 ],
                             },
                         ],
@@ -1337,7 +1817,13 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "uint8",
-                "children": [{"keyword": "range", "value": "1..253"}],
+                "children": [
+                    {
+                        "keyword": "range",
+                        "value": "1..253",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -1352,11 +1838,19 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "uint8",
-                                "children": [{"keyword": "range", "value": "1..253"}],
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                "children": [
+                                    {
+                                        "keyword": "range",
+                                        "value": "1..253",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
+                                ],
                             },
                         ],
                     }
@@ -1374,22 +1868,27 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "wrapper",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "fake-type",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
                                     {
                                         "keyword": "typedef",
                                         "name": "fake-type",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                         "children": [
                                             {
                                                 "keyword": "type",
                                                 "name": "uint8",
+                                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                                 "children": [
                                                     {
                                                         "keyword": "range",
                                                         "value": "7..9",
+                                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                                     }
                                                 ],
                                             },
@@ -1413,15 +1912,27 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "fake-type",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "uint8",
-                                "children": [{"keyword": "range", "value": "1..227"}],
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                "children": [
+                                    {
+                                        "keyword": "range",
+                                        "value": "1..227",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
+                                ],
                             },
                         ],
                     },
-                    {"keyword": "range", "value": "4..128"},
+                    {
+                        "keyword": "range",
+                        "value": "4..128",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             }
         )
@@ -1429,7 +1940,7 @@ class TestTypeElement(object):
         assert type_elem.range == "4..128"
 
     def test_no_range(self):
-        type_elem = yinsolidated.parse_json({"keyword": "type", "name": "uint8"},)
+        type_elem = yinsolidated.parse_json({"keyword": "type", "name": "uint8"})
 
         assert type_elem.range is None
 
@@ -1438,7 +1949,14 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "leafref",
-                "children": [{"keyword": "type", "name": "string"}],
+                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                "children": [
+                    {
+                        "keyword": "type",
+                        "name": "string",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -1450,8 +1968,16 @@ class TestTypeElement(object):
                 "keyword": "type",
                 "name": "union",
                 "children": [
-                    {"keyword": "type", "name": "uint8"},
-                    {"keyword": "type", "name": "string"},
+                    {
+                        "keyword": "type",
+                        "name": "uint8",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
+                    {
+                        "keyword": "type",
+                        "name": "string",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             },
         )
@@ -1467,11 +1993,19 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "faketype",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "leafref",
-                                "children": [{"keyword": "type", "name": "string"}],
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                "children": [
+                                    {
+                                        "keyword": "type",
+                                        "name": "string",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
+                                ],
                             },
                         ],
                     }
@@ -1487,8 +2021,16 @@ class TestTypeElement(object):
                 "keyword": "type",
                 "name": "union",
                 "children": [
-                    {"keyword": "type", "name": "uint8"},
-                    {"keyword": "type", "name": "string"},
+                    {
+                        "keyword": "type",
+                        "name": "uint8",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
+                    {
+                        "keyword": "type",
+                        "name": "string",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    },
                 ],
             },
         )
@@ -1501,7 +2043,13 @@ class TestTypeElement(object):
             {
                 "keyword": "type",
                 "name": "leafref",
-                "children": [{"keyword": "type", "name": "uint8"}],
+                "children": [
+                    {
+                        "keyword": "type",
+                        "name": "uint8",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -1516,13 +2064,23 @@ class TestTypeElement(object):
                     {
                         "keyword": "typedef",
                         "name": "faketype",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "type",
                                 "name": "union",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                 "children": [
-                                    {"keyword": "type", "name": "uint8"},
-                                    {"keyword": "type", "name": "string"},
+                                    {
+                                        "keyword": "type",
+                                        "name": "uint8",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
+                                    {
+                                        "keyword": "type",
+                                        "name": "string",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    },
                                 ],
                             },
                         ],
@@ -1549,11 +2107,19 @@ class TestTypeElementWithPrefixedName(object):
                         "keyword": "type",
                         "name": "b:counter",
                         "nsmap": {"a": "a:ns", "b": "b:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
                             {
                                 "keyword": "typedef",
                                 "name": "counter",
-                                "children": [{"keyword": "type", "name": "uint32"}],
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                "children": [
+                                    {
+                                        "keyword": "type",
+                                        "name": "uint32",
+                                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                                    }
+                                ],
                             }
                         ],
                     }
@@ -1587,7 +2153,13 @@ class TestTypedefElement(object):
             {
                 "keyword": "typedef",
                 "name": "counter",
-                "children": [{"keyword": "type", "name": "uint32"}],
+                "children": [
+                    {
+                        "keyword": "type",
+                        "name": "uint32",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -1598,7 +2170,13 @@ class TestTypedefElement(object):
             {
                 "keyword": "typedef",
                 "name": "counter",
-                "children": [{"keyword": "default", "value": "600"}],
+                "children": [
+                    {
+                        "keyword": "default",
+                        "value": "600",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -1616,7 +2194,13 @@ class TestTypedefElement(object):
             {
                 "keyword": "typedef",
                 "name": "counter",
-                "children": [{"keyword": "units", "name": "seconds"}],
+                "children": [
+                    {
+                        "keyword": "units",
+                        "name": "seconds",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
@@ -1632,7 +2216,7 @@ class TestTypedefElement(object):
 
 class TestBitElement(object):
     def test_name(self):
-        bit_elem = yinsolidated.parse_json({"keyword": "bit", "name": "alpha"},)
+        bit_elem = yinsolidated.parse_json({"keyword": "bit", "name": "alpha"})
 
         assert bit_elem.name == "alpha"
 
@@ -1641,21 +2225,27 @@ class TestBitElement(object):
             {
                 "keyword": "bit",
                 "name": "alpha",
-                "children": [{"keyword": "position", "value": "1"}],
+                "children": [
+                    {
+                        "keyword": "position",
+                        "value": "1",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
         assert bit_elem.position == 1
 
     def test_no_position(self):
-        bit_elem = yinsolidated.parse_json({"keyword": "bit", "name": "alpha"},)
+        bit_elem = yinsolidated.parse_json({"keyword": "bit", "name": "alpha"})
 
         assert bit_elem.position is None
 
 
 class TestEnumElement(object):
     def test_name(self):
-        enum_elem = yinsolidated.parse_json({"keyword": "enum", "name": "alpha"},)
+        enum_elem = yinsolidated.parse_json({"keyword": "enum", "name": "alpha"})
 
         assert enum_elem.name == "alpha"
 
@@ -1664,14 +2254,20 @@ class TestEnumElement(object):
             {
                 "keyword": "enum",
                 "name": "alpha",
-                "children": [{"keyword": "value", "value": "1"}],
+                "children": [
+                    {
+                        "keyword": "value",
+                        "value": "1",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             },
         )
 
         assert enum_elem.value == 1
 
     def test_no_value(self):
-        enum_elem = yinsolidated.parse_json({"keyword": "enum", "name": "alpha"},)
+        enum_elem = yinsolidated.parse_json({"keyword": "enum", "name": "alpha"})
 
         assert enum_elem.value is None
 
@@ -1686,6 +2282,7 @@ class TestWhenElement(object):
                     {
                         "keyword": "when",
                         "condition": "t:foo = 'bar'",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "nsmap": {"t": "test:ns"},
                     }
                 ],
@@ -1694,7 +2291,7 @@ class TestWhenElement(object):
         when_element = container_elem.find("when")
 
         assert when_element.condition == "t:foo = 'bar'"
-        assert when_element.namespace_map == {"t": "test:ns"}
+        assert when_element.nsmap == {"t": "test:ns"}
 
     def test_prefix_added(self):
         container_elem = yinsolidated.parse_json(
@@ -1705,6 +2302,7 @@ class TestWhenElement(object):
                     {
                         "keyword": "when",
                         "condition": "../foo/bar = 'alpha' | /t:root/test = 'bravo'",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "nsmap": {"t": "test:ns", "d": "default:ns"},
                     }
                 ],
@@ -1717,10 +2315,10 @@ class TestWhenElement(object):
             "../d:foo/d:bar = 'alpha' | /t:root/d:test = 'bravo'"
         )
 
-        assert when_element.namespace_map == {"d": "default:ns", "t": "test:ns"}
+        assert when_element.nsmap == {"d": "default:ns", "t": "test:ns"}
 
     def test_self_context(self):
-        when_element = yinsolidated.parse_json({"keyword": "when"},)
+        when_element = yinsolidated.parse_json({"keyword": "when"})
 
         assert not when_element.context_node_is_parent
 
@@ -1778,7 +2376,13 @@ class TestIdentityElement(object):
                 "name": "test-identity",
                 "module-prefix": "t",
                 "nsmap": {"t": "test:ns"},
-                "children": [{"keyword": "base", "name": "base-identity"}],
+                "children": [
+                    {
+                        "keyword": "base",
+                        "name": "base-identity",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
             }
         )
 
@@ -1791,7 +2395,13 @@ class TestIdentityElement(object):
                     "name": "test-identity",
                     "module-prefix": "t",
                     "nsmap": {"t": "test:ns", "o": "other:ns"},
-                    "children": [{"keyword": "base", "name": "o:base-identity"}],
+                    "children": [
+                        {
+                            "keyword": "base",
+                            "name": "o:base-identity",
+                            "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        }
+                    ],
                 },
             )
 
@@ -1807,27 +2417,41 @@ class TestIdentityElement(object):
                         "name": "base-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                     },
                     {
                         "keyword": "identity",
                         "name": "derived-identity-1",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns"},
-                        "children": [{"keyword": "base", "name": "base-identity"}],
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "children": [
+                            {
+                                "keyword": "base",
+                                "name": "base-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
+                        ],
                     },
                     {
                         "keyword": "identity",
                         "name": "another-base-identity",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                     },
                     {
                         "keyword": "identity",
                         "name": "derived-identity-2",
                         "module-prefix": "t",
                         "nsmap": {"t": "test:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
-                            {"keyword": "base", "name": "another-base-identity"}
+                            {
+                                "keyword": "base",
+                                "name": "another-base-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
                         ],
                     },
                     {
@@ -1835,15 +2459,27 @@ class TestIdentityElement(object):
                         "name": "external-derived-identity",
                         "module-prefix": "o",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
-                        "children": [{"keyword": "base", "name": "t:base-identity"}],
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                        "children": [
+                            {
+                                "keyword": "base",
+                                "name": "t:base-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
+                        ],
                     },
                     {
                         "keyword": "identity",
                         "name": "nested-derived-identity",
                         "module-prefix": "o",
                         "nsmap": {"t": "test:ns", "o": "other:ns"},
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                         "children": [
-                            {"keyword": "base", "name": "o:external-derived-identity"}
+                            {
+                                "keyword": "base",
+                                "name": "o:external-derived-identity",
+                                "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                            }
                         ],
                     },
                 ],
