@@ -216,6 +216,7 @@ def ancestor_data_node_model():
                                             "children": [
                                                 {
                                                     "keyword": "leaf",
+                                                    "name": "test-leaf",
                                                     "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                                     "children": [
                                                         {
@@ -233,6 +234,7 @@ def ancestor_data_node_model():
                                             "children": [
                                                 {
                                                     "keyword": "leaf-list",
+                                                    "name": "test-leaf-list",
                                                     "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
                                                     "children": [
                                                         {
@@ -361,6 +363,25 @@ class TestFind(object):
         )
 
         assert len(results) == expected_count
+
+
+class TestIterateDataNodes(object):
+    def test_direct_child(self, ancestor_data_node_model):
+        container_elem = ancestor_data_node_model.find("container")
+        names = [data_node.name for data_node in container_elem.iterate_data_nodes()]
+        assert names == ["test-list"]
+
+    def test_not_direct_children(self, ancestor_data_node_model):
+        list_elem = ancestor_data_node_model.find("container").find("list")
+        names = [data_node.name for data_node in list_elem.iterate_data_nodes()]
+        assert names == ["test-leaf", "test-leaf-list", "nested-container"]
+
+    def test_iterate_module(self, ancestor_data_node_model):
+        names = [
+            data_node.name
+            for data_node in ancestor_data_node_model.iterate_data_nodes()
+        ]
+        assert names == ["test-container", "sibling-list", "sibling-container"]
 
 
 class TestModuleElement(object):

@@ -215,7 +215,19 @@ def _change_all_whitespace_to_spaces(string):
 
 
 class ModuleElement(YinElement):
-    pass
+    def iterate_data_nodes(self):
+        for data_node in _iterate_data_node(self):
+            yield data_node
+
+
+def _iterate_data_node(parent):
+    for yin_element in parent.children:
+        if _common.is_data_node(yin_element.keyword):
+            yield yin_element
+        elif _common.is_data_definition(yin_element.keyword):
+            for child in yin_element.children:
+                for data_node in _iterate_data_node(child):
+                    yield data_node
 
 
 class DefinitionElement(YinElement):
@@ -243,6 +255,10 @@ class ContainerElement(DataDefinitionElement):
     @property
     def presence(self):
         return _get_subelem_attribute_or_default(self, "presence", "value")
+
+    def iterate_data_nodes(self):
+        for data_node in _iterate_data_node(self):
+            yield data_node
 
 
 def _get_subelem_attribute_or_default(
@@ -379,6 +395,10 @@ class ListElement(DataDefinitionElement):
     @property
     def ordered_by(self):
         return _get_ordered_by(self)
+
+    def iterate_data_nodes(self):
+        for data_node in _iterate_data_node(self):
+            yield data_node
 
 
 class AnyxmlElement(DataDefinitionElement):
