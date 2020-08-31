@@ -45,7 +45,7 @@ def consolidated_model():
 
     consolidated_model_json = subprocess.check_output(pyang_command)
 
-    return json.loads(consolidated_model_json)
+    return json.loads(consolidated_model_json.decode("utf-8"))
 
 
 def get_nested(yin_element, *path):
