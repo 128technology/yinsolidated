@@ -2292,6 +2292,23 @@ class TestEnumElement(object):
 
         assert enum_elem.value is None
 
+    def test_status(self):
+        enum_elem = yinsolidated.parse_json(
+            {
+                "keyword": "enum",
+                "name": "alpha",
+                "children": [
+                    {
+                        "keyword": "status",
+                        "value": "deprecated",
+                        "namespace": "urn:ietf:params:xml:ns:yang:yin:1",
+                    }
+                ],
+            },
+        )
+
+        assert enum_elem.status == "deprecated"
+
 
 class TestWhenElement(object):
     def test_no_prefix_added(self):
