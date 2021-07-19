@@ -556,6 +556,10 @@ class EnumElement(YinElement):
         value = _get_subelem_attribute_or_default(self, "value", "value")
         return int(value) if value is not None else None
 
+    @property
+    def status(self):
+        return _get_status(self)
+
 
 class PatternElement(YinElement):
     @property
